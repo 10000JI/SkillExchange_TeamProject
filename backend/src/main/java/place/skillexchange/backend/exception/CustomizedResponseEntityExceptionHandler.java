@@ -1,5 +1,6 @@
 package place.skillexchange.backend.exception;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.support.ResourceBundleMessageSource;
@@ -53,7 +54,7 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
         // 에러 메시지 목록
         List<String> errorMessages = new ArrayList<>();
         for (FieldError fieldError : fieldErrors) {
-            String errorMessage = fieldError.getDefaultMessage();
+            String errorMessage = messageSource.getMessage(fieldError, Locale.getDefault());
             if (errorMessage != null) {
                 errorMessages.add(errorMessage);
             }
