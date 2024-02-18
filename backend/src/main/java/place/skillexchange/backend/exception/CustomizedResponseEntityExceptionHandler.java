@@ -1,5 +1,6 @@
 package place.skillexchange.backend.exception;
 
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
@@ -38,10 +39,22 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
         //request.getDescription(false) : 클라이언트에게 상세정보를 보여주지 않을 것
         return new ResponseEntity(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR); //반환은 ResponseEntity
     }
-    @ExceptionHandler(UserNotFoundException.class) //타 Controller 실행 중 UserNotFoundException 에러 발생 시 (=사용자 정보가 존재하지 않았을 때) handlerAllExceptions()가 작업 우회
+    @ExceptionHandler(UserNotFoundException.class) //타 Controller 실행 중 UserNotFoundException 에러 발생 시 (=사용자 정보가 존재하지 않았을 때) handlerUserNotException()가 작업 우회
     public final ResponseEntity<Object> handlerUserNotException(Exception ex, WebRequest request) {
         ExceptionResponse.OneDetail exceptionResponse = new ExceptionResponse.OneDetail(new Date(), ex.getMessage(), request.getDescription(false));
         return new ResponseEntity(exceptionResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(UserUnAuthorizedException.class) //타 Controller 실행 중 UserUnAuthorizedException 에러 발생 시 (=인증 자격 증명이 유효하지 않은 경우) handlerUserUnAuthorizedException()가 작업 우회
+    public final ResponseEntity<Object> handlerUserUnAuthorizedException(Exception ex, WebRequest request) {
+        ExceptionResponse.OneDetail exceptionResponse = new ExceptionResponse.OneDetail(new Date(), ex.getMessage(), request.getDescription(false));
+        return new ResponseEntity(exceptionResponse, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(MessagingException.class) //타 Controller 실행 중 MessagingException 에러 발생 시 handlerInValidEmailException()가 작업 우회
+    public final ResponseEntity<Object> handlerInValidEmailException(Exception ex, WebRequest request) {
+        ExceptionResponse.OneDetail exceptionResponse = new ExceptionResponse.OneDetail(new Date(), "이메일 전송 중 문제가 발생하였습니다. 이메일이 유효한지 확인하세요.", request.getDescription(false));
+        return new ResponseEntity(exceptionResponse, HttpStatus.BAD_REQUEST);
     }
 
     //유효성 검사 실패 시 실행

@@ -17,7 +17,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class AuthServiceImpl {
+public class AuthServiceImpl implements AuthService{
 
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
@@ -28,6 +28,7 @@ public class AuthServiceImpl {
     /**
      * 사용자 등록
      */
+    @Override
     public User register(UserDto.RegisterRequest dto, BindingResult bindingResult) throws MethodArgumentNotValidException {
 
         boolean isValid = validateDuplicateMember(dto, bindingResult);
@@ -44,6 +45,7 @@ public class AuthServiceImpl {
     /**
      * 회원가입 검증
      */
+    @Override
     public boolean validateDuplicateMember(UserDto.RegisterRequest dto, BindingResult bindingResult) {
 
         boolean checked = false;
@@ -73,5 +75,11 @@ public class AuthServiceImpl {
         }
 
         return checked;
+    }
+
+    @Override
+    public void updateUserActiveStatus(String id) {
+        User user = userRepository.findById(id).orElseThrow();
+        user.changeActive(true);
     }
 }

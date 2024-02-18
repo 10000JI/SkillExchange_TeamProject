@@ -12,6 +12,9 @@ import java.util.Collections;
 
 public class UserDto {
 
+    /**
+     * 회원가입 시 요청된 Dto
+     */
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
@@ -52,6 +55,9 @@ public class UserDto {
         }
     }
 
+    /**
+     * 회원가입 성공시 보낼 Dto
+     */
     @Getter
     public static class RegisterResponseDto {
         private String id;
@@ -64,11 +70,24 @@ public class UserDto {
         }
     }
 
+    /**
+     * 응답코드, 응답메세지
+     */
     @Getter
     @AllArgsConstructor
-    public static class Response {
-        private RegisterResponseDto dto;
+    public static class ResponseBasic {
         private int returnCode;
         private String returnMessage;
+    }
+
+    /**
+     * 회원가입 성공 시 반환
+     */
+    @Getter
+    @AllArgsConstructor
+    public static class RegisterResponse {
+        private RegisterResponseDto dto;
+        private ResponseBasic responseBasic;
+        private String activeToken;
     }
 }

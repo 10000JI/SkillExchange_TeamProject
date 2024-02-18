@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>재능 교환소 계정 활성화 인증 메일</title>
+</head>
+<body>
+    <p th:text="'안녕하세요, ' + ${id} + '님'"></p>
+    <p>누군가가 새로운 위치에서 회원님의 계정으로 접속을 시도하고 있어요.</p>
+    <p>본인이라면 다음 링크를 눌러 로그인을 승인해주세요.</p>
+    <a th:href="${jwtLink}">
+        <button type="button">로그인 인증</button>
+    </a>
+</body>
+</html>

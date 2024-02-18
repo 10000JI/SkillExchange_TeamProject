@@ -78,6 +78,10 @@ public class User implements UserDetails {
         return id;
     }
 
+    public void changeActive(boolean active) {
+        this.active = active;
+    }
+
     @Override
     public boolean isAccountNonExpired() {
         return true;

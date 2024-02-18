@@ -67,7 +67,7 @@ public class SecurityConfig {
                         return config;
                     }
                 })).csrf((csrf) -> csrf.csrfTokenRequestHandler(requestHandler)
-                        .ignoringRequestMatchers("/v1/user/signUp","/v1/user/activation","/v1/user/fIndId","/v1/user/fIndPw","/v1/notices/list")
+                        .ignoringRequestMatchers("/v1/user/signUp","/v1/user/activation","/v1/user/findId","/v1/user/findPw","/v1/notices/list")
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
                 .addFilterAfter(new CsrfCookieFilterService(), BasicAuthenticationFilter.class)
                 //.addFilterBefore(new JWTTokenValidatorFilter(),BasicAuthenticationFilter.class)
