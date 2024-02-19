@@ -56,7 +56,7 @@ public class UserDto {
     }
 
     /**
-     * 회원가입 성공시 보낼 Dto
+     * 회원가입, 로그인 성공시 보낼 Dto
      */
     @Getter
     public static class RegisterResponseDto {
@@ -88,5 +88,23 @@ public class UserDto {
     public static class RegisterResponse {
         private RegisterResponseDto dto;
         private ResponseBasic responseBasic;
+    }
+
+    /**
+     * 로그인 성공시 요청된 Dto
+     */
+    @Getter
+    public static class LoginResponseDto {
+        private String id;
+        private String password;
+
+        /* Dto -> Entity */
+        public User toEntity() {
+            User user = User.builder()
+                    .id(id)
+                    .password(password)
+                    .build();
+            return user;
+        }
     }
 }

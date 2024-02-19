@@ -1,6 +1,7 @@
 package place.skillexchange.backend.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,6 +17,6 @@ public class NoticeController {
 
     @GetMapping("/list")
     public String list() {
-        return "boardList";
+        return "테스트";
     }
 }

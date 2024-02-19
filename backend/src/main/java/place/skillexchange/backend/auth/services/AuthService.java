@@ -1,5 +1,6 @@
 package place.skillexchange.backend.auth.services;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import place.skillexchange.backend.dto.UserDto;
@@ -12,4 +13,6 @@ public interface AuthService {
     public boolean validateDuplicateMember(UserDto.RegisterRequest dto, BindingResult bindingResult);
 
     void updateUserActiveStatus(String id);
+
+    public ResponseEntity<UserDto.RegisterResponseDto> login(UserDto.LoginResponseDto dto);
 }

@@ -52,18 +52,27 @@ public class UserController {
     @PostMapping("/activation")
     public UserDto.ResponseBasic activation(@RequestBody Map<String, String> requestBody) {
         String activeToken = requestBody.get("activeToken");
-        String username = jwtService.extractUsername(activeToken);
-        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        String id = jwtService.extractUsername(activeToken);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(id);
         // 여기서 activeToken을 검증하고 처리하는 로직을 추가
         //isTokenValid가 false일때 토큰 만료 exception이 출려되어야 함 !!!
-        if (jwtService.isTokenValid(activeToken, userDetails)) {
-            // active 0->1 로 변경 (active가 1이여야 로그인 가능)
-            authService.updateUserActiveStatus(username);
-        } else {
+        if (!jwtService.isTokenValid(activeToken, userDetails)) {
+            // 토큰이 유효하지 않은 경우 예외를 발생시킴
             throw new UserUnAuthorizedException("토큰이 만료되었습니다");
         }
 
+        // active 0->1 로 변경 (active가 1이여야 로그인 가능)
+        authService.updateUserActiveStatus(id);
+
         return new UserDto.ResponseBasic(200, "계정이 활성화 되었습니다.");
+    }
+
+    /**
+     * 사용자 로그인
+     */
+    @GetMapping("/signIn")
+    public ResponseEntity<UserDto.RegisterResponseDto> login(@RequestBody UserDto.LoginResponseDto dto) {
+        return authService.login(dto);
     }
 
 }

@@ -1,19 +1,19 @@
 package place.skillexchange.backend.auth.services;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 @Service
@@ -81,12 +81,29 @@ public class JwtService {
     public String generateActiveToken(UserDetails userDetails) {
         return Jwts
                 .builder().issuer("Skill Exchange").subject("JWT Active Token")
-                //claim(): 로그인된 유저의 ID, 권한을 채워줌
+                //claim(): 로그인된 유저의 ID를 채워줌
                 .claim("id", userDetails.getUsername())
                 //issuedAt(): 클라이언트에게 JWT 토큰이 발행시간 설정
                 .issuedAt(new Date())
                 //expiration(): 클라이언트에게 JWT 토큰이 만료시간 설정 (5분)
                 .expiration(new Date((new Date()).getTime() + 5 * 60 * 1000))
+                //signWith(): JWT 토큰 속 모든 요청에 디지털 서명을 하는 것, 여기서 위에서 설정한 비밀키를 대입
+                .signWith(getSignInKey()).compact();
+    }
+
+    /**
+     * 엑세스 토큰 (accessToken) 생성
+     */
+    public String generateAccessToken(UserDetails userDetails) {
+        return Jwts
+                .builder().issuer("Skill Exchange").subject("JWT Access Token")
+                //claim(): 로그인된 유저의 ID, 권한을 채워줌
+                .claim("id", userDetails.getUsername())
+                .claim("authorities",populateAuthorities(userDetails.getAuthorities()))
+                //issuedAt(): 클라이언트에게 JWT 토큰이 발행시간 설정
+                .issuedAt(new Date())
+                //expiration(): 클라이언트에게 JWT 토큰이 만료시간 설정 (5분)
+                .expiration(new Date((new Date()).getTime() + 1 * 60 * 1000))
                 //signWith(): JWT 토큰 속 모든 요청에 디지털 서명을 하는 것, 여기서 위에서 설정한 비밀키를 대입
                 .signWith(getSignInKey()).compact();
     }
@@ -132,15 +149,37 @@ public class JwtService {
     /**
      * 토큰 만료 여부
      */
-    private boolean isTokenExpired(String token) {
-        //before(): 추출된 만료 날짜가 현재 날짜 이전인지 확인
-        return extractExpiration(token).before(new Date());
+    public boolean isTokenExpired(String token) {
+        try {
+            Date expirationDate = extractExpiration(token);
+            return expirationDate != null && expirationDate.before(new Date());
+        } catch (ExpiredJwtException e) {
+            // 토큰이 만료되었음을 처리
+            return true;
+        }
     }
 
     /**
      * 토큰에서 만료 일자 클레임을 추출하여 반환
      */
     private Date extractExpiration(String token) {
-        return extractClaim(token, Claims::getExpiration);
+        Claims claims = extractAllClaims(token);
+        return claims.getExpiration();
+    }
+//    private Date extractExpiration(String token) {
+//        return extractClaim(token, Claims::getExpiration);
+//    }
+
+    /**
+     * user의 authority 여러 개일 수도 있음을 고려한 String 변경
+     */
+    private String populateAuthorities(Collection<? extends GrantedAuthority> collection) {
+        Set<String> authoritiesSet = new HashSet<>();
+        //내 모든 권한을 읽어옴
+        for (GrantedAuthority authority : collection) {
+            authoritiesSet.add(authority.getAuthority());
+        }
+        //String value로 "," 를 구분자로 권한들을 구분
+        return String.join(",", authoritiesSet);
     }
 }
