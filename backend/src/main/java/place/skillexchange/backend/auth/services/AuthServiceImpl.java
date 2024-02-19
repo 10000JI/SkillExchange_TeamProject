@@ -81,5 +81,6 @@ public class AuthServiceImpl implements AuthService{
     public void updateUserActiveStatus(String id) {
         User user = userRepository.findById(id).orElseThrow();
         user.changeActive(true);
+        userRepository.save(user);
     }
 }

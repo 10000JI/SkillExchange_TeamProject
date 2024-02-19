@@ -77,7 +77,7 @@ public class SecurityConfig {
                         .requestMatchers("/myLoans").hasRole("USER")
                         .requestMatchers("/myCards").hasRole("USER")
                         .requestMatchers("/user").authenticated()
-                        .requestMatchers("/notices","/contact","/register","/v1/user/signUp").permitAll())
+                        .requestMatchers("/notices","/contact","/register","/v1/user/signUp", "/v1/user/activation").permitAll())
                 .formLogin(Customizer.withDefaults())
                 .httpBasic(Customizer.withDefaults());
         return http.build();

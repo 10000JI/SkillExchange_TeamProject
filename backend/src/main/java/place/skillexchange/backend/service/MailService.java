@@ -13,11 +13,11 @@ public class MailService {
     private final MailManager mailManager;
     private final TemplateEngine templateEngine;
 
-    public void getEmail(String email, String id) throws MessagingException {
+    public void getEmail(String email, String id, String activeToken) throws MessagingException {
         // Thymeleaf를 사용하여 메일 템플릿 작성
         Context context = new Context();
         context.setVariable("id",id);
-        context.setVariable("jwtLink", "http://localhost/v1/notices/list");
+        context.setVariable("jwtLink", "http://localhost:3000/active/"+activeToken);
         String emailContent = templateEngine.process("email-template", context);
 
         // 메일 발송

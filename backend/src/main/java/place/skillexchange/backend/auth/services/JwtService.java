@@ -22,7 +22,7 @@ public class JwtService {
      * 클레임(Claim): JWT(토큰 기반의 웹 인증 시스템) 내에서 사용자에 대한 정보를 나타내는 JSON 객체
      */
 
-    private static final String SECRET_KEY = "BF7FD11ACE545745B7BA1AF98B6F156D127BC7BB544BAB6A4FD74E4FC7";
+    private static final String SECRET_KEY = "jxgEQeXHuPq8VdbyYFNkANdudQ53YUn20233359";
 
     /**
      * 비밀 키 : JWT에서 사용되는 비밀 키
@@ -79,13 +79,6 @@ public class JwtService {
      * 계정 활성화 토큰 (activeToken) 생성
      */
     public String generateActiveToken(UserDetails userDetails) {
-        return generateActiveToken(new HashMap<>(), userDetails);
-    }
-
-    public String generateActiveToken(
-            Map<String, Object> extraClaims,
-            UserDetails userDetails
-    ) {
         return Jwts
                 .builder().issuer("Skill Exchange").subject("JWT Active Token")
                 //claim(): 로그인된 유저의 ID, 권한을 채워줌
@@ -96,21 +89,37 @@ public class JwtService {
                 .expiration(new Date((new Date()).getTime() + 5 * 60 * 1000))
                 //signWith(): JWT 토큰 속 모든 요청에 디지털 서명을 하는 것, 여기서 위에서 설정한 비밀키를 대입
                 .signWith(getSignInKey()).compact();
-//                .builder()
-//                //클레임 설정
-//                .setClaims(extraClaims)
-//                //유저이름 설정
-//                .setSubject(userDetails.getUsername())
-//                //유저권한 설정 ( 내가 추가 한 것 )
-//                .setSubject(userDetails.getAuthorities().toString())
-//                //시작일
-//                .setIssuedAt(new Date(System.currentTimeMillis()))
-//                //만료일 (실제로는 1시간 정도로 설정)
-//                .setExpiration(new Date(System.currentTimeMillis() + 60 * 1000))
-//                //비밀키와 HS256 알고리즘 설정
-//                .signWith(getSignInKey(), SignatureAlgorithm.HS256)
-//                .compact();
     }
+
+//    public String generateActiveToken(
+//            Map<String, Object> extraClaims,
+//            UserDetails userDetails
+//    ) {
+//        return Jwts
+//                .builder().issuer("Skill Exchange").subject("JWT Active Token")
+//                //claim(): 로그인된 유저의 ID, 권한을 채워줌
+//                .claim("id", userDetails.getUsername())
+//                //issuedAt(): 클라이언트에게 JWT 토큰이 발행시간 설정
+//                .issuedAt(new Date())
+//                //expiration(): 클라이언트에게 JWT 토큰이 만료시간 설정 (5분)
+//                .expiration(new Date((new Date()).getTime() + 5 * 60 * 1000))
+//                //signWith(): JWT 토큰 속 모든 요청에 디지털 서명을 하는 것, 여기서 위에서 설정한 비밀키를 대입
+//                .signWith(getSignInKey()).compact();
+////                .builder()
+////                //클레임 설정
+////                .setClaims(extraClaims)
+////                //유저이름 설정
+////                .setSubject(userDetails.getUsername())
+////                //유저권한 설정 ( 내가 추가 한 것 )
+////                .setSubject(userDetails.getAuthorities().toString())
+////                //시작일
+////                .setIssuedAt(new Date(System.currentTimeMillis()))
+////                //만료일 (실제로는 1시간 정도로 설정)
+////                .setExpiration(new Date(System.currentTimeMillis() + 60 * 1000))
+////                //비밀키와 HS256 알고리즘 설정
+////                .signWith(getSignInKey(), SignatureAlgorithm.HS256)
+////                .compact();
+//    }
 
     /**
      * 사용자 이름과 사용자 세부 정보를 기반으로 토큰이 유효한지 여부

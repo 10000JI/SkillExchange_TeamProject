@@ -88,6 +88,5 @@ public class UserDto {
     public static class RegisterResponse {
         private RegisterResponseDto dto;
         private ResponseBasic responseBasic;
-        private String activeToken;
     }
 }
