@@ -49,17 +49,33 @@ public class RefreshTokenService {
         return refreshToken;
     }
 
+//    /**
+//     * refreshToken 확인
+//     */
+//    public RefreshToken verifyRefreshToken(String refreshToken) {
+//        RefreshToken refToken = refreshTokenRepository.findByRefreshToken(refreshToken)
+//                .orElseThrow(() -> new RuntimeException("리프레시 토큰을 찾을 수가 없습니다.!"));
+//
+//        // refreshToken의 만료시간이 현재 시간보다 작다면 refreshToken 삭제
+//        if (refToken.getExpirationTime().compareTo(Date.from(Instant.now())) < 0) {
+//            refreshTokenRepository.delete(refToken);
+//            throw new UserUnAuthorizedException("만료된 로그인 정보 입니다. 재로그인을 하세요.");
+//        }
+//
+//        return refToken;
+//    }
+
     /**
      * refreshToken 확인
      */
     public RefreshToken verifyRefreshToken(String refreshToken) {
         RefreshToken refToken = refreshTokenRepository.findByRefreshToken(refreshToken)
-                .orElseThrow(() -> new RuntimeException("리프레시 토큰을 찾을 수가 없습니다.!"));
+                .orElseThrow(() -> new RuntimeException("Refresh token not found!"));
 
-        // refreshToken의 만료시간이 현재 시간보다 작다면 refreshToken 삭제
+        //refreshToken의 만료시간이 현재 시간보다 작다면 refreshToken 삭제
         if (refToken.getExpirationTime().compareTo(Date.from(Instant.now())) < 0) {
             refreshTokenRepository.delete(refToken);
-            throw new UserUnAuthorizedException("만료된 로그인 정보 입니다. 재로그인을 하세요.");
+            throw new RuntimeException("Refresh Token expired");
         }
 
         return refToken;

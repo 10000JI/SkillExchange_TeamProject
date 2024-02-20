@@ -43,7 +43,7 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
     }
 
     /**
-     * 인증
+     * User를 찾을 수 없음
      */
     @ExceptionHandler(UsernameNotFoundException.class) //타 Controller 실행 중 UserNotFoundException 에러 발생 시 (=사용자 정보가 존재하지 않았을 때) handlerUserNotException()가 작업 우회
     public final ResponseEntity<Object> handlerUserNotException(UsernameNotFoundException ex, WebRequest request) {
@@ -52,7 +52,7 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
     }
 
     /**
-     * 권한부여
+     * 비인증
      */
     @ExceptionHandler(UserUnAuthorizedException.class) //타 Controller 실행 중 UserUnAuthorizedException 에러 발생 시 (=인증 자격 증명이 유효하지 않은 경우) handlerUserUnAuthorizedException()가 작업 우회
     public final ResponseEntity<Object> handlerUserUnAuthorizedException(UserUnAuthorizedException ex, WebRequest request) {

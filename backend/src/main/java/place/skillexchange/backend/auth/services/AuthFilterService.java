@@ -73,8 +73,8 @@ public class AuthFilterService extends OncePerRequestFilter {
             if (jwtService.isTokenExpired(jwt)) {
                 //쿠키의 refreshToken과 db에 저장된 refreshToken의 만료일을 확인하고 accessToken 재발급 / 만료되면 재로그인 exception
                 handleExpiredToken(request, response);
-                //accessToken이 만료되지 않았다면 유효한지 검증
             } else {
+                //accessToken이 만료되지 않았다면 유효한지 검증
                 authenticateUser(jwt, request);
             }
         }
@@ -84,18 +84,21 @@ public class AuthFilterService extends OncePerRequestFilter {
 
     private void handleExpiredToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String refreshTokenValue = extractRefreshTokenFromCookie(request);
-        try {
-            if (refreshTokenValue != null) {
-                RefreshToken refreshToken = refreshTokenService.verifyRefreshToken(refreshTokenValue);
-                if (refreshToken != null) {
-                    User user = refreshToken.getUser();
-                    String accessToken = jwtService.generateAccessToken(user);
-                    response.setHeader("Authorization", "Bearer " + accessToken);
-                    return;
-                }
+        if (refreshTokenValue != null) {
+            RefreshToken refreshToken = refreshTokenService.verifyRefreshToken(refreshTokenValue);
+            if (refreshToken != null) {
+                User user = refreshToken.getUser();
+                String accessToken = jwtService.generateAccessToken(user);
+                response.setHeader("Authorization", "Bearer " + accessToken);
+
+                //UserDetailsService에서 loadUserByUsername 메서드로 사용자 세부 정보 검색
+                UserDetails userDetails = userDetailsService.loadUserByUsername(user.getId());
+                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                //authenticationToken의 세부정보 설정
+                authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                //해당 인증 객체를 SecurityContextHolder에 authenticationToken 설정
+                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             }
-        } catch (Exception e) {
-            throw new UserUnAuthorizedException("refreshToken이 만료되었습니다. 재로그인을 해주세요.");
         }
     }
 
@@ -117,13 +120,8 @@ public class AuthFilterService extends OncePerRequestFilter {
         String id = jwtService.extractUsername(jwt);
 
         //UserDetailsService에서 loadUserByUsername 메서드로 사용자 세부 정보 검색
-        UserDetails userDetails;
-        try {
-            userDetails = userDetailsService.loadUserByUsername(id);
-        } catch (Exception  e) {
-            throw new UserUnAuthorizedException("유저를 찾을 수 없습니다.");
-        }
-        if (jwtService.isTokenValid(jwt, userDetails)) {
+        UserDetails userDetails = userDetailsService.loadUserByUsername(id);
+        if (jwtService.isAccessTokenValid(jwt, userDetails)) {
             //UsernamePasswordAuthenticationToken 대상을 생성 (사용자이름,암호(=null로 설정),권한)
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                     userDetails,
@@ -135,5 +133,11 @@ public class AuthFilterService extends OncePerRequestFilter {
             //해당 인증 객체를 SecurityContextHolder에 authenticationToken 설정
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         }
+    }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String servletPath = request.getServletPath();
+        return servletPath.equals("/v1/user/findId");
     }
 }

@@ -55,6 +55,13 @@ public class JwtService {
     }
 
     /**
+     * 토큰의 사용자 권한 추출
+     */
+    public String extractAuthority(String token) {
+        return (String) extractAllClaims(token).get("authorities");
+    }
+
+    /**
      * activeToken에서 모든 클레임을 추출하는 작업
      */
     private Claims extractAllClaims(String token) {
@@ -103,7 +110,7 @@ public class JwtService {
                 //issuedAt(): 클라이언트에게 JWT 토큰이 발행시간 설정
                 .issuedAt(new Date())
                 //expiration(): 클라이언트에게 JWT 토큰이 만료시간 설정 (5분)
-                .expiration(new Date((new Date()).getTime() + 1 * 60 * 1000))
+                .expiration(new Date((new Date()).getTime() + 2 * 60 * 1000))
                 //signWith(): JWT 토큰 속 모든 요청에 디지털 서명을 하는 것, 여기서 위에서 설정한 비밀키를 대입
                 .signWith(getSignInKey()).compact();
     }
@@ -141,9 +148,18 @@ public class JwtService {
     /**
      * 사용자 이름과 사용자 세부 정보를 기반으로 토큰이 유효한지 여부
      */
-    public boolean isTokenValid(String token, UserDetails userDetails) {
+    public boolean isActiveTokenValid(String token, UserDetails userDetails) {
         final String id = extractUsername(token);
         return (id.equals(userDetails.getUsername()) && !isTokenExpired(token));
+    }
+
+    /**
+     * 사용자 이름과 사용자 권한, 사용자 세부 정보를 기반으로 토큰이 유효한지 여부
+     */
+    public boolean isAccessTokenValid(String token, UserDetails userDetails) {
+        final String id = extractUsername(token);
+        final String authorities = extractAuthority(token);
+        return (id.equals(userDetails.getUsername()) && authorities.equals(populateAuthorities(userDetails.getAuthorities())) && !isTokenExpired(token));
     }
 
     /**

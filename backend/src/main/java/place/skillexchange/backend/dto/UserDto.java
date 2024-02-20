@@ -63,7 +63,6 @@ public class UserDto {
         private String id;
         private String email;
 
-        /* Entity -> Dto */
         public RegisterResponseDto(User user) {
             this.id = user.getId();
             this.email = user.getEmail();
@@ -88,6 +87,12 @@ public class UserDto {
     public static class RegisterResponse {
         private RegisterResponseDto dto;
         private ResponseBasic responseBasic;
+
+        // 새로운 생성자 추가
+        public RegisterResponse(User user, int returnCode, String returnMessage) {
+            this.dto = new RegisterResponseDto(user);
+            this.responseBasic = new ResponseBasic(returnCode, returnMessage);
+        }
     }
 
     /**

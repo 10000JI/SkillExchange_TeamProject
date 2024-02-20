@@ -1,12 +1,15 @@
 package place.skillexchange.backend.auth.services;
 
 
+import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -16,6 +19,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import place.skillexchange.backend.dto.UserDto;
 import place.skillexchange.backend.entity.RefreshToken;
 import place.skillexchange.backend.entity.User;
+import place.skillexchange.backend.exception.UserUnAuthorizedException;
 import place.skillexchange.backend.repository.UserRepository;
 
 import java.util.Optional;
@@ -95,13 +99,18 @@ public class AuthServiceImpl implements AuthService{
     @Override
     public ResponseEntity<UserDto.RegisterResponseDto> login(UserDto.LoginResponseDto dto) {
         //authenticationManager가 authenticate() = 인증한다.
-        //이미 AuthFilterService에서 유효한 jwt인지 인증하는 작업을 로그인 인증 전에 시행
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        dto.getId(),
-                        dto.getPassword()
-                )
-        );
+        try {
+            //authenticationManager가 authenticate() = 인증한다.
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            dto.getId(),
+                            dto.getPassword()
+                    )
+            );
+        } catch (AuthenticationException ex) {
+            // 잘못된 아이디 패스워드 입력으로 인한 예외 처리
+            throw new UserUnAuthorizedException("잘못된 정보입니다. 다시 입력하세요.");
+        }
 
         //유저의 아이디 및 계정활성화 유무를 가지고 유저 객체 조회
         User user = userRepository.findByIdAndActiveIsTrue(dto.getId());
@@ -118,9 +127,15 @@ public class AuthServiceImpl implements AuthService{
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "Bearer " + accessToken);
 
-        // 쿠키에 refreshToken 추가
-        headers.add(HttpHeaders.SET_COOKIE, "refreshToken=" + refreshToken.getRefreshToken() + "; HttpOnly; Path=/");
-
+        //쿠키에 refresh 토큰 추가
+        ResponseCookie responseCookie = ResponseCookie
+                .from("refreshToken", refreshToken.getRefreshToken())
+                .secure(true)
+                .httpOnly(true)
+                .path("/")
+                .sameSite("None")
+                .build();
+        headers.add(HttpHeaders.SET_COOKIE, responseCookie.toString());
 
         // ResponseEntity에 헤더만 설정하여 반환
         return ResponseEntity
