@@ -19,7 +19,7 @@ public class UserDto {
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
-    public static class RegisterRequest {
+    public static class SignUpRequest {
 
         @NotBlank(message = "아이디: 필수 정보입니다.")
         @Size(min = 5 , message="id는 5글자 이상 입력해 주세요.")
@@ -56,50 +56,10 @@ public class UserDto {
     }
 
     /**
-     * 회원가입, 로그인 성공시 보낼 Dto
-     */
-    @Getter
-    public static class RegisterResponseDto {
-        private String id;
-        private String email;
-
-        public RegisterResponseDto(User user) {
-            this.id = user.getId();
-            this.email = user.getEmail();
-        }
-    }
-
-    /**
-     * 응답코드, 응답메세지
-     */
-    @Getter
-    @AllArgsConstructor
-    public static class ResponseBasic {
-        private int returnCode;
-        private String returnMessage;
-    }
-
-    /**
-     * 회원가입 성공 시 반환
-     */
-    @Getter
-    @AllArgsConstructor
-    public static class RegisterResponse {
-        private RegisterResponseDto dto;
-        private ResponseBasic responseBasic;
-
-        // 새로운 생성자 추가
-        public RegisterResponse(User user, int returnCode, String returnMessage) {
-            this.dto = new RegisterResponseDto(user);
-            this.responseBasic = new ResponseBasic(returnCode, returnMessage);
-        }
-    }
-
-    /**
      * 로그인 성공시 요청된 Dto
      */
     @Getter
-    public static class LoginResponseDto {
+    public static class SignInRequest {
         private String id;
         private String password;
 
@@ -112,4 +72,50 @@ public class UserDto {
             return user;
         }
     }
+
+    /**
+     * 회원가입, 로그인 성공시 보낼 Dto
+     */
+    @Getter
+    public static class SignUpInResponseDto {
+        private String id;
+        private String email;
+        private int returnCode;
+        private String returnMessage;
+
+        /* Entity -> Dto */
+        public SignUpInResponseDto(User user, int returnCode, String returnMessage) {
+            this.id = user.getId();
+            this.email = user.getEmail();
+            this.returnCode = returnCode;
+            this.returnMessage = returnMessage;
+        }
+    }
+    /**
+     * 응답코드, 응답메세지
+     */
+    @Getter
+    @AllArgsConstructor
+    public static class ResponseBasic {
+        private int returnCode;
+        private String returnMessage;
+    }
+//
+//    /**
+//     * 회원가입 성공 시 반환
+//     */
+//    @Getter
+//    @AllArgsConstructor
+//    public static class RegisterResponse {
+//        private RegisterResponseDto dto;
+//        private ResponseBasic responseBasic;
+//
+//        // 새로운 생성자 추가
+//        public RegisterResponse(User user, int returnCode, String returnMessage) {
+//            this.dto = new RegisterResponseDto(user);
+//            this.responseBasic = new ResponseBasic(returnCode, returnMessage);
+//        }
+//    }
+
+
 }

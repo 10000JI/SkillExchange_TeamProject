@@ -8,11 +8,11 @@ import place.skillexchange.backend.entity.User;
 
 public interface AuthService {
 
-    public User register(UserDto.RegisterRequest dto, BindingResult bindingResult)  throws MethodArgumentNotValidException;
+    public User register(UserDto.SignUpRequest dto, BindingResult bindingResult)  throws MethodArgumentNotValidException;
 
-    public boolean validateDuplicateMember(UserDto.RegisterRequest dto, BindingResult bindingResult);
+    public boolean validateDuplicateMember(UserDto.SignUpRequest dto, BindingResult bindingResult);
 
     void updateUserActiveStatus(String id);
 
-    public ResponseEntity<UserDto.RegisterResponseDto> login(UserDto.LoginResponseDto dto);
+    public ResponseEntity<UserDto.SignUpInResponseDto> login(UserDto.SignInRequest dto);
 }

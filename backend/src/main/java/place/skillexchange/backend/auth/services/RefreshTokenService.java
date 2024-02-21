@@ -75,12 +75,12 @@ public class RefreshTokenService {
      */
     public RefreshToken verifyRefreshToken(String refreshToken) {
         RefreshToken refToken = refreshTokenRepository.findByRefreshToken(refreshToken)
-                .orElseThrow(() -> new RuntimeException("Refresh token not found!"));
+                .orElseThrow(() -> new UserUnAuthorizedException("Refresh Token을 찾을 수 없습니다."));
 
         //refreshToken의 만료시간이 현재 시간보다 작다면 refreshToken 삭제
         if (refToken.getExpirationTime().compareTo(Date.from(Instant.now())) < 0) {
             refreshTokenRepository.delete(refToken);
-            throw new RuntimeException("Refresh Token expired");
+            throw new UserUnAuthorizedException("Refresh Token이 만료되었습니다.");
         }
 
         return refToken;

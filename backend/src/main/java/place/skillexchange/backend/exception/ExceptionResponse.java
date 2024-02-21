@@ -29,6 +29,14 @@ public class ExceptionResponse {
         private List<String> details;
     }
 
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class SmallDetails{
+        private String message;
+        private String details;
+    }
+
 
 }
 

@@ -39,7 +39,7 @@ public class AuthServiceImpl implements AuthService{
      * 사용자 등록
      */
     @Override
-    public User register(UserDto.RegisterRequest dto, BindingResult bindingResult) throws MethodArgumentNotValidException {
+    public User register(UserDto.SignUpRequest dto, BindingResult bindingResult) throws MethodArgumentNotValidException {
 
         boolean isValid = validateDuplicateMember(dto, bindingResult);
         if (isValid) {
@@ -56,7 +56,7 @@ public class AuthServiceImpl implements AuthService{
      * 회원가입 검증
      */
     @Override
-    public boolean validateDuplicateMember(UserDto.RegisterRequest dto, BindingResult bindingResult) {
+    public boolean validateDuplicateMember(UserDto.SignUpRequest dto, BindingResult bindingResult) {
 
         boolean checked = false;
         //checked가 true면 검증 발견
@@ -102,7 +102,7 @@ public class AuthServiceImpl implements AuthService{
      * 로그인
      */
     @Override
-    public ResponseEntity<UserDto.RegisterResponseDto> login(UserDto.LoginResponseDto dto) {
+    public ResponseEntity<UserDto.SignUpInResponseDto> login(UserDto.SignInRequest dto) {
         //authenticationManager가 authenticate() = 인증한다.
         try {
             //authenticationManager가 authenticate() = 인증한다.
@@ -146,6 +146,6 @@ public class AuthServiceImpl implements AuthService{
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .headers(headers)
-                .body(new UserDto.RegisterResponseDto(user));
+                .body(new UserDto.SignUpInResponseDto(user, 200, "로그인 성공!"));
     }
 }

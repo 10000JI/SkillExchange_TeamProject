@@ -79,13 +79,14 @@ public class SecurityConfig {
             .addFilterAfter(csrfCookieFilterService, BasicAuthenticationFilter.class)
             .addFilterBefore(authFilterService, UsernamePasswordAuthenticationFilter.class)
             .exceptionHandling(configurer -> configurer
-                    .authenticationEntryPoint(authenticationEntryPoint)
-                    .accessDeniedHandler(accessDeniedHandler))
+                    .accessDeniedHandler(accessDeniedHandler)
+                    .authenticationEntryPoint(authenticationEntryPoint))
+            //authFilterService가 인증 전에 실행되어 항상 검증되기 때문에 requestMatchers의 authenticated()과 permitAll()은 영향 X
+            //하지만 코드 가독성을 위해 requestMatchers를 사용해 명시해주자
             .authorizeHttpRequests((requests)->requests
                     .requestMatchers("/myBalance").hasAnyRole("USER","ADMIN")
                     .requestMatchers("/v1/notices/list").hasRole("USER")
-                    .requestMatchers("/user").authenticated()
-                    .requestMatchers("/v1/user/signUp", "/v1/user/activation","/v1/user/signIn", "/v1/user/findId").permitAll())
+                    .requestMatchers("/v1/user/**").permitAll())
             .formLogin(Customizer.withDefaults())
             .httpBasic(Customizer.withDefaults());
         return http.build();

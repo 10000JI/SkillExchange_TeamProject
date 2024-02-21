@@ -50,7 +50,7 @@ public class UserController {
      * 회원가입
      */
     @PostMapping("/signUp")
-    public UserDto.RegisterResponse register(@Validated @RequestBody UserDto.RegisterRequest dto, BindingResult bindingResult) throws MethodArgumentNotValidException, MessagingException {
+    public UserDto.SignUpInResponseDto register(@Validated @RequestBody UserDto.SignUpRequest dto, BindingResult bindingResult) throws MethodArgumentNotValidException, MessagingException {
 
         //DB에 회원 id, email, password 저장
         User user = authService.register(dto,bindingResult);
@@ -70,7 +70,7 @@ public class UserController {
         //active Token (계정 활성화 토큰) 발급
         mailService.getEmail(dto.getEmail(), dto.getId(), activeToken);
 
-        return new UserDto.RegisterResponse(new UserDto.RegisterResponseDto(user), new UserDto.ResponseBasic(200, "회원가입 완료"));
+        return new UserDto.SignUpInResponseDto(user, 200, "회원가입 완료");
     }
 
     /**
@@ -98,7 +98,7 @@ public class UserController {
      * 사용자 로그인
      */
     @PostMapping("/signIn")
-    public ResponseEntity<UserDto.RegisterResponseDto> login(@RequestBody UserDto.LoginResponseDto dto) {
+    public ResponseEntity<UserDto.SignUpInResponseDto> login(@RequestBody UserDto.SignInRequest dto) {
         return authService.login(dto);
     }
 

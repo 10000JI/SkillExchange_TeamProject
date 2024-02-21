@@ -20,12 +20,11 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
                          AuthenticationException authException) throws IOException {
-        ExceptionResponse.OneDetail exceptionResponse = new ExceptionResponse.OneDetail(
-                new Date(),
+        ExceptionResponse.SmallDetails exceptionResponse = new ExceptionResponse.SmallDetails(
                 "계정에 다시 로그인 해야 합니다.",
                 request.getRequestURI());
 
-        ResponseEntity<ExceptionResponse.OneDetail> entity = ResponseEntity
+        ResponseEntity<ExceptionResponse.SmallDetails> entity = ResponseEntity
                 .status(HttpStatus.UNAUTHORIZED) // HTTP 상태 코드 401 Forbidden 설정
                 .body(exceptionResponse); // 응답 본문에 객체를 넣어 JSON으로 변환하여 전달
 

@@ -43,10 +43,10 @@ public class AuthFilterService extends OncePerRequestFilter {
     /**
      * 헤더에 토큰을 저장하는데, 저장된 토큰을 헤더에서 꺼내서 유효한지 검증하는 작업, 실패시 filer 작용으로 (security) exceptionHandler 작동 안됨 해결해야 할 과제 어떻게 프론트에게 에러임을 알려줄 수 있는가
      */
-/*    1. 엑세스 토큰 만료되었을 때 리프레시 토큰 db에 있으면 엑세스 토큰 재발급
+/*    1. 엑세스 토큰 만료되었을 때 리프레시 토큰 db에 있으면 엑세스 토큰 재발급, 재발급한 엑세스 토큰은 헤더에 넣어서 보낸다.
       2, 엑세스 토큰 만료되었을 때 리프레시 토큰 db에 있는거 확인 후 만료일자가 지났다면 리프레시 토큰 삭제
        -> 엑세스 토큰 만료되고, 리프레시 토큰도 없기 때문에 "새로 로그인 하시오"라는 문구가 띄어져야 한다.
-      3.  디폴트는 헤더에 저장된 토큰을 꺼내 유효한지 확인 (user, role, exp 등 확인하여 엔드포인트 role 별로 접근 가능)*/
+      3.  디폴트는 헤더에 저장된 토큰을 꺼내 유효한지 확인 */
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
