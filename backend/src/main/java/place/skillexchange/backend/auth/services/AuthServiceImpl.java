@@ -13,6 +13,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -89,13 +90,17 @@ public class AuthServiceImpl implements AuthService{
     /**
      * active 컬럼 0->1 변경
      */
+    @Transactional
     @Override
     public void updateUserActiveStatus(String id) {
         User user = userRepository.findById(id).orElseThrow();
         user.changeActive(true);
-        userRepository.save(user);
+        //userRepository.save(user);
     }
 
+    /**
+     * 로그인
+     */
     @Override
     public ResponseEntity<UserDto.RegisterResponseDto> login(UserDto.LoginResponseDto dto) {
         //authenticationManager가 authenticate() = 인증한다.

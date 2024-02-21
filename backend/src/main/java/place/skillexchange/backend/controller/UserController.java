@@ -24,10 +24,13 @@ import place.skillexchange.backend.dto.UserDto;
 import place.skillexchange.backend.entity.RefreshToken;
 import place.skillexchange.backend.entity.User;
 import place.skillexchange.backend.exception.UserUnAuthorizedException;
+import place.skillexchange.backend.repository.UserRepository;
 import place.skillexchange.backend.service.MailService;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 @RestController
 @RequiredArgsConstructor
@@ -40,6 +43,7 @@ public class UserController {
     private final MailService mailService;
     private final UserDetailsService userDetailsService;
     private final RefreshTokenService refreshTokenService;
+    private final UserRepository userRepository;
 
 
     /**
@@ -50,6 +54,18 @@ public class UserController {
 
         //DB에 회원 id, email, password 저장
         User user = authService.register(dto,bindingResult);
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                // 5분 후에 실행될 작업
+                System.out.println("5분 후에 한 번 실행됩니다.");
+                if (userRepository.findByIdAndActiveIsTrue(user.getId()) == null) {
+                    userRepository.delete(user);
+                }
+                timer.cancel(); // 작업 완료 후 타이머 종료
+            }
+        }, 5 * 60 * 1000); // 5분 후에 작업 실행
         String activeToken = jwtService.generateActiveToken(user);
         //active Token (계정 활성화 토큰) 발급
         mailService.getEmail(dto.getEmail(), dto.getId(), activeToken);

@@ -4,6 +4,7 @@ package place.skillexchange.backend.auth.services;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import place.skillexchange.backend.entity.RefreshToken;
 import place.skillexchange.backend.entity.User;
 import place.skillexchange.backend.exception.UserUnAuthorizedException;
@@ -25,6 +26,7 @@ public class RefreshTokenService {
     /**
      * refreshToken 생성
      */
+    @Transactional
     public RefreshToken createRefreshToken(String id) {
         //사용자 이름이 존재하면 User 객체 반환, 없다면 사용자를 찾을 수 없다는 예외
         User user = userRepository.findById(id)
@@ -44,6 +46,9 @@ public class RefreshTokenService {
                     .build();
 
             refreshTokenRepository.save(refreshToken);
+        } else {
+            refreshToken.changeRefreshTokenExp(new Date((new Date()).getTime() + 2 * 60 * 1000));
+            //refreshTokenRepository.save(refreshToken);
         }
 
         return refreshToken;

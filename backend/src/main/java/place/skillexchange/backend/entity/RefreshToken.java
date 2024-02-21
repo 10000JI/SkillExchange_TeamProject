@@ -29,4 +29,12 @@ public class RefreshToken {
 
     @OneToOne
     private User user;
+
+    /**
+     * 로그인 시 리프레시 토큰 만료일자 변경
+     */
+    public void changeRefreshTokenExp(Date expirationTime) {
+        this.expirationTime = expirationTime;
+    }
+
 }
