@@ -34,8 +34,9 @@ public class RefreshToken {
     /**
      * 로그인 시 리프레시 토큰 만료일자 변경
      */
-    public void changeRefreshTokenExp(Date expirationTime) {
+    public void changeRefreshTokenExp(Date expirationTime, String refreshToken) {
         this.expirationTime = expirationTime;
+        this.refreshToken = refreshToken;
     }
 
 }

@@ -72,7 +72,7 @@ public class SecurityConfig {
                     return config;
                 }
             })).csrf((csrf) -> csrf.csrfTokenRequestHandler(requestHandler)
-                    .ignoringRequestMatchers("/v1/user/signUp","/v1/user/activation","/v1/user/signIn","/v1/user/findPw","/v1/notices/list")
+                    .ignoringRequestMatchers("/v1/user/**","/v1/notices/list")
                     .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
             //DaoAuthenticationProvider의 세부 내역을 AuthenticationProvider 빈을 만들어 정의했으므로 인증을 구성해줘야 한다.
             .authenticationProvider(authenticationProvider)

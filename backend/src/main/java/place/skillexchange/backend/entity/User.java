@@ -91,6 +91,13 @@ public class User implements UserDetails {
         this.active = active;
     }
 
+    /**
+     * active 컬럼 0->1 변경
+     */
+    public void changeEmail(String email) {
+        this.email = email;
+    }
+
     @Override
     public boolean isAccountNonExpired() {
         return true;

@@ -47,7 +47,7 @@ public class RefreshTokenService {
 
             refreshTokenRepository.save(refreshToken);
         } else {
-            refreshToken.changeRefreshTokenExp(new Date((new Date()).getTime() + 2 * 60 * 1000));
+            refreshToken.changeRefreshTokenExp(new Date((new Date()).getTime() + 2 * 60 * 1000),UUID.randomUUID().toString());
             //refreshTokenRepository.save(refreshToken);
         }
 

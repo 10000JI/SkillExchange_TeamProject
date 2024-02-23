@@ -12,6 +12,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -50,28 +51,30 @@ public class UserController {
      * 회원가입
      */
     @PostMapping("/signUp")
-    public UserDto.SignUpInResponseDto register(@Validated @RequestBody UserDto.SignUpRequest dto, BindingResult bindingResult) throws MethodArgumentNotValidException, MessagingException {
+    public UserDto.SignUpInResponseDto register(@Validated @RequestBody UserDto.SignUpRequest dto, BindingResult bindingResult) throws MethodArgumentNotValidException, MessagingException, IOException {
 
         //DB에 회원 id, email, password 저장
         User user = authService.register(dto,bindingResult);
+        //5분 뒤 회원의 active가 0이라면 db에서 회원 정보 삭제 (active 토큰 만료일에 맞춰서)
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
                 // 5분 후에 실행될 작업
-                System.out.println("5분 후에 한 번 실행됩니다.");
+                System.out.println("1시간 후에 한 번 실행됩니다.");
                 if (userRepository.findByIdAndActiveIsTrue(user.getId()) == null) {
                     userRepository.delete(user);
                 }
                 timer.cancel(); // 작업 완료 후 타이머 종료
             }
-        }, 5 * 60 * 1000); // 5분 후에 작업 실행
+        }, 5 * 60 * 1000); // 5분 후 = 1시간 후에 작업 실행
         String activeToken = jwtService.generateActiveToken(user);
         //active Token (계정 활성화 토큰) 발급
         mailService.getEmail(dto.getEmail(), dto.getId(), activeToken);
 
-        return new UserDto.SignUpInResponseDto(user, 200, "회원가입 완료");
+        return new UserDto.SignUpInResponseDto(user, 200, "이메일("+dto.getEmail() +")을 확인하여 회원 활성화를 완료해주세요.");
     }
+
 
     /**
      * active Token (계정 활성화 토큰) 검증
