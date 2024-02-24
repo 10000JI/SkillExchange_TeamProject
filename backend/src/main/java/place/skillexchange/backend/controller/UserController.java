@@ -54,7 +54,7 @@ public class UserController {
     public UserDto.SignUpInResponseDto register(@Validated @RequestBody UserDto.SignUpRequest dto, BindingResult bindingResult) throws MethodArgumentNotValidException, MessagingException, IOException {
 
         //DB에 회원 id, email, password 저장
-        User user = authService.register(dto,bindingResult);
+        User user = authService.register(dto, bindingResult);
         //5분 뒤 회원의 active가 0이라면 db에서 회원 정보 삭제 (active 토큰 만료일에 맞춰서)
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
@@ -72,7 +72,7 @@ public class UserController {
         //active Token (계정 활성화 토큰) 발급
         mailService.getEmail(dto.getEmail(), dto.getId(), activeToken);
 
-        return new UserDto.SignUpInResponseDto(user, 200, "이메일("+dto.getEmail() +")을 확인하여 회원 활성화를 완료해주세요.");
+        return new UserDto.SignUpInResponseDto(user, 200, "이메일(" + dto.getEmail() + ")을 확인하여 회원 활성화를 완료해주세요.");
     }
 
 
@@ -112,7 +112,7 @@ public class UserController {
     public String getUserIdFromToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
         //Authorization 이름을 가진 헤더의 값을 꺼내옴
         String authHeader = request.getHeader("Authorization");
-        System.out.println("authHeader????????????"+authHeader);
+        System.out.println("authHeader????????????" + authHeader);
         String jwt = authHeader.substring(7);
 
         if (jwt != null) {
@@ -163,8 +163,25 @@ public class UserController {
         if (jwtService.isAccessTokenValid(jwt, userDetails)) {
             return id;
         }
-        // 처리되지 않은 경우 예외를 던집니다.
+        // 처리되지 않은 경우 예외를 던진다.
         throw new UserUnAuthorizedException("사용자 인증에 실패하였습니다.");
     }
 
+    /**
+     * 아이디 찾기
+     */
+    @PostMapping("/emailToFindId")
+    public UserDto.ResponseBasic emailToFindId(@RequestBody UserDto.EmailRequest dto) throws MessagingException, IOException {
+        mailService.getEmailToFindId(dto.getEmail());
+        return new UserDto.ResponseBasic(200, "이메일이 성공적으로 전송되었습니다.");
+    }
+
+    /**
+     * 비밀번호 찾기
+     */
+    @PostMapping("/emailToFindPw")
+    public UserDto.ResponseBasic emailToFindPw(@RequestBody UserDto.EmailRequest dto) throws MessagingException, IOException {
+        mailService.getEmailToFindPw(dto.getEmail());
+        return new UserDto.ResponseBasic(200, "이메일이 성공적으로 전송되었습니다.");
+    }
 }

@@ -92,10 +92,10 @@ public class User implements UserDetails {
     }
 
     /**
-     * active 컬럼 0->1 변경
+     * 임시 password
      */
-    public void changeEmail(String email) {
-        this.email = email;
+    public void changePw(String password) {
+        this.password = password;
     }
 
     @Override

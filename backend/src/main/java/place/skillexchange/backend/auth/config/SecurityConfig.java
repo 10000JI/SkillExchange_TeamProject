@@ -41,8 +41,8 @@ public class SecurityConfig {
 
     private final AuthenticationProvider authenticationProvider;
 
-    private final CustomAuthenticationEntryPoint authenticationEntryPoint; // 추가
-    private final CustomAccessDeniedHandler accessDeniedHandler; // 추가
+    private final CustomAuthenticationEntryPoint authenticationEntryPoint;
+    private final CustomAccessDeniedHandler accessDeniedHandler;
 
 
     @Bean

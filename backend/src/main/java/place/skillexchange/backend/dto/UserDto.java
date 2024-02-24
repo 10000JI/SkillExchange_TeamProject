@@ -100,6 +100,14 @@ public class UserDto {
         private int returnCode;
         private String returnMessage;
     }
+
+    /**
+     * 로그인 성공시 요청된 Dto
+     */
+    @Getter
+    public static class EmailRequest {
+        private String email;
+    }
 //
 //    /**
 //     * 회원가입 성공 시 반환

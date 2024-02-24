@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>재능 교환소 계정 활성화 인증 메일</title>
+    <title>재능교환소 계정 아이디</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -46,12 +46,9 @@
 <body>
 <div class="container">
     <img src='cid:image' alt="로고 이미지">
-    <h2>안녕하세요, <span th:text="${id}"></span>님</h2>
-    <p>누군가가 새로운 위치에서 회원님의 계정으로 접속을 시도하고 있어요.</p>
-    <p>본인이라면 아래 버튼을 클릭하여 로그인을 승인해주세요.</p>
-    <a th:href="${jwtLink}">
-        <button type="button">로그인 인증</button>
-    </a>
+    <h2>아이디 찾기</h2>
+    <p>회원님의 아이디는 <span th:text="${id}" style="color:red"></span>으로 등록되어 있습니다.</p>
+    <p>저희 재능교환소를 이용해주셔서 감사합니다.</p>
 </div>
 </body>
 </html>

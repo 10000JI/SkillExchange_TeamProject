@@ -15,12 +15,12 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     //활성화된 사용자(계정) 반환
     User findByIdAndActiveIsTrue(String id);
 
-    User findByIdAndActiveIsFalse(String id);
-
-    User findByEmailAndActiveIsFalse(String Email);
+//    User findByIdAndActiveIsFalse(String id);
+//
+//    User findByEmailAndActiveIsFalse(String Email);
 
     Optional<User> findByEmailAndIdAndActiveIsFalse(String email, String id);
 
-    void deleteById(String id);
+//    void deleteById(String id);
 
 }
