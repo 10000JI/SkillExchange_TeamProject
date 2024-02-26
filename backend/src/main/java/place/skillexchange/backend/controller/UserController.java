@@ -5,19 +5,15 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import place.skillexchange.backend.auth.services.AuthServiceImpl;
 import place.skillexchange.backend.auth.services.JwtService;
 import place.skillexchange.backend.auth.services.RefreshTokenService;
@@ -25,8 +21,10 @@ import place.skillexchange.backend.dto.UserDto;
 import place.skillexchange.backend.entity.RefreshToken;
 import place.skillexchange.backend.entity.User;
 import place.skillexchange.backend.exception.UserUnAuthorizedException;
+import place.skillexchange.backend.file.FileStore;
 import place.skillexchange.backend.repository.UserRepository;
 import place.skillexchange.backend.service.MailService;
+import place.skillexchange.backend.service.UserServiceImpl;
 
 import java.io.IOException;
 import java.util.Map;
@@ -45,13 +43,14 @@ public class UserController {
     private final UserDetailsService userDetailsService;
     private final RefreshTokenService refreshTokenService;
     private final UserRepository userRepository;
-
+    private final UserServiceImpl userService;
+    private final FileStore fileStore;
 
     /**
      * 회원가입
      */
     @PostMapping("/signUp")
-    public UserDto.SignUpInResponseDto register(@Validated @RequestBody UserDto.SignUpRequest dto, BindingResult bindingResult) throws MethodArgumentNotValidException, MessagingException, IOException {
+    public UserDto.SignUpInResponse register(@Validated @RequestBody UserDto.SignUpRequest dto, BindingResult bindingResult) throws MethodArgumentNotValidException, MessagingException, IOException {
 
         //DB에 회원 id, email, password 저장
         User user = authService.register(dto, bindingResult);
@@ -72,7 +71,7 @@ public class UserController {
         //active Token (계정 활성화 토큰) 발급
         mailService.getEmail(dto.getEmail(), dto.getId(), activeToken);
 
-        return new UserDto.SignUpInResponseDto(user, 200, "이메일(" + dto.getEmail() + ")을 확인하여 회원 활성화를 완료해주세요.");
+        return new UserDto.SignUpInResponse(user, 200, "이메일(" + dto.getEmail() + ")을 확인하여 회원 활성화를 완료해주세요.");
     }
 
 
@@ -101,7 +100,7 @@ public class UserController {
      * 사용자 로그인
      */
     @PostMapping("/signIn")
-    public ResponseEntity<UserDto.SignUpInResponseDto> login(@RequestBody UserDto.SignInRequest dto) {
+    public ResponseEntity<UserDto.SignUpInResponse> login(@RequestBody UserDto.SignInRequest dto) {
         return authService.login(dto);
     }
 
@@ -183,5 +182,13 @@ public class UserController {
     public UserDto.ResponseBasic emailToFindPw(@RequestBody UserDto.EmailRequest dto) throws MessagingException, IOException {
         mailService.getEmailToFindPw(dto.getEmail());
         return new UserDto.ResponseBasic(200, "이메일이 성공적으로 전송되었습니다.");
+    }
+
+    /**
+     * 프로필 수정
+     */
+    @PatchMapping("/profileUpdate")
+    public UserDto.ProfileResponse profileUpdate(@RequestPart("profileDto") UserDto.ProfileRequest dto, @RequestPart(value="imgFile", required = false) MultipartFile imageFile ) throws IOException {
+        return userService.profileUpdate(dto, fileStore.storeFile(imageFile));
     }
 }

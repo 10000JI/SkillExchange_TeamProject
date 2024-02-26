@@ -9,6 +9,8 @@ import org.hibernate.annotations.ColumnDefault;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import place.skillexchange.backend.dto.UserDto;
+import place.skillexchange.backend.file.UploadFile;
 
 import java.util.*;
 
@@ -65,6 +67,12 @@ public class User implements UserDetails {
     @OneToOne(mappedBy = "user")
     private RefreshToken refreshToken;
 
+    /**
+     * User와 File은 1:1 관계
+     */
+    @OneToOne(mappedBy = "user")
+    private File file;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
@@ -96,6 +104,17 @@ public class User implements UserDetails {
      */
     public void changePw(String password) {
         this.password = password;
+    }
+
+    /**
+     * 프로필 수정
+     */
+    public void changeProfileField(UserDto.ProfileRequest dto) {
+        this.gender = dto.getGender();
+        this.job = dto.getJob();
+        this.careerSkills = dto.getCareerSkills();
+        this.preferredSubject = dto.getPreferredSubject();
+        this.mySubject = dto.getMySubject();
     }
 
     @Override

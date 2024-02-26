@@ -75,7 +75,7 @@ public class AuthFilterService extends OncePerRequestFilter {
                 handleExpiredToken(request, response);
             } else {
                 //accessToken이 만료되지 않았다면 유효한지 검증
-                authenticateUser(jwt, request);
+                authenticateUser(jwt, request, response);
             }
         }
         //체인 내의 다음 필터를 호출
@@ -93,7 +93,11 @@ public class AuthFilterService extends OncePerRequestFilter {
 
                 //UserDetailsService에서 loadUserByUsername 메서드로 사용자 세부 정보 검색
                 UserDetails userDetails = userDetailsService.loadUserByUsername(user.getId());
-                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                        userDetails,
+                        null,
+                        userDetails.getAuthorities()
+                );
                 //authenticationToken의 세부정보 설정
                 authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 //해당 인증 객체를 SecurityContextHolder에 authenticationToken 설정
@@ -115,7 +119,7 @@ public class AuthFilterService extends OncePerRequestFilter {
         return null;
     }
 
-    private void authenticateUser(String jwt, HttpServletRequest request) {
+    private void authenticateUser(String jwt, HttpServletRequest request, HttpServletResponse response) {
         // jwt의 사용자 이름 추출
         String id = jwtService.extractUsername(jwt);
 
@@ -132,6 +136,8 @@ public class AuthFilterService extends OncePerRequestFilter {
             authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             //해당 인증 객체를 SecurityContextHolder에 authenticationToken 설정
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+            //헤더에 accessToken 유효하므로 동일하게 설정
+            response.setHeader("Authorization", "Bearer " + jwt);
         }
     }
 

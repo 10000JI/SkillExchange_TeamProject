@@ -35,6 +35,16 @@ spring:
           starttls:
             enable: true
 
+logging:
+  level:
+    org.hibernate:
+      SQL: debug
+      type: trace
+    org.apache.coyote.http11: debug
+
+
 server:
   port: 80
 
+file:
+  dir: C:/SpringStudy/SkillExchange_TeamProject/backend/src/main/resources/static/img/

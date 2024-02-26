@@ -1,7 +1,6 @@
 package place.skillexchange.backend.auth.services;
 
 
-import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -14,7 +13,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import place.skillexchange.backend.dto.UserDto;
@@ -35,8 +33,10 @@ public class AuthServiceImpl implements AuthService{
     private final RefreshTokenService refreshTokenService;
     private final AuthenticationManager authenticationManager;
 
+    /* 회원가입 ~ 로그인 까지 (JWT 생성) */
+
     /**
-     * 사용자 등록
+     * 회원가입
      */
     @Override
     public User register(UserDto.SignUpRequest dto, BindingResult bindingResult) throws MethodArgumentNotValidException {
@@ -114,7 +114,7 @@ public class AuthServiceImpl implements AuthService{
      * 로그인
      */
     @Override
-    public ResponseEntity<UserDto.SignUpInResponseDto> login(UserDto.SignInRequest dto) {
+    public ResponseEntity<UserDto.SignUpInResponse> login(UserDto.SignInRequest dto) {
         //authenticationManager가 authenticate() = 인증한다.
         try {
             //authenticationManager가 authenticate() = 인증한다.
@@ -158,6 +158,6 @@ public class AuthServiceImpl implements AuthService{
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .headers(headers)
-                .body(new UserDto.SignUpInResponseDto(user, 200, "로그인 성공!"));
+                .body(new UserDto.SignUpInResponse(user, 200, "로그인 성공!"));
     }
 }

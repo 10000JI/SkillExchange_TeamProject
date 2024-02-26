@@ -5,8 +5,11 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 import place.skillexchange.backend.entity.Authority;
+import place.skillexchange.backend.entity.File;
 import place.skillexchange.backend.entity.User;
+import place.skillexchange.backend.file.UploadFile;
 
 import java.util.Collections;
 
@@ -64,27 +67,27 @@ public class UserDto {
         private String password;
 
         /* Dto -> Entity */
-        public User toEntity() {
-            User user = User.builder()
-                    .id(id)
-                    .password(password)
-                    .build();
-            return user;
-        }
+//        public User toEntity() {
+//            User user = User.builder()
+//                    .id(id)
+//                    .password(password)
+//                    .build();
+//            return user;
+//        }
     }
 
     /**
      * 회원가입, 로그인 성공시 보낼 Dto
      */
     @Getter
-    public static class SignUpInResponseDto {
+    public static class SignUpInResponse {
         private String id;
         private String email;
         private int returnCode;
         private String returnMessage;
 
         /* Entity -> Dto */
-        public SignUpInResponseDto(User user, int returnCode, String returnMessage) {
+        public SignUpInResponse(User user, int returnCode, String returnMessage) {
             this.id = user.getId();
             this.email = user.getEmail();
             this.returnCode = returnCode;
@@ -108,22 +111,55 @@ public class UserDto {
     public static class EmailRequest {
         private String email;
     }
-//
-//    /**
-//     * 회원가입 성공 시 반환
-//     */
-//    @Getter
-//    @AllArgsConstructor
-//    public static class RegisterResponse {
-//        private RegisterResponseDto dto;
-//        private ResponseBasic responseBasic;
-//
-//        // 새로운 생성자 추가
-//        public RegisterResponse(User user, int returnCode, String returnMessage) {
-//            this.dto = new RegisterResponseDto(user);
-//            this.responseBasic = new ResponseBasic(returnCode, returnMessage);
-//        }
-//    }
 
+    /**
+     * 프로필 수정 시 요청된 Dto
+     */
+    @Getter
+    public static class ProfileRequest {
+        private String gender;
+        private String job;
+        private String careerSkills;
+        private String preferredSubject;
+        private String mySubject;
 
+    }
+
+    /**
+     * 프로필 수정 시 응답 Dto
+     */
+    @Getter
+    public static class ProfileResponse {
+        private String id;
+        private String email;
+        private String gender;
+        private String job;
+        private String careerSkills;
+        private String preferredSubject;
+        private String mySubject;
+        private String oriName;
+        private String fileName;
+        private int returnCode;
+        private String returnMessage;
+
+        /* Entity -> Dto */
+        public ProfileResponse(User user, File file, int returnCode, String returnMessage) {
+            this.id = user.getId();
+            this.email = user.getEmail();
+            this.gender = user.getGender();
+            this.job = user.getJob();
+            this.careerSkills = user.getCareerSkills();
+            this.preferredSubject = user.getPreferredSubject();
+            this.mySubject = user.getMySubject();
+            if (file != null) {
+                this.oriName = file.getOriName();
+                this.fileName = file.getFileName();
+            } else {
+                this.oriName = null;
+                this.fileName = null;
+            }
+            this.returnCode = returnCode;
+            this.returnMessage = returnMessage;
+        }
+    }
 }

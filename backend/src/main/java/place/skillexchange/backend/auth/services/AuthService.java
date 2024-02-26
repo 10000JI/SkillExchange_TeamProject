@@ -14,5 +14,5 @@ public interface AuthService {
 
     void updateUserActiveStatus(String id);
 
-    public ResponseEntity<UserDto.SignUpInResponseDto> login(UserDto.SignInRequest dto);
+    public ResponseEntity<UserDto.SignUpInResponse> login(UserDto.SignInRequest dto);
 }

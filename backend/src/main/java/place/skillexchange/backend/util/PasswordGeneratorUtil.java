@@ -1,11 +1,11 @@
-package place.skillexchange.backend.file;
+package place.skillexchange.backend.util;
 
 import org.springframework.stereotype.Component;
 
 import java.security.SecureRandom;
 
 @Component
-public class PasswordGenerator {
+public class PasswordGeneratorUtil {
     private static final String CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_=+";
     private static final SecureRandom random = new SecureRandom();
 

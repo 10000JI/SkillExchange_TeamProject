@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import place.skillexchange.backend.entity.User;
-import place.skillexchange.backend.file.PasswordGenerator;
+import place.skillexchange.backend.util.PasswordGeneratorUtil;
 import place.skillexchange.backend.repository.UserRepository;
 
 import java.io.IOException;
@@ -26,7 +26,7 @@ public class MailService {
     private final TemplateEngine templateEngine;
     private final JavaMailSender emailSender;
     private final UserRepository userRepository;
-    private final PasswordGenerator passwordGenerator;
+    private final PasswordGeneratorUtil passwordGeneratorUtil;
     private final PasswordEncoder passwordEncoder;
 
     @Value("${spring.mail.username}")
@@ -107,7 +107,7 @@ public class MailService {
         //송신자 설정
         helper.setFrom(sender);
 
-        String newPw = passwordGenerator.generatePassword();
+        String newPw = passwordGeneratorUtil.generatePassword();
         User user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 email 입니다: " + email));
         user.changePw(passwordEncoder.encode(newPw));
         //userRepository.save(user);
