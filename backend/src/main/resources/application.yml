@@ -7,8 +7,10 @@ spring:
     driver-class-name: org.mariadb.jdbc.Driver
     username: root
     password: root1234
+  profiles:
+      include: aws
 
-#  sql:
+  #  sql:
 #    init:
 #      mode: always
 
@@ -21,19 +23,6 @@ spring:
         show_sql: true
         dialect: org.hibernate.dialect.MariaDBDialect
 #    defer-datasource-initialization: true
-
-
-  mail:
-    host: smtp.gmail.com
-    port: 587
-    username: kimmin7932@gmail.com
-    password: zcobonksycfssphi
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
 
 logging:
   level:

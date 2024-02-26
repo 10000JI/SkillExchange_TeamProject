@@ -9,12 +9,11 @@ import lombok.NoArgsConstructor;
 @Builder
 public class UploadFile {
     private String uploadFileName;
-    private String storeFileName;
-    private String generateHash;
+//    private String storeFileName;
+    private String fileUrl;
 
-    public UploadFile(String uploadFileName, String storeFileName, String generateHash) {
+    public UploadFile(String uploadFileName, String fileUrl) {
         this.uploadFileName = uploadFileName;
-        this.storeFileName = storeFileName;
-        this.generateHash = generateHash;
+        this.fileUrl = fileUrl;
     }
 }

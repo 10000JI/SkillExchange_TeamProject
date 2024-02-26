@@ -137,13 +137,14 @@ public class UserDto {
         private String careerSkills;
         private String preferredSubject;
         private String mySubject;
-        private String oriName;
-        private String fileName;
+/*        private String oriName;
+//        private String fileName;
+        private String fileUrl;*/
         private int returnCode;
         private String returnMessage;
 
         /* Entity -> Dto */
-        public ProfileResponse(User user, File file, int returnCode, String returnMessage) {
+        public ProfileResponse(User user, int returnCode, String returnMessage) {
             this.id = user.getId();
             this.email = user.getEmail();
             this.gender = user.getGender();
@@ -151,13 +152,6 @@ public class UserDto {
             this.careerSkills = user.getCareerSkills();
             this.preferredSubject = user.getPreferredSubject();
             this.mySubject = user.getMySubject();
-            if (file != null) {
-                this.oriName = file.getOriName();
-                this.fileName = file.getFileName();
-            } else {
-                this.oriName = null;
-                this.fileName = null;
-            }
             this.returnCode = returnCode;
             this.returnMessage = returnMessage;
         }

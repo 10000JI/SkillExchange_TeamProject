@@ -8,6 +8,4 @@ import java.util.Optional;
 
 public interface FileRepository extends JpaRepository<File,Integer> {
     Optional<File> findByUser(User user);
-
-    boolean existsByGenerateHash(String generateHash);
 }

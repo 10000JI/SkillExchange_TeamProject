@@ -6,6 +6,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -21,7 +23,6 @@ import place.skillexchange.backend.dto.UserDto;
 import place.skillexchange.backend.entity.RefreshToken;
 import place.skillexchange.backend.entity.User;
 import place.skillexchange.backend.exception.UserUnAuthorizedException;
-import place.skillexchange.backend.file.FileStore;
 import place.skillexchange.backend.repository.UserRepository;
 import place.skillexchange.backend.service.MailService;
 import place.skillexchange.backend.service.UserServiceImpl;
@@ -44,7 +45,6 @@ public class UserController {
     private final RefreshTokenService refreshTokenService;
     private final UserRepository userRepository;
     private final UserServiceImpl userService;
-    private final FileStore fileStore;
 
     /**
      * 회원가입
@@ -188,7 +188,8 @@ public class UserController {
      * 프로필 수정
      */
     @PatchMapping("/profileUpdate")
-    public UserDto.ProfileResponse profileUpdate(@RequestPart("profileDto") UserDto.ProfileRequest dto, @RequestPart(value="imgFile", required = false) MultipartFile imageFile ) throws IOException {
-        return userService.profileUpdate(dto, fileStore.storeFile(imageFile));
+    public UserDto.ProfileResponse profileUpdate(@RequestBody UserDto.ProfileRequest dto) throws IOException {
+        return userService.profileUpdate(dto);
     }
+
 }

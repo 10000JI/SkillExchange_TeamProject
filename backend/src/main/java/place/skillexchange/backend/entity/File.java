@@ -23,22 +23,22 @@ public class File {
     @JoinColumn(name="user_id")
     private User user;
 
-    @Column(name = "ori_Name")
+    @Column(name = "ori_name")
     private String oriName; //클라이언트가 업로드한 파일명
 
-    @Column(name = "file_Name")
-    private String fileName; //서버 내부에서 관리하는 파일명
+//    @Column(name = "file_name")
+//    private String fileName; //서버 내부에서 관리하는 파일명
 
-    @Lob
-    private String generateHash; // BLOB 바이너리 데이터
+    @Column(name = "file_url")
+    private String fileUrl; //서버 내부에서 관리하는 파일명
+
 
     /**
      * 프로필 이미지 수정
      */
     public void changeProfileImg(UploadFile uploadFile) {
         this.oriName = uploadFile.getUploadFileName();
-        this.fileName = uploadFile.getStoreFileName();
-        this.generateHash = uploadFile.getGenerateHash();
+        this.fileUrl = uploadFile.getFileUrl();
     }
 
 }

@@ -72,7 +72,7 @@ public class SecurityConfig {
                     return config;
                 }
             })).csrf((csrf) -> csrf.csrfTokenRequestHandler(requestHandler)
-                    .ignoringRequestMatchers("/v1/user/**","/v1/notices/list")
+                    .ignoringRequestMatchers("/v1/user/**","/v1/file/**","/v1/notices/list")
                     .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
             //DaoAuthenticationProvider의 세부 내역을 AuthenticationProvider 빈을 만들어 정의했으므로 인증을 구성해줘야 한다.
             .authenticationProvider(authenticationProvider)
@@ -86,7 +86,7 @@ public class SecurityConfig {
             .authorizeHttpRequests((requests)->requests
                     .requestMatchers("/myBalance").hasAnyRole("USER","ADMIN")
                     .requestMatchers("/v1/notices/list").hasRole("USER")
-                    .requestMatchers("/v1/user/**").permitAll())
+                    .requestMatchers("/v1/user/**","/v1/file/**").permitAll())
             .formLogin(Customizer.withDefaults())
             .httpBasic(Customizer.withDefaults());
         return http.build();
