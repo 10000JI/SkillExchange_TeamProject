@@ -2,11 +2,11 @@
 import React, { useEffect } from "react";
 import Header from "../components/Layout/Header";
 import Footer from "../components/Layout/Footer";
-import SignInForm from "../components/SignIn/SignInForm";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import FindForm from "../components/FindAccount/FindForm";
 
-const SignInPage = () => {
+const FindAccountPage = () => {
   const navigate = useNavigate();
   const { isAuthenticated} = useSelector((state) => state.user);
 
@@ -19,7 +19,7 @@ const SignInPage = () => {
     <>
       <Header />
  
-          <SignInForm />
+          <FindForm />
           
 
       <Footer />
@@ -28,4 +28,4 @@ const SignInPage = () => {
   );
 };
 
-export default SignInPage;
+export default FindAccountPage;

@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import Swiper from 'swiper';
 import 'swiper/css';
 
-
 const SignUpBanner = () => {
     useEffect(() => {
         // Swiper 초기화
@@ -15,6 +14,7 @@ const SignUpBanner = () => {
             clickable: true,
           },
         });
+        
       }, []); // useEffect를 빈 배열로 전달하여 한 번만 실행되도록 함
     
       return (

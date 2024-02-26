@@ -1,6 +1,10 @@
 import React from "react";
+import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 
 const Header = () => {
+  const { isAuthenticated, user } = useSelector((state) => state.user);
+
   return (
     <header className="header">
       <nav className="navbar container">
@@ -41,14 +45,10 @@ const Header = () => {
           className="navbar-nav order-2 hidden w-full flex-[0_0_100%] lg:order-1 lg:flex lg:w-auto lg:flex-auto lg:justify-center lg:space-x-5"
         >
           <li className="nav-item">
-            <a href="/" className="nav-link active">
-              메인페이지
-            </a>
+            <Link to="/" className="nav-link active">메인페이지</Link>
           </li>
           <li className="nav-item">
-            <a href="notice" className="nav-link">
-              공지사항
-            </a>
+            <Link to="/notice" className="nav-link">공지사항</Link>
           </li>
           <li className="nav-item">
             <a href="blog.html" className="nav-link">
@@ -112,7 +112,7 @@ const Header = () => {
           </li> */}
           <li className="nav-item">
             <a href="contact.html" className="nav-link">
-                자주 묻는 질문
+              자주 묻는 질문
             </a>
           </li>
           <li className="nav-item mt-3.5 lg:hidden">
@@ -124,10 +124,18 @@ const Header = () => {
             </a>
           </li>
         </ul>
+
         <div className="order-1 ml-auto hidden items-center md:order-2 md:ml-0 lg:flex">
-          <a className="btn btn-primary btn-sm font-bold" href="sign-in">
-            로그인
-          </a>
+          {isAuthenticated ? (
+            <a className="btn btn-primary btn-sm font-bold" href="sign-in">
+              로그아웃
+            </a>
+          ) : (
+            <Link to="/sign-in" className="btn btn-primary btn-sm font-bold">
+              로그인
+            </Link>
+            
+          )}
         </div>
       </nav>
     </header>

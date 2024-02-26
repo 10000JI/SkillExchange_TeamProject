@@ -179,6 +179,10 @@ const TableForm = () => {
   const table = useMaterialReactTable({
     columns,
     data,
+    mantinePaginationProps: {
+      showRowsPerPage: false,
+    },
+    paginationDisplayMode: 'pages',
     enableColumnFilters: false,
     enableDensityToggle: false,
     enableHiding: false,
