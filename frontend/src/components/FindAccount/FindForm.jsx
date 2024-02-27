@@ -24,11 +24,13 @@ const FindForm = () => {
   const findIdHandleSubmit = async (e) => {
     e.preventDefault();
     console.log("아이디 찾기 데이터", id)
+    const email = id
     try {
         const response = await axios.post(
-            process.env.REACT_APP_SERVER + `/v1/user/emailToFindId`,{id}
+            process.env.REACT_APP_SERVER + `/v1/user/emailToFindId`, {email} ,{ withCredentials: true }
         );
         toast.success(response.data.returnMessage);
+        console.log(id)
     } catch (err) {
         toast.error(err.response.data.message);
     }
@@ -37,9 +39,10 @@ const FindForm = () => {
   const findPasswordHandleSubmit = async (e) => {
     e.preventDefault();
     console.log("비밀번호 찾기 데이터", password)
+    const email = password
     try {
         const response = await axios.post(
-            process.env.REACT_APP_SERVER + `/v1/user/emailToFindPw`,{password}
+            process.env.REACT_APP_SERVER + `/v1/user/emailToFindPw`,{email}
         );
         toast.success(response.data.returnMessage);
     } catch (err) {
@@ -80,10 +83,10 @@ const FindForm = () => {
 
                   <form onSubmit={findIdHandleSubmit}>
                     <div className="form-group">
-                      <label htmlFor="email" className="form-label"></label>
+                      <label htmlFor="id" className="form-label"></label>
                       <input
                         type="email"
-                        id="email"
+                        id="id"
                         required
                         value={id}
                         onChange={(e) => setId(e.target.value)}

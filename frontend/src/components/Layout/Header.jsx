@@ -10,9 +10,9 @@ const Header = () => {
       <nav className="navbar container">
         {/* logo */}
         <div className="order-0">
-          <a href="/">
+          <Link to="/">
             <img src="images/logo.svg" height="30" width="147" alt="logo" />
-          </a>
+          </Link>
         </div>
         {/* navbar toggler */}
         <input id="nav-toggle" type="checkbox" className="hidden" />

@@ -58,7 +58,7 @@ const Notice = () => {
       <section className="integration-single section pt-0">
         <div className="container">
           <div className="row justify-center">
-            <div className="lg:col-10">
+            <div className="lg:col-12">
                 
               <div
                 className="integration-single-container tab rounded-xl bg-white px-5 py-16 shadow-lg md:px-10"

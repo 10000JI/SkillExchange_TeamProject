@@ -26,7 +26,7 @@ const SignUpForm = () => {
         process.env.REACT_APP_SERVER + `/v1/user/signUp`,
         formData
       );
-      setSignUp = true;
+      setSignUp(true);
     
       console.log("서버응답", response.data);
       toast.success(response.data.returnMessage);
