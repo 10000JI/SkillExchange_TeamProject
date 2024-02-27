@@ -6,16 +6,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import place.skillexchange.backend.auth.services.AuthServiceImpl;
 import place.skillexchange.backend.auth.services.JwtService;
 import place.skillexchange.backend.auth.services.RefreshTokenService;
@@ -108,62 +106,28 @@ public class UserController {
      * 토큰 받고 검증 후 유저 id 반환
      */
     @GetMapping("/findId")
-    public String getUserIdFromToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        //Authorization 이름을 가진 헤더의 값을 꺼내옴
+    public ResponseEntity<String> getUserIdFromToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        // Authorization 헤더에서 토큰을 가져옴
         String authHeader = request.getHeader("Authorization");
-        System.out.println("authHeader????????????" + authHeader);
-        String jwt = authHeader.substring(7);
+        System.out.println("authHeader: " + authHeader);
 
-        if (jwt != null) {
-            //accessToken이 만료되었다면
-            if (jwtService.isTokenExpired(jwt)) {
-                //쿠키의 refreshToken과 db에 저장된 refreshToken의 만료일을 확인하고 accessToken 재발급 / 만료되면 재로그인 exception
-                handleExpiredToken(request, response);
-            } else {
-                //accessToken이 만료되지 않았다면 유효한지 검증
-                return authenticateUser(jwt, request);
-            }
-        }
-        // 처리되지 않은 경우 예외를 던집니다.
-        throw new UserUnAuthorizedException("사용자 인증에 실패하였습니다.");
-    }
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String jwt = authHeader.substring(7);
 
-    public void handleExpiredToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String refreshTokenValue = extractRefreshTokenFromCookie(request);
-        if (refreshTokenValue != null) {
-            RefreshToken refreshToken = refreshTokenService.verifyRefreshToken(refreshTokenValue);
-            if (refreshToken != null) {
-                User user = refreshToken.getUser();
-                String accessToken = jwtService.generateAccessToken(user);
-                response.setHeader("Authorization", "Bearer " + accessToken);
-            }
-        }
-    }
-
-    private String extractRefreshTokenFromCookie(HttpServletRequest request) {
-        // 쿠키에서 refreshToken 가져오기
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if ("refreshToken".equals(cookie.getName())) {
-                    return cookie.getValue();
+            if (jwt != null) {
+                String id = authService.authenticateUser(jwt);
+                if (id != null) {
+                    // 헤더에 accessToken 추가
+                    response.setHeader("Authorization", "Bearer " + jwt);
+                    return ResponseEntity.ok(id);
+                } else {
+                    // 사용자 인증 실패일 때 예외를 던짐
+                    throw new UserUnAuthorizedException("사용자 인증에 실패하였습니다.");
                 }
             }
         }
-        return null;
-    }
-
-    private String authenticateUser(String jwt, HttpServletRequest request) {
-        // jwt의 사용자 이름 추출
-        String id = jwtService.extractUsername(jwt);
-
-        //UserDetailsService에서 loadUserByUsername 메서드로 사용자 세부 정보 검색
-        UserDetails userDetails = userDetailsService.loadUserByUsername(id);
-        if (jwtService.isAccessTokenValid(jwt, userDetails)) {
-            return id;
-        }
-        // 처리되지 않은 경우 예외를 던진다.
-        throw new UserUnAuthorizedException("사용자 인증에 실패하였습니다.");
+        // 토큰이 제공되지 않은 경우 예외를 던짐
+        throw new UserUnAuthorizedException("토큰이 제공되지 않았거나 유효하지 않습니다.");
     }
 
     /**
@@ -192,4 +156,27 @@ public class UserController {
         return userService.profileUpdate(dto);
     }
 
+    /**
+     * 프로필 조회
+     */
+    @GetMapping("/profile")
+    public UserDto.MyProfileResponse profileRead() {
+        return userService.profileRead();
+    }
+
+    /**
+     * 비밀번호 변경
+     */
+    @PostMapping("/updatePw")
+    public UserDto.ResponseBasic updatePw(@Validated @RequestBody UserDto.UpdatePwRequest dto, BindingResult bindingResult) throws MethodArgumentNotValidException {
+        return userService.updatePw(dto, bindingResult);
+    }
+
+    /**
+     * 회원 탈퇴
+     */
+    @DeleteMapping("/withdraw")
+    public UserDto.ResponseBasic withdraw(HttpServletRequest request, HttpServletResponse response) {
+        return authService.withdraw(request, response);
+    }
 }

@@ -1,5 +1,7 @@
 package place.skillexchange.backend.auth.services;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -15,4 +17,8 @@ public interface AuthService {
     void updateUserActiveStatus(String id);
 
     public ResponseEntity<UserDto.SignUpInResponse> login(UserDto.SignInRequest dto);
+
+    public UserDto.ResponseBasic withdraw(HttpServletRequest request, HttpServletResponse response);
+
+    public String authenticateUser(String jwt);
 }

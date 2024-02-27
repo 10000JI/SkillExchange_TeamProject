@@ -67,13 +67,13 @@ public class User implements UserDetails {
     /**
      * User와 RefreshToken은 1:1 관계
      */
-    @OneToOne(mappedBy = "user")
+    @OneToOne(mappedBy = "user", cascade = CascadeType.REMOVE)
     private RefreshToken refreshToken;
 
     /**
      * User와 File은 1:1 관계
      */
-    @OneToOne(mappedBy = "user")
+    @OneToOne(mappedBy = "user", cascade = CascadeType.REMOVE)
     private File file;
 
     @Override

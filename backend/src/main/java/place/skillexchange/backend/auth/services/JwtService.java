@@ -32,21 +32,6 @@ public class JwtService {
         return Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
     }
 
-//    /**
-//     * 토큰의 사용자 이름 추출
-//     */
-//    public String extractUsername(String token) {
-//        return extractClaim(token, Claims::getSubject);
-//    }
-//
-    /**
-     * 클레임 추출
-     */
-    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-        final Claims claims = extractAllClaims(token);
-        return claimsResolver.apply(claims);
-    }
-
     /**
      * 토큰의 사용자 이름 추출
      */
@@ -75,11 +60,6 @@ public class JwtService {
                 //JWT 바디 값을 읽어보자, 특정 값을 나타내는 토큰 값이라면 헤더에서 서명 부분을 읽고 싶지 않은 것이다
                 //getPayload() 메소드에서 claims를 가져옴
                 .getPayload();
-//                .parser()
-//                .setSigningKey(getSignInKey())
-//                .build()
-//                .parseClaimsJws(token)
-//                .getBody();
     }
 
     /**
@@ -115,35 +95,6 @@ public class JwtService {
                 .signWith(getSignInKey()).compact();
     }
 
-//    public String generateActiveToken(
-//            Map<String, Object> extraClaims,
-//            UserDetails userDetails
-//    ) {
-//        return Jwts
-//                .builder().issuer("Skill Exchange").subject("JWT Active Token")
-//                //claim(): 로그인된 유저의 ID, 권한을 채워줌
-//                .claim("id", userDetails.getUsername())
-//                //issuedAt(): 클라이언트에게 JWT 토큰이 발행시간 설정
-//                .issuedAt(new Date())
-//                //expiration(): 클라이언트에게 JWT 토큰이 만료시간 설정 (5분)
-//                .expiration(new Date((new Date()).getTime() + 5 * 60 * 1000))
-//                //signWith(): JWT 토큰 속 모든 요청에 디지털 서명을 하는 것, 여기서 위에서 설정한 비밀키를 대입
-//                .signWith(getSignInKey()).compact();
-////                .builder()
-////                //클레임 설정
-////                .setClaims(extraClaims)
-////                //유저이름 설정
-////                .setSubject(userDetails.getUsername())
-////                //유저권한 설정 ( 내가 추가 한 것 )
-////                .setSubject(userDetails.getAuthorities().toString())
-////                //시작일
-////                .setIssuedAt(new Date(System.currentTimeMillis()))
-////                //만료일 (실제로는 1시간 정도로 설정)
-////                .setExpiration(new Date(System.currentTimeMillis() + 60 * 1000))
-////                //비밀키와 HS256 알고리즘 설정
-////                .signWith(getSignInKey(), SignatureAlgorithm.HS256)
-////                .compact();
-//    }
 
     /**
      * 사용자 이름과 사용자 세부 정보를 기반으로 토큰이 유효한지 여부
@@ -182,9 +133,6 @@ public class JwtService {
         Claims claims = extractAllClaims(token);
         return claims.getExpiration();
     }
-//    private Date extractExpiration(String token) {
-//        return extractClaim(token, Claims::getExpiration);
-//    }
 
     /**
      * user의 authority 여러 개일 수도 있음을 고려한 String 변경

@@ -65,15 +65,6 @@ public class UserDto {
     public static class SignInRequest {
         private String id;
         private String password;
-
-        /* Dto -> Entity */
-//        public User toEntity() {
-//            User user = User.builder()
-//                    .id(id)
-//                    .password(password)
-//                    .build();
-//            return user;
-//        }
     }
 
     /**
@@ -122,7 +113,6 @@ public class UserDto {
         private String careerSkills;
         private String preferredSubject;
         private String mySubject;
-
     }
 
     /**
@@ -137,9 +127,6 @@ public class UserDto {
         private String careerSkills;
         private String preferredSubject;
         private String mySubject;
-/*        private String oriName;
-//        private String fileName;
-        private String fileUrl;*/
         private int returnCode;
         private String returnMessage;
 
@@ -155,5 +142,54 @@ public class UserDto {
             this.returnCode = returnCode;
             this.returnMessage = returnMessage;
         }
+    }
+
+    /**
+     * 프로필 조회 시 응답 Dto
+     */
+    @Getter
+    public static class MyProfileResponse {
+        private String id;
+        private String email;
+        private String gender;
+        private String job;
+        private String careerSkills;
+        private String preferredSubject;
+        private String mySubject;
+        private String imgUrl;
+        private int returnCode;
+        private String returnMessage;
+
+        /* Entity -> Dto */
+        public MyProfileResponse(User user, int returnCode, String returnMessage) {
+            this.id = user.getId();
+            this.email = user.getEmail();
+            this.gender = user.getGender();
+            this.job = user.getJob();
+            this.careerSkills = user.getCareerSkills();
+            this.preferredSubject = user.getPreferredSubject();
+            this.mySubject = user.getMySubject();
+            this.imgUrl = user.getFile().getFileUrl();
+            this.returnCode = returnCode;
+            this.returnMessage = returnMessage;
+        }
+    }
+
+    /**
+     * 비밀번호 변경 시 요청된 Dto
+     */
+    @Getter
+    public static class UpdatePwRequest {
+        @NotBlank(message = "현재 비밀번호: 필수 정보입니다.")
+        @Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{8,16}", message = "8~16자 영문 대 소문자, 숫자, 특수문자를 사용하세요.")
+        private String password;
+
+        @NotBlank(message = "새 비밀번호: 필수 정보입니다.")
+        @Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{8,16}", message = "8~16자 영문 대 소문자, 숫자, 특수문자를 사용하세요.")
+        private String newPassword;
+
+        @NotBlank(message = "새 비밀번호 확인: 필수 정보입니다.")
+        @Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{8,16}", message = "8~16자 영문 대 소문자, 숫자, 특수문자를 사용하세요.")
+        private String newPasswordCheck;
     }
 }

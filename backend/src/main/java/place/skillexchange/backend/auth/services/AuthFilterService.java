@@ -144,6 +144,6 @@ public class AuthFilterService extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String servletPath = request.getServletPath();
-        return servletPath.equals("/v1/user/findId");
+        return servletPath.equals("/v1/user/findId") || servletPath.equals("/v1/user/withdraw");
     }
 }

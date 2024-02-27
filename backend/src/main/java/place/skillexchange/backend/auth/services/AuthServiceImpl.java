@@ -1,6 +1,8 @@
 package place.skillexchange.backend.auth.services;
 
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -9,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -32,6 +36,7 @@ public class AuthServiceImpl implements AuthService{
     private final JwtService jwtService;
     private final RefreshTokenService refreshTokenService;
     private final AuthenticationManager authenticationManager;
+    private final UserDetailsService userDetailsService;
 
     /* 회원가입 ~ 로그인 까지 (JWT 생성) */
 
@@ -159,5 +164,28 @@ public class AuthServiceImpl implements AuthService{
                 .status(HttpStatus.OK)
                 .headers(headers)
                 .body(new UserDto.SignUpInResponse(user, 200, "로그인 성공!"));
+    }
+
+    /**
+     * 헤더의 엑세스 토큰 jwt 검증
+     */
+    @Override
+    public String authenticateUser(String jwt) {
+        // jwt의 사용자 이름 추출
+        String id = jwtService.extractUsername(jwt);
+
+        //UserDetailsService에서 loadUserByUsername 메서드로 사용자 세부 정보 검색
+        UserDetails userDetails = userDetailsService.loadUserByUsername(id);
+        if (jwtService.isAccessTokenValid(jwt, userDetails)) {
+            return id;
+        }
+        // 처리되지 않은 경우 예외를 던진다.
+//        throw new UserUnAuthorizedException("사용자 인증에 실패하였습니다.");
+        return null;
+    }
+
+    @Override
+    public UserDto.ResponseBasic withdraw(HttpServletRequest request, HttpServletResponse response) {
+        return null;
     }
 }
