@@ -166,23 +166,23 @@ public class AuthServiceImpl implements AuthService{
                 .body(new UserDto.SignUpInResponse(user, 200, "로그인 성공!"));
     }
 
-    /**
-     * 헤더의 엑세스 토큰 jwt 검증
-     */
-    @Override
-    public String authenticateUser(String jwt) {
-        // jwt의 사용자 이름 추출
-        String id = jwtService.extractUsername(jwt);
-
-        //UserDetailsService에서 loadUserByUsername 메서드로 사용자 세부 정보 검색
-        UserDetails userDetails = userDetailsService.loadUserByUsername(id);
-        if (jwtService.isAccessTokenValid(jwt, userDetails)) {
-            return id;
-        }
-        // 처리되지 않은 경우 예외를 던진다.
-//        throw new UserUnAuthorizedException("사용자 인증에 실패하였습니다.");
-        return null;
-    }
+//    /**
+//     * 헤더의 엑세스 토큰 jwt 검증
+//     */
+//    @Override
+//    public String authenticateUser(String jwt) {
+//        // jwt의 사용자 이름 추출
+//        String id = jwtService.extractUsername(jwt);
+//
+//        //UserDetailsService에서 loadUserByUsername 메서드로 사용자 세부 정보 검색
+//        UserDetails userDetails = userDetailsService.loadUserByUsername(id);
+//        if (jwtService.isAccessTokenValid(jwt, userDetails)) {
+//            return id;
+//        }
+//        // 처리되지 않은 경우 예외를 던진다.
+////        throw new UserUnAuthorizedException("사용자 인증에 실패하였습니다.");
+//        return null;
+//    }
 
     @Override
     public UserDto.ResponseBasic withdraw(HttpServletRequest request, HttpServletResponse response) {

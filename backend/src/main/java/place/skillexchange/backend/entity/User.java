@@ -51,8 +51,6 @@ public class User implements UserDetails {
     @Column(name = "my_subject", length = 50)
     private String mySubject;
 
-//    @Column(name= "image_url")
-//    private String imageUrl;
 
     /**
      * Security에서 권한 정보 로드할 때 LAZY(지연)로딩이 아니라 EAGER(즉시)로딩으로 설정해야 함

@@ -7,6 +7,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,10 +26,12 @@ import place.skillexchange.backend.repository.RefreshTokenRepository;
 import place.skillexchange.backend.repository.UserRepository;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthFilterService extends OncePerRequestFilter {
 
     private final JwtService jwtService;
@@ -56,6 +59,14 @@ public class AuthFilterService extends OncePerRequestFilter {
         //Authorization 이름을 가진 헤더의 값을 꺼내옴
         final String authHeader = request.getHeader("Authorization");
         String jwt;
+
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                log.error("Cookie Name: {}, Value: {}", cookie.getName(), cookie.getValue());
+            }
+        }
+
 
         //authHeader가 null이고, Bearer로 시작하지 않다면 체인 내의 다음 필터를 호출
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
@@ -144,6 +155,6 @@ public class AuthFilterService extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String servletPath = request.getServletPath();
-        return servletPath.equals("/v1/user/findId") || servletPath.equals("/v1/user/withdraw");
+        return servletPath.equals("/v1/user/withdraw");
     }
 }

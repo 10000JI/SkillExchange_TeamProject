@@ -4,6 +4,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import place.skillexchange.backend.exception.UserNotFoundException;
 
 @Component
 @NoArgsConstructor
@@ -16,7 +17,10 @@ public class SecurityUtil {
 
         if (authentication == null || authentication.getName() == null) {
             throw new RuntimeException("Security Context 에 인증 정보가 없습니다.");
+        } else if (authentication.getName().equals("anonymousUser")) {
+            throw new UserNotFoundException("계정에 다시 로그인 해야 합니다.");
         }
+
         //authenticaion은 principal을 extends 받은 객체. getName() 메서드는 사용자의 이름을 넘겨주었다.
         //String type의 username (유저의 id) -> UserDetails의 username와 동일
         return authentication.getName();

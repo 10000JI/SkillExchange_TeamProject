@@ -14,6 +14,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import place.skillexchange.backend.auth.services.AuthServiceImpl;
 import place.skillexchange.backend.auth.services.JwtService;
 import place.skillexchange.backend.auth.services.RefreshTokenService;
@@ -24,6 +25,7 @@ import place.skillexchange.backend.exception.UserUnAuthorizedException;
 import place.skillexchange.backend.repository.UserRepository;
 import place.skillexchange.backend.service.MailService;
 import place.skillexchange.backend.service.UserServiceImpl;
+import place.skillexchange.backend.util.SecurityUtil;
 
 import java.io.IOException;
 import java.util.Map;
@@ -43,6 +45,7 @@ public class UserController {
     private final RefreshTokenService refreshTokenService;
     private final UserRepository userRepository;
     private final UserServiceImpl userService;
+    private final SecurityUtil securityUtil;
 
     /**
      * 회원가입
@@ -102,33 +105,43 @@ public class UserController {
         return authService.login(dto);
     }
 
-    /**
-     * 토큰 받고 검증 후 유저 id 반환
-     */
-    @GetMapping("/findId")
-    public ResponseEntity<String> getUserIdFromToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        // Authorization 헤더에서 토큰을 가져옴
-        String authHeader = request.getHeader("Authorization");
-        System.out.println("authHeader: " + authHeader);
+//    /**
+//     * 토큰 받고 검증 후 유저 id 반환
+//     */
+//    @GetMapping("/findId")
+//    public ResponseEntity<String> getUserIdFromToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
+//        // Authorization 헤더에서 토큰을 가져옴
+//        String authHeader = request.getHeader("Authorization");
+//        System.out.println("authHeader: " + authHeader);
+//
+//        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+//            String jwt = authHeader.substring(7);
+//
+//            if (jwt != null) {
+//                String id = authService.authenticateUser(jwt);
+//                if (id != null) {
+//                    // 헤더에 accessToken 추가
+//                    response.setHeader("Authorization", "Bearer " + jwt);
+//                    return ResponseEntity.ok(id);
+//                } else {
+//                    // 사용자 인증 실패일 때 예외를 던짐
+//                    throw new UserUnAuthorizedException("사용자 인증에 실패하였습니다.");
+//                }
+//            }
+//        }
+//        // 토큰이 제공되지 않은 경우 예외를 던짐
+//        throw new UserUnAuthorizedException("토큰이 제공되지 않았거나 유효하지 않습니다.");
+//    }
 
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            String jwt = authHeader.substring(7);
+//    /**
+//     * 토큰 받고 검증 후 유저 id 반환
+//     */
+//    @GetMapping("/findId")
+//    public ResponseEntity<String> getUserIdFromToken() throws IOException {
+//        String id = securityUtil.getCurrentMemberUsername();
+//        return ResponseEntity.ok(id);
+//    }
 
-            if (jwt != null) {
-                String id = authService.authenticateUser(jwt);
-                if (id != null) {
-                    // 헤더에 accessToken 추가
-                    response.setHeader("Authorization", "Bearer " + jwt);
-                    return ResponseEntity.ok(id);
-                } else {
-                    // 사용자 인증 실패일 때 예외를 던짐
-                    throw new UserUnAuthorizedException("사용자 인증에 실패하였습니다.");
-                }
-            }
-        }
-        // 토큰이 제공되지 않은 경우 예외를 던짐
-        throw new UserUnAuthorizedException("토큰이 제공되지 않았거나 유효하지 않습니다.");
-    }
 
     /**
      * 아이디 찾기
@@ -148,18 +161,25 @@ public class UserController {
         return new UserDto.ResponseBasic(200, "이메일이 성공적으로 전송되었습니다.");
     }
 
+//    /**
+//     * 프로필 수정
+//     */
+//    @PatchMapping("/profileUpdate")
+//    public UserDto.ProfileResponse profileUpdate(@RequestBody UserDto.ProfileRequest dto) throws IOException {
+//        return userService.profileUpdate(dto);
+//    }
     /**
      * 프로필 수정
      */
     @PatchMapping("/profileUpdate")
-    public UserDto.ProfileResponse profileUpdate(@RequestBody UserDto.ProfileRequest dto) throws IOException {
-        return userService.profileUpdate(dto);
+    public UserDto.ProfileResponse profileUpdate(@RequestPart("profileDto")  UserDto.ProfileRequest dto, @RequestPart(value="imgFile", required = false) MultipartFile multipartFile) throws IOException {
+        return userService.profileUpdate(dto, multipartFile);
     }
 
     /**
      * 프로필 조회
      */
-    @GetMapping("/profile")
+    @GetMapping("/userInfo")
     public UserDto.MyProfileResponse profileRead() {
         return userService.profileRead();
     }

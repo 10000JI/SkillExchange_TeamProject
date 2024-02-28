@@ -1,35 +1,28 @@
-package place.skillexchange.backend.service;
+package place.skillexchange.backend.file;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import place.skillexchange.backend.dto.FileDto;
 import place.skillexchange.backend.entity.File;
 import place.skillexchange.backend.entity.User;
-import place.skillexchange.backend.file.S3Uploader;
-import place.skillexchange.backend.file.UploadFile;
 import place.skillexchange.backend.repository.FileRepository;
-import place.skillexchange.backend.repository.UserRepository;
-import place.skillexchange.backend.util.SecurityUtil;
 
 import java.io.IOException;
 
-@Service
+@Component
 @RequiredArgsConstructor
-public class FileServiceImpl implements FileService {
+public class FileHandler {
 
-    private final SecurityUtil securityUtil;
-    private final UserRepository userRepository;
     private final FileRepository fileRepository;
     private final S3Uploader s3Uploader;
 
-    @Override
+    /**
+     * 단일 파일 업로드
+     */
     @Transactional
-    public FileDto.ProfileResponse profileUpdate(MultipartFile multipartFile) throws IOException {
-        String id = securityUtil.getCurrentMemberUsername();
-        User user = userRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("해당 유저를 찾지 못했습니다 : " + id));
+    public File uploadFile(MultipartFile multipartFile, User user) throws IOException {
 
         File file = null;
         if (!multipartFile.isEmpty()) {
@@ -49,6 +42,6 @@ public class FileServiceImpl implements FileService {
             }
         }
 
-        return new FileDto.ProfileResponse(file, 200, "프로필 사진이 성공적으로 변경되었습니다.");
+        return file;
     }
 }

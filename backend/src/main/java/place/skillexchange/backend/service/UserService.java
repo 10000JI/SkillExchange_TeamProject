@@ -10,7 +10,8 @@ import place.skillexchange.backend.file.UploadFile;
 import java.io.IOException;
 
 public interface UserService {
-    public UserDto.ProfileResponse profileUpdate(UserDto.ProfileRequest dto) throws IOException;
+//    public UserDto.ProfileResponse profileUpdate(UserDto.ProfileRequest dto) throws IOException;
+    public UserDto.ProfileResponse profileUpdate(UserDto.ProfileRequest dto, MultipartFile multipartFile) throws IOException;
 
     public UserDto.MyProfileResponse profileRead();
 

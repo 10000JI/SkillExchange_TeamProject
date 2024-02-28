@@ -20,5 +20,5 @@ public interface AuthService {
 
     public UserDto.ResponseBasic withdraw(HttpServletRequest request, HttpServletResponse response);
 
-    public String authenticateUser(String jwt);
+//    public String authenticateUser(String jwt);
 }

@@ -7,8 +7,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.multipart.MultipartFile;
+import place.skillexchange.backend.dto.FileDto;
 import place.skillexchange.backend.dto.UserDto;
+import place.skillexchange.backend.entity.File;
 import place.skillexchange.backend.entity.User;
+import place.skillexchange.backend.file.FileHandler;
+import place.skillexchange.backend.file.S3Uploader;
+import place.skillexchange.backend.file.UploadFile;
+import place.skillexchange.backend.repository.FileRepository;
 import place.skillexchange.backend.repository.UserRepository;
 import place.skillexchange.backend.util.SecurityUtil;
 
@@ -22,17 +29,42 @@ public class UserServiceImpl implements UserService {
     private final SecurityUtil securityUtil;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final FileRepository fileRepository;
+    private final S3Uploader s3Uploader;
+    private final FileHandler fileHandler;
 
+
+//    /**
+//     * 프로필 수정
+//     */
+//    @Override
+//    @Transactional
+//    public UserDto.ProfileResponse profileUpdate(UserDto.ProfileRequest dto) throws IOException {
+//        String id = securityUtil.getCurrentMemberUsername();
+//        User user = userRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("해당 유저를 찾지 못했습니다 : " + id));
+//        user.changeProfileField(dto);
+//
+//        return new UserDto.ProfileResponse(user, 200, "프로필이 성공적으로 변경되었습니다.");
+//    }
+
+    /**
+     * 프로필 수정
+     */
     @Override
     @Transactional
-    public UserDto.ProfileResponse profileUpdate(UserDto.ProfileRequest dto) throws IOException {
+    public UserDto.ProfileResponse profileUpdate(UserDto.ProfileRequest dto, MultipartFile multipartFile) throws IOException {
         String id = securityUtil.getCurrentMemberUsername();
         User user = userRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("해당 유저를 찾지 못했습니다 : " + id));
         user.changeProfileField(dto);
 
-        return new UserDto.ProfileResponse(user, 200, "프로필이 성공적으로 변경되었습니다.");
+        File file = fileHandler.uploadFile(multipartFile, user);
+
+        return new UserDto.ProfileResponse(user, file,200, "프로필이 성공적으로 변경되었습니다.");
     }
 
+    /**
+     * 프로필 조회
+     */
     @Override
     public UserDto.MyProfileResponse profileRead() {
         String id = securityUtil.getCurrentMemberUsername();
@@ -41,6 +73,9 @@ public class UserServiceImpl implements UserService {
         return new UserDto.MyProfileResponse(user, 200, id+"님의 프로필");
     }
 
+    /**
+     * 비밀번호 변경
+     */
     @Override
     @Transactional
     public UserDto.ResponseBasic updatePw(UserDto.UpdatePwRequest dto, BindingResult bindingResult) throws MethodArgumentNotValidException {

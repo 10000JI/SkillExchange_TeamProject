@@ -115,6 +115,34 @@ public class UserDto {
         private String mySubject;
     }
 
+//    /**
+//     * 프로필 수정 시 응답 Dto
+//     */
+//    @Getter
+//    public static class ProfileResponse {
+//        private String id;
+//        private String email;
+//        private String gender;
+//        private String job;
+//        private String careerSkills;
+//        private String preferredSubject;
+//        private String mySubject;
+//        private int returnCode;
+//        private String returnMessage;
+//
+//        /* Entity -> Dto */
+//        public ProfileResponse(User user, int returnCode, String returnMessage) {
+//            this.id = user.getId();
+//            this.email = user.getEmail();
+//            this.gender = user.getGender();
+//            this.job = user.getJob();
+//            this.careerSkills = user.getCareerSkills();
+//            this.preferredSubject = user.getPreferredSubject();
+//            this.mySubject = user.getMySubject();
+//            this.returnCode = returnCode;
+//            this.returnMessage = returnMessage;
+//        }
+//    }
     /**
      * 프로필 수정 시 응답 Dto
      */
@@ -127,11 +155,13 @@ public class UserDto {
         private String careerSkills;
         private String preferredSubject;
         private String mySubject;
+        private String oriName;
+        private String imgUrl;
         private int returnCode;
         private String returnMessage;
 
         /* Entity -> Dto */
-        public ProfileResponse(User user, int returnCode, String returnMessage) {
+        public ProfileResponse(User user, File file, int returnCode, String returnMessage) {
             this.id = user.getId();
             this.email = user.getEmail();
             this.gender = user.getGender();
@@ -139,6 +169,13 @@ public class UserDto {
             this.careerSkills = user.getCareerSkills();
             this.preferredSubject = user.getPreferredSubject();
             this.mySubject = user.getMySubject();
+            if (file != null) {
+                this.oriName = file.getOriName();
+                this.imgUrl = file.getFileUrl();
+            } else {
+                this.oriName = null;
+                this.imgUrl = file.getFileUrl();
+            }
             this.returnCode = returnCode;
             this.returnMessage = returnMessage;
         }
@@ -169,7 +206,11 @@ public class UserDto {
             this.careerSkills = user.getCareerSkills();
             this.preferredSubject = user.getPreferredSubject();
             this.mySubject = user.getMySubject();
-            this.imgUrl = user.getFile().getFileUrl();
+            if (user.getFile() != null) {
+                this.imgUrl = user.getFile().getFileUrl();
+            }else{
+                this.imgUrl = null;
+            }
             this.returnCode = returnCode;
             this.returnMessage = returnMessage;
         }

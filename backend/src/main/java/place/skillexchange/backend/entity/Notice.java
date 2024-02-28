@@ -7,12 +7,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-public class Notices extends BaseEntity{
+public class Notice extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "notice_id")
@@ -31,4 +34,7 @@ public class Notices extends BaseEntity{
     @Column(name = "board_hit")
     @ColumnDefault("0")
     private Long hit;
+
+    @OneToMany(mappedBy = "notice", cascade = CascadeType.ALL)
+    private List<File> files = new ArrayList<>();
 }

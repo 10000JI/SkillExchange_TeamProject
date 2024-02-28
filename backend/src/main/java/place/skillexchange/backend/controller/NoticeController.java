@@ -15,8 +15,8 @@ import java.security.Principal;
 @RequestMapping("/v1/notices/")
 public class NoticeController {
 
-    @GetMapping("/list")
-    public String list() {
+    @GetMapping("/register")
+    public String register() {
         return "테스트";
     }
 }
