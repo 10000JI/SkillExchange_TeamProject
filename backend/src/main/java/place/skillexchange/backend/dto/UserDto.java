@@ -5,11 +5,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-import org.springframework.web.multipart.MultipartFile;
 import place.skillexchange.backend.entity.Authority;
 import place.skillexchange.backend.entity.File;
 import place.skillexchange.backend.entity.User;
-import place.skillexchange.backend.file.UploadFile;
 
 import java.util.Collections;
 
@@ -174,7 +172,7 @@ public class UserDto {
                 this.imgUrl = file.getFileUrl();
             } else {
                 this.oriName = null;
-                this.imgUrl = file.getFileUrl();
+                this.imgUrl = null;
             }
             this.returnCode = returnCode;
             this.returnMessage = returnMessage;

@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -51,44 +52,46 @@ public class SecurityConfig {
         requestHandler.setCsrfRequestAttributeName("_csrf");
 
         http
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            //CorsConfigurationSource 인터페이스를 구현하는 익명 클래스 생성하여 getCorsConfiguration() 메소드 재정의
-            .cors(corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
-                //getCorsConfiguration() 메소드에서 CorsConfiguration 객체를 생성하고 필요한 설정들을 추가
-                @Override
-                public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
-                    CorsConfiguration config = new CorsConfiguration();
-                    //허용할 출처(도메인)를 설정
-                    config.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
-                    //허용할 HTTP 메소드를 설정
-                    config.setAllowedMethods(Collections.singletonList("*"));
-                    //인증 정보 허용 여부를 설정
-                    config.setAllowCredentials(true);
-                    //허용할 헤더를 설정
-                    config.setAllowedHeaders(Collections.singletonList("*"));
-                    config.setExposedHeaders(Arrays.asList("Authorization"));
-                    //CORS 설정 캐시로 사용할 시간을 설정
-                    config.setMaxAge(3600L);
-                    return config;
-                }
-            })).csrf((csrf) -> csrf.csrfTokenRequestHandler(requestHandler)
-                    .ignoringRequestMatchers("/v1/user/**","/v1/file/**","/v1/notices/list")
-                    .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
-            //DaoAuthenticationProvider의 세부 내역을 AuthenticationProvider 빈을 만들어 정의했으므로 인증을 구성해줘야 한다.
-            .authenticationProvider(authenticationProvider)
-            .addFilterAfter(csrfCookieFilterService, BasicAuthenticationFilter.class)
-            .addFilterBefore(authFilterService, UsernamePasswordAuthenticationFilter.class)
-            .exceptionHandling(configurer -> configurer
-                    .accessDeniedHandler(accessDeniedHandler)
-                    .authenticationEntryPoint(authenticationEntryPoint))
-            //authFilterService가 인증 전에 실행되어 항상 검증되기 때문에 requestMatchers의 authenticated()과 permitAll()은 영향 X
-            //하지만 코드 가독성을 위해 requestMatchers를 사용해 명시해주자
-            .authorizeHttpRequests((requests)->requests
-                    .requestMatchers("/myBalance").hasAnyRole("USER","ADMIN")
-                    .requestMatchers("/v1/notices/list").hasRole("USER")
-                    .requestMatchers("/v1/user/**","/v1/file/**").permitAll())
-            .formLogin(Customizer.withDefaults())
-            .httpBasic(Customizer.withDefaults());
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                //CorsConfigurationSource 인터페이스를 구현하는 익명 클래스 생성하여 getCorsConfiguration() 메소드 재정의
+                .cors(corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
+                    //getCorsConfiguration() 메소드에서 CorsConfiguration 객체를 생성하고 필요한 설정들을 추가
+                    @Override
+                    public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
+                        CorsConfiguration config = new CorsConfiguration();
+                        //허용할 출처(도메인)를 설정
+                        config.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
+                        //허용할 HTTP 메소드를 설정
+                        config.setAllowedMethods(Collections.singletonList("*"));
+                        //인증 정보 허용 여부를 설정
+                        config.setAllowCredentials(true);
+                        //허용할 헤더를 설정
+                        config.setAllowedHeaders(Collections.singletonList("*"));
+                        config.setExposedHeaders(Arrays.asList("Authorization"));
+                        //CORS 설정 캐시로 사용할 시간을 설정
+                        config.setMaxAge(3600L);
+                        return config;
+                    }
+                })).csrf((csrf) -> csrf.csrfTokenRequestHandler(requestHandler)
+                        .ignoringRequestMatchers("/v1/user/**", "/v1/file/**", "/v1/notices/register", "/v1/notices/{noticeId}")
+                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
+                //DaoAuthenticationProvider의 세부 내역을 AuthenticationProvider 빈을 만들어 정의했으므로 인증을 구성해줘야 한다.
+                .authenticationProvider(authenticationProvider)
+                .addFilterAfter(csrfCookieFilterService, BasicAuthenticationFilter.class)
+                .addFilterBefore(authFilterService, UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(configurer -> configurer
+                        .accessDeniedHandler(accessDeniedHandler)
+                        .authenticationEntryPoint(authenticationEntryPoint))
+                //authFilterService가 인증 전에 실행되어 항상 검증되기 때문에 requestMatchers의 authenticated()과 permitAll()은 영향 X
+                //하지만 코드 가독성을 위해 requestMatchers를 사용해 명시해주자
+                .authorizeHttpRequests((requests) -> requests
+                        .requestMatchers(request -> HttpMethod.PATCH.matches(request.getMethod()) && request.getServletPath().startsWith("/v1/notices/{noticeId}")).hasRole("ADMIN") // PATCH 메서드에 대한 접근 제한
+                        .requestMatchers(request -> HttpMethod.DELETE.matches(request.getMethod()) && request.getServletPath().startsWith("/v1/notices/{noticeId}")).hasRole("ADMIN") // PATCH 메서드에 대한 접근 제한
+                        .requestMatchers("/myBalance").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers("/v1/notices/register").hasRole("ADMIN")
+                        .requestMatchers("/v1/user/**", "/v1/file/**", "/v1/notices/{noticeId}").permitAll())
+                .formLogin(Customizer.withDefaults())
+                .httpBasic(Customizer.withDefaults());
         return http.build();
     }
 

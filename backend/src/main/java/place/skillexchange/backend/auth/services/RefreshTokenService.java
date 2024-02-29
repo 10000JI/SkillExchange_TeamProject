@@ -41,7 +41,7 @@ public class RefreshTokenService {
                     //refreshToken은 UUID로 생성
                     .refreshToken(UUID.randomUUID().toString())
                     //만료일은 2분 (실제로는 2주 정도로 설정)
-                    .expirationTime(new Date((new Date()).getTime() + 10 * 60 * 1000))
+                    .expirationTime(new Date((new Date()).getTime() + 14 * 24 * 60 * 60 * 1000))
                     .user(user)
                     .build();
 

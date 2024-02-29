@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 @Builder
 public class UploadFile {
     private String uploadFileName;
-//    private String storeFileName;
     private String fileUrl;
 
     public UploadFile(String uploadFileName, String fileUrl) {

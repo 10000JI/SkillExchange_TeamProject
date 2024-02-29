@@ -172,7 +172,7 @@ public class UserController {
      * 프로필 수정
      */
     @PatchMapping("/profileUpdate")
-    public UserDto.ProfileResponse profileUpdate(@RequestPart("profileDto")  UserDto.ProfileRequest dto, @RequestPart(value="imgFile", required = false) MultipartFile multipartFile) throws IOException {
+    public UserDto.ProfileResponse profileUpdate(@RequestPart("profileDto") UserDto.ProfileRequest dto, @RequestPart(value="imgFile", required = false) MultipartFile multipartFile) throws IOException {
         return userService.profileUpdate(dto, multipartFile);
     }
 

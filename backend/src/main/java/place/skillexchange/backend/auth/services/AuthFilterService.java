@@ -27,6 +27,7 @@ import place.skillexchange.backend.repository.UserRepository;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -59,14 +60,6 @@ public class AuthFilterService extends OncePerRequestFilter {
         //Authorization 이름을 가진 헤더의 값을 꺼내옴
         final String authHeader = request.getHeader("Authorization");
         String jwt;
-
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                log.error("Cookie Name: {}, Value: {}", cookie.getName(), cookie.getValue());
-            }
-        }
-
 
         //authHeader가 null이고, Bearer로 시작하지 않다면 체인 내의 다음 필터를 호출
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {

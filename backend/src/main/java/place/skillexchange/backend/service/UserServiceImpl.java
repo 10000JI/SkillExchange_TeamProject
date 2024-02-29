@@ -8,13 +8,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.multipart.MultipartFile;
-import place.skillexchange.backend.dto.FileDto;
 import place.skillexchange.backend.dto.UserDto;
 import place.skillexchange.backend.entity.File;
 import place.skillexchange.backend.entity.User;
-import place.skillexchange.backend.file.FileHandler;
 import place.skillexchange.backend.file.S3Uploader;
-import place.skillexchange.backend.file.UploadFile;
 import place.skillexchange.backend.repository.FileRepository;
 import place.skillexchange.backend.repository.UserRepository;
 import place.skillexchange.backend.util.SecurityUtil;
@@ -31,7 +28,7 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final FileRepository fileRepository;
     private final S3Uploader s3Uploader;
-    private final FileHandler fileHandler;
+    private final FileServiceImpl fileHandler;
 
 
 //    /**
@@ -57,7 +54,10 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("해당 유저를 찾지 못했습니다 : " + id));
         user.changeProfileField(dto);
 
-        File file = fileHandler.uploadFile(multipartFile, user);
+        File file = null;
+        if (multipartFile != null) {
+           file  = fileHandler.uploadFilePR(multipartFile, user);
+        }
 
         return new UserDto.ProfileResponse(user, file,200, "프로필이 성공적으로 변경되었습니다.");
     }

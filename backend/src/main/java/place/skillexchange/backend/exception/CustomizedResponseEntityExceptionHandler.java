@@ -94,4 +94,13 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
         return new ResponseEntity(exceptionResponse, HttpStatus.BAD_REQUEST);
     }
 
+    /**
+     * 존재하지 않는 게시물
+     */
+    @ExceptionHandler(NoticeNotFoundException.class) //타 Controller 실행 중 UserNotFoundException 에러 발생 시 (=사용자 정보가 존재하지 않았을 때) handlerUserNotException()가 작업 우회
+    public final ResponseEntity<Object> handlerUserNotException(NoticeNotFoundException ex, WebRequest request) {
+        ExceptionResponse.OneDetail exceptionResponse = new ExceptionResponse.OneDetail(new Date(), ex.getMessage(), request.getDescription(false));
+        return new ResponseEntity(exceptionResponse, HttpStatus.NOT_FOUND);
+    }
+
 }

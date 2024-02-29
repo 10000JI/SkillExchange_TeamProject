@@ -22,10 +22,16 @@ public class File {
     @Column(name = "file_url", nullable = false)
     private String fileUrl; //서버 내부에서 관리하는 파일명
 
+    /**
+     * User와 File은 1:1 관계
+     */
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="user_id")
     private User user;
 
+    /**
+     * 양방향 매핑
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="board_id")
     private Notice notice;

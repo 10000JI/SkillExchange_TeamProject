@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
+import place.skillexchange.backend.dto.NoticeDto;
+import place.skillexchange.backend.file.UploadFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,8 +23,11 @@ public class Notice extends BaseEntity{
     @Column(name = "notice_id")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    @JoinColumn(name="user_id")
+    /**
+     * 단방향 매핑 (단뱡향일 때는 Cascade 작동 X, User 삭제 시 Notice 삭제 후 User 삭제 해야 함)
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="writer")
     private User user;
 
     @Column(name = "board_title", length = 50, nullable = false)
@@ -33,8 +38,21 @@ public class Notice extends BaseEntity{
 
     @Column(name = "board_hit")
     @ColumnDefault("0")
-    private Long hit;
+    private boolean hit;
 
+    /**
+     * 이미지와 양방향 매핑
+     */
     @OneToMany(mappedBy = "notice", cascade = CascadeType.ALL)
     private List<File> files = new ArrayList<>();
+
+    /**
+     * 공지사항 제목,내용 수정
+     */
+    public void changeNotice(NoticeDto.RegisterRequest dto) {
+        this.title = dto.getTitle();
+        this.content = dto.getContent();
+    }
+
+
 }
