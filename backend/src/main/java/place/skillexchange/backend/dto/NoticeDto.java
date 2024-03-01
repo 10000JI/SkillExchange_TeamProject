@@ -33,7 +33,7 @@ public class NoticeDto {
         /* Dto -> Entity */
         public Notice toEntity(User user) {
             Notice notice = Notice.builder()
-                    .user(user)
+                    .writer(user)
                     .title(title)
                     .content(content)
                     .build();
@@ -102,7 +102,7 @@ public class NoticeDto {
 
         /* Entity -> Dto */
         public ReadResponse(Notice notice, int returnCode, String returnMessage) {
-            this.writer = notice.getUser().getId();
+            this.writer = notice.getWriter().getId();
             this.id = notice.getId();
             this.title = notice.getTitle();
             this.content = notice.getContent();

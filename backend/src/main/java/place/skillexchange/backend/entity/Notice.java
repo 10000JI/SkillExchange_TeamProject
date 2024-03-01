@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import place.skillexchange.backend.dto.NoticeDto;
-import place.skillexchange.backend.file.UploadFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +27,7 @@ public class Notice extends BaseEntity{
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="writer")
-    private User user;
+    private User writer;
 
     @Column(name = "board_title", length = 50, nullable = false)
     private String title;
