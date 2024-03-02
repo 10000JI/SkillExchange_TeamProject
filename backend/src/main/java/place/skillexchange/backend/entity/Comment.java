@@ -21,10 +21,12 @@ public class Comment extends CreatedDateEntity{
     @Column(name = "comment_id")
     private Long id;
 
+    //내용
     @Column(nullable = false)
     @Lob
     private String content;
 
+    //삭제된 상태
     @Enumerated(value = EnumType.STRING)
     private DeleteStatus isDeleted;
 
@@ -32,14 +34,21 @@ public class Comment extends CreatedDateEntity{
     @JoinColumn(name = "notice_id")
     private Notice notice;
 
+    //작성자
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer")
     private User writer;
 
+    //부모 댓글
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
     private Comment parent;
 
+    //자식 댓글 리스트
     @OneToMany(mappedBy = "parent", orphanRemoval = true)
     private List<Comment> children = new ArrayList<>();
+
+    public void changeDeletedStatus(DeleteStatus deleteStatus) {
+        this.isDeleted = deleteStatus;
+    }
 }

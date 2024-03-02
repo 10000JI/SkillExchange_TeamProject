@@ -86,9 +86,11 @@ public class SecurityConfig {
                 //하지만 코드 가독성을 위해 requestMatchers를 사용해 명시해주자
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers(request -> HttpMethod.PATCH.matches(request.getMethod()) && request.getServletPath().startsWith("/v1/notices/{noticeId}")).hasRole("ADMIN") // PATCH 메서드에 대한 접근 제한
-                        .requestMatchers(request -> HttpMethod.DELETE.matches(request.getMethod()) && request.getServletPath().startsWith("/v1/notices/{noticeId}")).hasRole("ADMIN") // PATCH 메서드에 대한 접근 제한
+                        .requestMatchers(request -> HttpMethod.DELETE.matches(request.getMethod()) && request.getServletPath().startsWith("/v1/notices/{noticeId}")).hasRole("ADMIN") // DELETE 메서드에 대한 접근 제한
+                        .requestMatchers(request -> HttpMethod.DELETE.matches(request.getMethod()) && request.getServletPath().startsWith("/v1/comment/{commentId}")).hasRole("ADMIN") // DELETE 메서드에 대한 접근 제한
                         .requestMatchers("/myBalance").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/v1/notices/register").hasRole("ADMIN")
+                        .requestMatchers("/v1/comment/register").hasRole("ADMIN")
                         .requestMatchers("/v1/user/**", "/v1/file/**", "/v1/notices/{noticeId}","/v1/comment/**").permitAll())
                 .formLogin(Customizer.withDefaults())
                 .httpBasic(Customizer.withDefaults());

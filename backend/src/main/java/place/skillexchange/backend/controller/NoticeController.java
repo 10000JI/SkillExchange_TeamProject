@@ -2,6 +2,8 @@ package place.skillexchange.backend.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -27,8 +29,8 @@ public class NoticeController {
      * 공지사항 등록
      */
     @PostMapping("/register")
-    public NoticeDto.RegisterResponse register(@Validated @RequestPart("noticeDto") NoticeDto.RegisterRequest dto, @RequestPart(value = "imgFiles", required = false) List<MultipartFile> multipartFiles) throws IOException {
-        return noticeService.register(dto, multipartFiles);
+    public ResponseEntity<NoticeDto.RegisterResponse> register(@Validated @RequestPart("noticeDto") NoticeDto.RegisterRequest dto, @RequestPart(value = "imgFiles", required = false) List<MultipartFile> multipartFiles) throws IOException {
+        return ResponseEntity.status(HttpStatus.CREATED).body(noticeService.register(dto, multipartFiles));
     }
 
     /**

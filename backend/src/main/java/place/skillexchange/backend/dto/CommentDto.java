@@ -29,6 +29,8 @@ public class CommentDto {
             this.userId = userId;
         }
 
+        //DeleteStatus(삭제된 상태)가 Y(맞다면)라면 new ViewResponse(comment.getId(), "삭제된 댓글입니다.", null)
+        //아니라면(N이라면) new ViewResponse(comment.getId(), comment.getContent(), comment.getWriter().getId())
         public static ViewResponse entityToDto(Comment comment) {
             return comment.getIsDeleted() == DeleteStatus.Y ?
                     new ViewResponse(comment.getId(), "삭제된 댓글입니다.", null) :
@@ -83,5 +85,15 @@ public class CommentDto {
             this.returnCode = returnCode;
             this.returnMessage = returnMessage;
         }
+    }
+
+    /**
+     * 응답코드, 응답메세지
+     */
+    @Getter
+    @AllArgsConstructor
+    public static class ResponseBasic {
+        private int returnCode;
+        private String returnMessage;
     }
 }
