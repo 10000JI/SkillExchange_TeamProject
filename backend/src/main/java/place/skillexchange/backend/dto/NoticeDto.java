@@ -71,7 +71,7 @@ public class NoticeDto {
 //            this.imgUrl = new ArrayList<>();
 
 
-            if (!files.isEmpty()) {
+            if (!files.isEmpty() && files != null) {
                 for (File file : files) {
                     this.oriName.add(file.getOriName());
                     this.imgUrl.add(file.getFileUrl());
@@ -92,6 +92,7 @@ public class NoticeDto {
     public static class ReadResponse {
         private Long id;
         private String writer;
+        private String avatar;
         private String title;
         private String content;
         private LocalDateTime regDate;
@@ -99,15 +100,22 @@ public class NoticeDto {
         private List<String> imgUrl = new ArrayList<>();
         private int returnCode;
         private String returnMessage;
+        private Integer hit;
 
         /* Entity -> Dto */
         public ReadResponse(Notice notice, int returnCode, String returnMessage) {
             this.writer = notice.getWriter().getId();
+            if (notice.getWriter() != null && notice.getWriter().getFile() != null) {
+                this.avatar = notice.getWriter().getFile().getFileUrl();
+            } else {
+                this.avatar = null;
+            }
             this.id = notice.getId();
             this.title = notice.getTitle();
             this.content = notice.getContent();
             this.regDate = notice.getRegDate();
             this.modDate = notice.getModDate();
+            this.hit = notice.getHit();
 
 //            // oriName 및 imgUrl 리스트 초기화
 //            this.oriName = new ArrayList<>();
@@ -140,6 +148,7 @@ public class NoticeDto {
         private List<String> imgUrl = new ArrayList<>();
         private int returnCode;
         private String returnMessage;
+        private Integer hit;
 
         /* Entity -> Dto */
         public UpdateResponse(User user, List<File> files , Notice notice, int returnCode, String returnMessage) {
@@ -149,6 +158,7 @@ public class NoticeDto {
             this.content = notice.getContent();
             this.regDate = notice.getRegDate();
             this.modDate = notice.getModDate();
+            this.hit = notice.getHit();
 
 //            // oriName 및 imgUrl 리스트 초기화
 //            this.oriName = new ArrayList<>();
@@ -178,5 +188,26 @@ public class NoticeDto {
     public static class ResponseBasic {
         private int returnCode;
         private String returnMessage;
+    }
+
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class ListResponse {
+        private Long id;
+        private String writer;
+        private String title;
+        private Integer hit;
+        private LocalDateTime regDate;
+
+        public ListResponse(Notice notice) {
+            this.id = notice.getId();
+            this.writer = notice.getWriter().getId();
+            this.title = notice.getTitle();
+            this.hit = notice.getHit();
+            this.regDate = notice.getRegDate();
+        }
     }
 }

@@ -27,6 +27,7 @@ import place.skillexchange.backend.repository.UserRepository;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.stream.Collectors;
 
 
@@ -60,6 +61,13 @@ public class AuthFilterService extends OncePerRequestFilter {
         //Authorization 이름을 가진 헤더의 값을 꺼내옴
         final String authHeader = request.getHeader("Authorization");
         String jwt;
+
+        Enumeration<String> parameterNames = request.getParameterNames();
+        while (parameterNames.hasMoreElements()) {
+            String paramName = parameterNames.nextElement();
+            String paramValue = request.getParameter(paramName);
+            log.info("Parameter Name: {}, Value: {}", paramName, paramValue);
+        }
 
         //authHeader가 null이고, Bearer로 시작하지 않다면 체인 내의 다음 필터를 호출
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {

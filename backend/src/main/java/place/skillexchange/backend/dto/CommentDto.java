@@ -21,20 +21,25 @@ public class CommentDto {
         private Long id;
         private String content;
         private String userId;
+        private String imgUrl;
+        private LocalDateTime regDate;
         private List<ViewResponse> children = new ArrayList<>();
 
-        public ViewResponse(Long id, String content, String userId) {
+        public ViewResponse(Long id, String content, String userId, String imgUrl, LocalDateTime regDate) {
             this.id = id;
             this.content = content;
             this.userId = userId;
+            this.imgUrl = imgUrl;
+            this.regDate = regDate;
         }
 
         //DeleteStatus(삭제된 상태)가 Y(맞다면)라면 new ViewResponse(comment.getId(), "삭제된 댓글입니다.", null)
         //아니라면(N이라면) new ViewResponse(comment.getId(), comment.getContent(), comment.getWriter().getId())
         public static ViewResponse entityToDto(Comment comment) {
+            String imgUrl = comment.getWriter() != null && comment.getWriter().getFile() != null ? comment.getWriter().getFile().getFileUrl() : null;
             return comment.getIsDeleted() == DeleteStatus.Y ?
-                    new ViewResponse(comment.getId(), "삭제된 댓글입니다.", null) :
-                    new ViewResponse(comment.getId(), comment.getContent(), comment.getWriter().getId());
+                    new ViewResponse(comment.getId(), "삭제된 댓글입니다.", null, imgUrl, comment.getRegDate()) :
+                    new ViewResponse(comment.getId(), comment.getContent(), comment.getWriter().getId(), imgUrl, comment.getRegDate());
         }
     }
 

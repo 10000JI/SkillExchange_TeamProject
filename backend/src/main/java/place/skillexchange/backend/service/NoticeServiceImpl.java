@@ -1,6 +1,10 @@
 package place.skillexchange.backend.service;
 
+import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -8,10 +12,12 @@ import org.springframework.web.multipart.MultipartFile;
 import place.skillexchange.backend.dto.NoticeDto;
 import place.skillexchange.backend.entity.File;
 import place.skillexchange.backend.entity.Notice;
+import place.skillexchange.backend.entity.QNotice;
 import place.skillexchange.backend.entity.User;
 import place.skillexchange.backend.exception.NoticeNotFoundException;
 import place.skillexchange.backend.exception.UserNotFoundException;
 import place.skillexchange.backend.repository.NoticeRepository;
+import place.skillexchange.backend.repository.NoticeRepositoryImpl;
 import place.skillexchange.backend.repository.UserRepository;
 import place.skillexchange.backend.util.SecurityUtil;
 
@@ -26,6 +32,7 @@ public class NoticeServiceImpl implements NoticeService{
 
     private final SecurityUtil securityUtil;
     private final NoticeRepository noticeRepository;
+    private final NoticeRepositoryImpl noticeRepositoryImpl;
     private final UserRepository userRepository;
     private final FileServiceImpl fileService;
 
@@ -40,6 +47,7 @@ public class NoticeServiceImpl implements NoticeService{
         Notice notice = noticeRepository.save(dto.toEntity(user));
 
         List<File> files = null;
+        System.out.println("MultiPartFiles"+multipartFiles);
         if (multipartFiles != null) {
             files = fileService.registerNoticeImg(multipartFiles,notice);
         }
@@ -48,8 +56,10 @@ public class NoticeServiceImpl implements NoticeService{
     }
 
     @Override
+    @Transactional
     public NoticeDto.ReadResponse read(Long noticeId) {
         Notice notice = noticeRepository.findById(noticeId).orElseThrow(() -> new NoticeNotFoundException("존재하지 않는 게시물 번호입니다: " + noticeId));
+        notice.updateHit();
         return new NoticeDto.ReadResponse(notice,200, "조회하는데 성공하였습니다.");
     }
 
@@ -80,5 +90,11 @@ public class NoticeServiceImpl implements NoticeService{
         } else {
             throw new NoticeNotFoundException("존재하지 않는 게시물 번호입니다: " + noticeId);
         }
+    }
+
+    @Override
+    public Page<NoticeDto.ListResponse> getNotices(int limit, int skip, String keyword) {
+        Pageable pageable = PageRequest.of(skip, limit);
+        return noticeRepositoryImpl.findNoticesWithPagingAndKeyword(keyword, pageable);
     }
 }

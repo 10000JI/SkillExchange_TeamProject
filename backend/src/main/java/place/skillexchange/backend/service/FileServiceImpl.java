@@ -63,34 +63,14 @@ public class FileServiceImpl implements FileService{
     @Override
     public List<File> registerNoticeImg(List<MultipartFile> multipartFiles, Notice notice) throws IOException {
         List<File> images = new ArrayList<>();
-        for (MultipartFile multipartFile : multipartFiles) {
-            if (!multipartFile.isEmpty()) {
-                UploadFile image = s3Uploader.upload(multipartFile, "images");
-                /**
-                 * 게시물 수정 시 고혀
-                 */
-//                // 해당 공지에 이미 존재하는 파일 확인
-//                Optional<File> existingFileOptional = fileRepository.findByNoticeAndOriName(notice, image.getUploadFileName());
-
-//                if (existingFileOptional.isPresent()) {
-//                    // 이미 존재하는 파일이면 업데이트
-//                    File existingFile = existingFileOptional.get();
-//                    existingFile.changeProfileImg(image);
-//                    images.add(existingFile);
-//                } else {
-//                    // 새로운 파일 생성
+        if (multipartFiles != null) {
+            for (MultipartFile multipartFile : multipartFiles) {
+                if (!multipartFile.isEmpty()) {
+                    UploadFile image = s3Uploader.upload(multipartFile, "images");
+                    // 새로운 파일 생성
                     File newFile = fileRepository.save(new FileDto.NoticeDto().toEntity(image, notice));
                     images.add(newFile);
-//                }
-//            } else {
-                /**
-                 * 게시물 삭제 시 고려
-                 */
-////                // 이미지 파일이 전달되지 않은 경우 해당 파일 정보를 삭제
-////                File fileToRemove = notice.getFiles().stream().findFirst().orElse(null);
-////                if (fileToRemove != null) {
-////                    fileRepository.delete(fileToRemove);
-////                }
+                }
             }
         }
         return images;

@@ -1,6 +1,7 @@
 package place.skillexchange.backend.auth.services;
 
 
+import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -24,8 +25,13 @@ import place.skillexchange.backend.entity.RefreshToken;
 import place.skillexchange.backend.entity.User;
 import place.skillexchange.backend.exception.UserUnAuthorizedException;
 import place.skillexchange.backend.repository.UserRepository;
+import place.skillexchange.backend.service.MailService;
 
+import java.io.IOException;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Timer;
+import java.util.TimerTask;
 
 @Service
 @RequiredArgsConstructor
@@ -36,6 +42,7 @@ public class AuthServiceImpl implements AuthService{
     private final JwtService jwtService;
     private final RefreshTokenService refreshTokenService;
     private final AuthenticationManager authenticationManager;
+    private final MailService mailService;
     private final UserDetailsService userDetailsService;
 
     /* 회원가입 ~ 로그인 까지 (JWT 생성) */
@@ -44,7 +51,7 @@ public class AuthServiceImpl implements AuthService{
      * 회원가입
      */
     @Override
-    public User register(UserDto.SignUpRequest dto, BindingResult bindingResult) throws MethodArgumentNotValidException {
+    public UserDto.SignUpInResponse register(UserDto.SignUpRequest dto, BindingResult bindingResult) throws MethodArgumentNotValidException, MessagingException, IOException {
 
         boolean isValid = validateDuplicateMember(dto, bindingResult);
         if (isValid) {
@@ -52,8 +59,29 @@ public class AuthServiceImpl implements AuthService{
         }
 
         dto.setPassword(passwordEncoder.encode(dto.getPassword()));
+
         //user 저장
-        return userRepository.save(dto.toEntity());
+        User user = userRepository.save(dto.toEntity());
+
+        //5분 뒤 회원의 active가 0이라면 db에서 회원 정보 삭제 (active 토큰 만료일에 맞춰서)
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                // 5분 후에 실행될 작업
+                System.out.println("1시간 후에 한 번 실행됩니다.");
+                if (userRepository.findByIdAndActiveIsTrue(user.getId()) == null) {
+                    userRepository.delete(user);
+                }
+                timer.cancel(); // 작업 완료 후 타이머 종료
+            }
+        }, 5 * 60 * 1000); // 5분 후 = 1시간 후에 작업 실행
+
+        String activeToken = jwtService.generateActiveToken(user);
+        //active Token (계정 활성화 토큰) 발급
+        mailService.getEmail(dto.getEmail(), dto.getId(), activeToken);
+
+        return new UserDto.SignUpInResponse(user, 201, "이메일(" + dto.getEmail() + ")을 확인하여 회원 활성화를 완료해주세요.");
     }
 
 
@@ -105,12 +133,34 @@ public class AuthServiceImpl implements AuthService{
     }
 
     /**
+     * activeToken 발급
+     */
+    @Override
+    @Transactional
+    public UserDto.ResponseBasic activation(Map<String, String> requestBody) {
+        String activeToken = requestBody.get("activeToken");
+        String id = jwtService.extractUsername(activeToken);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(id);
+        // 여기서 activeToken을 검증하고 처리하는 로직을 추가
+        //isTokenValid가 false일때 토큰 만료 exception이 출려되어야 함 !!!
+        if (!jwtService.isActiveTokenValid(activeToken, userDetails)) {
+            // 토큰이 유효하지 않은 경우 예외를 발생시킴
+            throw new UserUnAuthorizedException("토큰이 만료되었습니다");
+        }
+
+        // active 0->1 로 변경 (active가 1이여야 로그인 가능)
+        updateUserActiveStatus(id);
+
+        return new UserDto.ResponseBasic(200, "계정이 활성화 되었습니다.");
+    }
+
+    /**
      * active 컬럼 0->1 변경
      */
     @Transactional
     @Override
     public void updateUserActiveStatus(String id) {
-        User user = userRepository.findById(id).orElseThrow();
+        User user = userRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("해당 유저를 찾지 못했습니다 : " + id));
         user.changeActive(true);
         //userRepository.save(user);
     }
@@ -165,24 +215,6 @@ public class AuthServiceImpl implements AuthService{
                 .headers(headers)
                 .body(new UserDto.SignUpInResponse(user, 200, "로그인 성공!"));
     }
-
-//    /**
-//     * 헤더의 엑세스 토큰 jwt 검증
-//     */
-//    @Override
-//    public String authenticateUser(String jwt) {
-//        // jwt의 사용자 이름 추출
-//        String id = jwtService.extractUsername(jwt);
-//
-//        //UserDetailsService에서 loadUserByUsername 메서드로 사용자 세부 정보 검색
-//        UserDetails userDetails = userDetailsService.loadUserByUsername(id);
-//        if (jwtService.isAccessTokenValid(jwt, userDetails)) {
-//            return id;
-//        }
-//        // 처리되지 않은 경우 예외를 던진다.
-////        throw new UserUnAuthorizedException("사용자 인증에 실패하였습니다.");
-//        return null;
-//    }
 
     @Override
     public UserDto.ResponseBasic withdraw(HttpServletRequest request, HttpServletResponse response) {

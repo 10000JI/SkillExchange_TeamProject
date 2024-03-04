@@ -37,7 +37,7 @@ public class Notice extends BaseEntity{
 
     @Column(name = "board_hit")
     @ColumnDefault("0")
-    private boolean hit;
+    private Integer hit;
 
     /**
      * 이미지와 양방향 매핑
@@ -53,5 +53,11 @@ public class Notice extends BaseEntity{
         this.content = dto.getContent();
     }
 
+    /**
+     * 조회수 +1
+     */
+    public void updateHit() {
+        this.hit++; // 조회수 증가
+    }
 
 }

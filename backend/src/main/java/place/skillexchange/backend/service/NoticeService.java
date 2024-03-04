@@ -1,5 +1,6 @@
 package place.skillexchange.backend.service;
 
+import org.springframework.data.domain.Page;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
 import place.skillexchange.backend.dto.NoticeDto;
@@ -16,4 +17,7 @@ public interface NoticeService {
     public NoticeDto.UpdateResponse update(NoticeDto.RegisterRequest dto, List<MultipartFile> multipartFile, Long noticeId) throws IOException;
 
     public NoticeDto.ResponseBasic delete(Long noticeId);
+
+    public Page<NoticeDto.ListResponse> getNotices(int limit, int skip, String keyword);
+
 }

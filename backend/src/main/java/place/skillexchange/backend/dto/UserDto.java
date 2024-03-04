@@ -60,6 +60,7 @@ public class UserDto {
      * 로그인 성공시 요청된 Dto
      */
     @Getter
+    @AllArgsConstructor
     public static class SignInRequest {
         private String id;
         private String password;

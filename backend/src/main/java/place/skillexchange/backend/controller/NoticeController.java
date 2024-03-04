@@ -1,17 +1,14 @@
 package place.skillexchange.backend.controller;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import place.skillexchange.backend.dto.NoticeDto;
-import place.skillexchange.backend.entity.Notice;
+import place.skillexchange.backend.service.NoticeService;
 import place.skillexchange.backend.service.NoticeServiceImpl;
 
 import java.io.IOException;
@@ -23,13 +20,13 @@ import java.util.List;
 @RequestMapping("/v1/notices/")
 public class NoticeController {
 
-    private final NoticeServiceImpl noticeService;
+    private final NoticeService noticeService;
 
     /**
      * 공지사항 등록
      */
     @PostMapping("/register")
-    public ResponseEntity<NoticeDto.RegisterResponse> register(@Validated @RequestPart("noticeDto") NoticeDto.RegisterRequest dto, @RequestPart(value = "imgFiles", required = false) List<MultipartFile> multipartFiles) throws IOException {
+    public ResponseEntity<NoticeDto.RegisterResponse> register(@Validated @RequestPart("noticeDto") NoticeDto.RegisterRequest dto, @RequestPart(value = "files", required = false) List<MultipartFile> multipartFiles) throws IOException {
         return ResponseEntity.status(HttpStatus.CREATED).body(noticeService.register(dto, multipartFiles));
     }
 
@@ -45,7 +42,7 @@ public class NoticeController {
      * 공지사항 수정
      */
     @PatchMapping("/{noticeId}")
-    public NoticeDto.UpdateResponse update(@Validated @RequestPart("noticeDto") NoticeDto.RegisterRequest dto, @RequestPart(value = "imgFiles", required = false) List<MultipartFile> multipartFiles, @PathVariable Long noticeId) throws IOException {
+    public NoticeDto.UpdateResponse update(@Validated @RequestPart("noticeDto") NoticeDto.RegisterRequest dto, @RequestPart(value = "files", required = false) List<MultipartFile> multipartFiles, @PathVariable Long noticeId) throws IOException {
         return noticeService.update(dto, multipartFiles, noticeId);
     }
 
@@ -60,4 +57,14 @@ public class NoticeController {
     /**
      * 공지사랑 목록
      */
+    @GetMapping("/list")
+    public ResponseEntity<Page<NoticeDto.ListResponse>> getNotices(
+            @RequestParam(defaultValue = "10") int limit,
+            @RequestParam(defaultValue = "0") int skip,
+            @RequestParam(required = false) String keyword) {
+
+        Page<NoticeDto.ListResponse> notices = noticeService.getNotices(limit, skip, keyword);
+
+        return ResponseEntity.ok(notices);
+    }
 }
