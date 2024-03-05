@@ -105,6 +105,7 @@ public class FileServiceImpl implements FileService{
                     updatedImages.add(newFile);
                 }
             }
+            notice.updateModDate();
         }
 
         return updatedImages;

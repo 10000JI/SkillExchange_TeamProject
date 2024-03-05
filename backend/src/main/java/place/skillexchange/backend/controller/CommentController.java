@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import place.skillexchange.backend.dto.CommentDto;
-import place.skillexchange.backend.service.CommentService;
+import place.skillexchange.backend.service.CommentServiceImpl;
 
 import java.util.List;
 
@@ -15,14 +15,14 @@ import java.util.List;
 @RequestMapping("/v1/comment/")
 public class CommentController {
 
-    private final CommentService commentService;
+    private final CommentServiceImpl commentServiceImpl;
 
     /**
      * 공지사항 게시물 번호의 댓글 조회
      */
     @GetMapping(value = "/{noticeId}")
     public List<CommentDto.ViewResponse> findAllCommentsByNoticeId(@PathVariable("noticeId") Long noticeId) {
-        return commentService.findCommentsByNoticeId(noticeId);
+        return commentServiceImpl.findCommentsByNoticeId(noticeId);
     }
 
     /**
@@ -30,7 +30,7 @@ public class CommentController {
      */
     @PostMapping(value="/register")
     public ResponseEntity<CommentDto.RegisterResponse> createComment(@Validated @RequestBody CommentDto.RegisterRequest dto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(commentService.createComment(dto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(commentServiceImpl.createComment(dto));
     }
 
     /**
@@ -38,6 +38,6 @@ public class CommentController {
      */
     @DeleteMapping(value = "/{commentId}")
     public CommentDto.ResponseBasic deleteComment(@PathVariable("commentId") Long commentId) {
-        return commentService.deleteComment(commentId);
+        return commentServiceImpl.deleteComment(commentId);
     }
 }

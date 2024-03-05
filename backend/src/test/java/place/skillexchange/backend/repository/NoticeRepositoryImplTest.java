@@ -24,14 +24,15 @@ class NoticeRepositoryImplTest {
     @Test
     @DisplayName("공지사항 더미 데이터")
     public void insetDummies() {
-        Optional<User> userOptional = userRepository.findById("alswl3359");
+        Optional<User> userOptional = userRepository.findById("admin");
 
         userOptional.ifPresent(user -> {
             IntStream.rangeClosed(1, 10).forEach(i -> {
                 Notice notice = Notice.builder()
-                        .title("공지테스트 ..." + i)
-                        .content("내용테스트..." + i)
+                        .title("공지사항입니다 ..." + i)
+                        .content("내용입니다 ..." + i)
                         .writer(user)
+                        .hit(0L)
                         .build();
                 noticeRepository.save(notice);
             });

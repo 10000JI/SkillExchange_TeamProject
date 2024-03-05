@@ -37,7 +37,7 @@ public class Notice extends BaseEntity{
 
     @Column(name = "board_hit")
     @ColumnDefault("0")
-    private Integer hit;
+    private Long hit;
 
     /**
      * 이미지와 양방향 매핑

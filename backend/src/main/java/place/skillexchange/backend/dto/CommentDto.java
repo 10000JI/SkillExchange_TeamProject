@@ -13,10 +13,10 @@ import java.util.List;
 
 public class CommentDto {
     //implements Serializable
+    @Getter
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
-    @Builder
     public static class ViewResponse {
         private Long id;
         private String content;

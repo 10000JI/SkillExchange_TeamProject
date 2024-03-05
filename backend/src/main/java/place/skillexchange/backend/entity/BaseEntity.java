@@ -20,4 +20,12 @@ abstract class BaseEntity {
     @LastModifiedDate
     @Column(name = "moddate")
     private LocalDateTime modDate;
+
+    /**
+     * 이미지 업데이트 시 사용
+     */
+    public void updateModDate() {
+        this.modDate = LocalDateTime.now(); // 현재 시간으로 modDate 업데이트
+    }
+
 }

@@ -114,34 +114,6 @@ public class UserDto {
         private String mySubject;
     }
 
-//    /**
-//     * 프로필 수정 시 응답 Dto
-//     */
-//    @Getter
-//    public static class ProfileResponse {
-//        private String id;
-//        private String email;
-//        private String gender;
-//        private String job;
-//        private String careerSkills;
-//        private String preferredSubject;
-//        private String mySubject;
-//        private int returnCode;
-//        private String returnMessage;
-//
-//        /* Entity -> Dto */
-//        public ProfileResponse(User user, int returnCode, String returnMessage) {
-//            this.id = user.getId();
-//            this.email = user.getEmail();
-//            this.gender = user.getGender();
-//            this.job = user.getJob();
-//            this.careerSkills = user.getCareerSkills();
-//            this.preferredSubject = user.getPreferredSubject();
-//            this.mySubject = user.getMySubject();
-//            this.returnCode = returnCode;
-//            this.returnMessage = returnMessage;
-//        }
-//    }
     /**
      * 프로필 수정 시 응답 Dto
      */

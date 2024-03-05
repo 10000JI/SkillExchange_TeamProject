@@ -20,7 +20,7 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
-public class CommentService {
+public class CommentServiceImpl implements CommentSerivce {
     private final NoticeRepository noticeRepository;
     private final CommentRepository commentRepository;
     private final SecurityUtil securityUtil;
@@ -29,6 +29,7 @@ public class CommentService {
     /**
      * 공지사항 게시물 번호의 댓글 조회
      */
+    @Override
     public List<CommentDto.ViewResponse> findCommentsByNoticeId(Long noticeId) {
         noticeRepository.findById(noticeId).orElseThrow(() -> new NoticeNotFoundException("존재하지 않는 게시물 번호입니다: " + noticeId));
         //댓글 조회 메서드 `convertNestedStructure`
@@ -57,6 +58,7 @@ public class CommentService {
     /**
      * 댓글 등록
      */
+    @Override
     public CommentDto.RegisterResponse createComment(CommentDto.RegisterRequest dto) {
         //로그인한 user 객체 가져옴
         String id = securityUtil.getCurrentMemberUsername();
@@ -78,6 +80,7 @@ public class CommentService {
         return new CommentDto.RegisterResponse(saveComment,201,"댓글이 성공적으로 등록되었습니다.");
     }
 
+    @Override
     @Transactional
     public CommentDto.ResponseBasic deleteComment(Long commentId) {
         Comment comment = commentRepository.findCommentByIdWithParent(commentId)

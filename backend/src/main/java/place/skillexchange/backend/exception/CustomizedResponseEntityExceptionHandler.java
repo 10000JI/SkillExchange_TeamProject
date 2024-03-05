@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.util.ArrayList;
@@ -101,6 +102,24 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
     public final ResponseEntity<Object> handlerUserNotException(NoticeNotFoundException ex, WebRequest request) {
         ExceptionResponse.OneDetail exceptionResponse = new ExceptionResponse.OneDetail(new Date(), ex.getMessage(), request.getDescription(false));
         return new ResponseEntity(exceptionResponse, HttpStatus.NOT_FOUND);
+    }
+
+/*    *//**
+     * 이미지 크기 초과 예외
+     *//*
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public final ResponseEntity<Object> handleMaxUploadSizeExceededException(MaxUploadSizeExceededException ex, WebRequest request) {
+        ExceptionResponse.OneDetail exceptionResponse = new ExceptionResponse.OneDetail(new Date(), "이미지 크기가 너무 큽니다.", request.getDescription(false));
+        return new ResponseEntity(exceptionResponse, HttpStatus.BAD_REQUEST);
+    }*/
+
+    /**
+     * 계층형 카테고리 구조 생성시 오류
+     */
+    @ExceptionHandler(CannotConvertNestedStructureException.class) //타 Controller 실행 중 UserNotFoundException 에러 발생 시 (=사용자 정보가 존재하지 않았을 때) handlerUserNotException()가 작업 우회
+    public final ResponseEntity<Object> cannotConvertNestedStructureException(CannotConvertNestedStructureException ex, WebRequest request) {
+        ExceptionResponse.OneDetail exceptionResponse = new ExceptionResponse.OneDetail(new Date(), ex.getMessage(), request.getDescription(false));
+        return new ResponseEntity(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 }
