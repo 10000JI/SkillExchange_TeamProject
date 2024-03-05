@@ -47,7 +47,7 @@ public class NoticeServiceImpl implements NoticeService{
         Notice notice = noticeRepository.save(dto.toEntity(user));
 
         List<File> files = null;
-        System.out.println("MultiPartFiles"+multipartFiles);
+        System.out.println("MultiPartFiles:  "+multipartFiles);
         if (multipartFiles != null) {
             files = fileService.registerNoticeImg(multipartFiles,notice);
         }
@@ -56,12 +56,13 @@ public class NoticeServiceImpl implements NoticeService{
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public NoticeDto.ReadResponse read(Long noticeId) {
+        noticeRepository.updateHit(noticeId);
         Notice notice = noticeRepository.findById(noticeId).orElseThrow(() -> new NoticeNotFoundException("존재하지 않는 게시물 번호입니다: " + noticeId));
-        notice.updateHit();
-        return new NoticeDto.ReadResponse(notice,200, "조회하는데 성공하였습니다.");
+        return new NoticeDto.ReadResponse(notice, 200, "조회하는데 성공하였습니다.");
     }
+
 
     @Override
     @Transactional
@@ -75,6 +76,7 @@ public class NoticeServiceImpl implements NoticeService{
         notice.changeNotice(dto);
 
         List<File> files = fileService.updateNoticeImg(multipartFiles, notice);
+
 
         return new NoticeDto.UpdateResponse(user, files , notice,200,"공지가 수정되었습니다.");
     }
