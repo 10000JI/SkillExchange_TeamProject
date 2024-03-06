@@ -77,7 +77,7 @@ public class NoticeServiceImpl implements NoticeService{
      */
     @Override
     @Transactional
-    public NoticeDto.UpdateResponse update(NoticeDto.RegisterRequest dto, List<MultipartFile> multipartFiles, Long noticeId) throws IOException {
+    public NoticeDto.UpdateResponse update(NoticeDto.UpdateRequest dto, List<MultipartFile> multipartFiles, Long noticeId) throws IOException {
         String id = securityUtil.getCurrentMemberUsername();
         User user = userRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("해당 유저를 찾지 못했습니다 : " + id));
         if (!Objects.equals(id, dto.getWriter())) {
@@ -86,8 +86,7 @@ public class NoticeServiceImpl implements NoticeService{
         Notice notice = noticeRepository.findById(noticeId).orElseThrow(() -> new NoticeNotFoundException("존재하지 않는 게시물 번호입니다: " + noticeId));
         notice.changeNotice(dto);
 
-        List<File> files = fileService.updateNoticeImg(multipartFiles, notice);
-
+        List<File> files = fileService.updateNoticeImg(dto.getImgUrl(), multipartFiles, notice);
 
         return new NoticeDto.UpdateResponse(user, files , notice,200,"공지가 수정되었습니다.");
     }

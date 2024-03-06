@@ -22,7 +22,7 @@ abstract class BaseEntity {
     private LocalDateTime modDate;
 
     /**
-     * 이미지 업데이트 시 사용
+     * 이미지 업데이트 시 사용 (각기 다른 테이블이라 어노테이션 적용 안됨)
      */
     public void updateModDate() {
         this.modDate = LocalDateTime.now(); // 현재 시간으로 modDate 업데이트

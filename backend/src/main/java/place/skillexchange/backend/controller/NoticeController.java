@@ -43,7 +43,7 @@ public class NoticeController {
      * 공지사항 수정
      */
     @PatchMapping("/{noticeId}")
-    public NoticeDto.UpdateResponse update(@Validated @RequestPart("noticeDto") NoticeDto.RegisterRequest dto, @RequestPart(value = "files", required = false) List<MultipartFile> multipartFiles, @PathVariable Long noticeId) throws IOException {
+    public NoticeDto.UpdateResponse update(@Validated @RequestPart("noticeDto") NoticeDto.UpdateRequest dto, @RequestPart(value = "files", required = false) List<MultipartFile> multipartFiles, @PathVariable Long noticeId) throws IOException {
         return noticeService.update(dto, multipartFiles, noticeId);
     }
 

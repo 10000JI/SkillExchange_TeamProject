@@ -48,7 +48,7 @@ public class Notice extends BaseEntity{
     /**
      * 공지사항 제목,내용 수정
      */
-    public void changeNotice(NoticeDto.RegisterRequest dto) {
+    public void changeNotice(NoticeDto.UpdateRequest dto) {
         this.title = dto.getTitle();
         this.content = dto.getContent();
     }

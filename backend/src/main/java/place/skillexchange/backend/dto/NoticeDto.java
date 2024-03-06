@@ -127,6 +127,28 @@ public class NoticeDto {
     }
 
     /**
+     * 게시물 수정 시 요청된 Dto
+     */
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class UpdateRequest {
+
+        @NotBlank(message = "작성자: 필수 정보입니다.")
+        private String writer;
+
+        @NotBlank(message = "제목: 필수 정보입니다.")
+        private String title;
+
+        @NotBlank(message = "내용: 필수 정보입니다.")
+        private String content;
+
+        private List<String> imgUrl = new ArrayList<>();
+
+    }
+
+    /**
      * 게시물 수정 성공시 보낼 Dto
      */
     @Getter

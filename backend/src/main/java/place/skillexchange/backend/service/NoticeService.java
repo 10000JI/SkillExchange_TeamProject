@@ -15,7 +15,7 @@ public interface NoticeService {
 
     public NoticeDto.ReadResponse read(Long noticeId);
 
-    public NoticeDto.UpdateResponse update(NoticeDto.RegisterRequest dto, List<MultipartFile> multipartFile, Long noticeId) throws IOException;
+    public NoticeDto.UpdateResponse update(NoticeDto.UpdateRequest dto, List<MultipartFile> multipartFile, Long noticeId) throws IOException;
 
 
     public NoticeDto.ResponseBasic delete(Long noticeId) throws MalformedURLException;
