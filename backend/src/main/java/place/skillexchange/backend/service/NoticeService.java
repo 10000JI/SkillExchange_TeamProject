@@ -6,6 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 import place.skillexchange.backend.dto.NoticeDto;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.List;
 
 public interface NoticeService {
@@ -17,7 +18,7 @@ public interface NoticeService {
     public NoticeDto.UpdateResponse update(NoticeDto.RegisterRequest dto, List<MultipartFile> multipartFile, Long noticeId) throws IOException;
 
 
-    public NoticeDto.ResponseBasic delete(Long noticeId);
+    public NoticeDto.ResponseBasic delete(Long noticeId) throws MalformedURLException;
 
     public Page<NoticeDto.ListResponse> getNotices(int limit, int skip, String keyword);
 

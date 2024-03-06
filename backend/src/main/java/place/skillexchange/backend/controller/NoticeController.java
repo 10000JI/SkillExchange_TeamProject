@@ -12,6 +12,7 @@ import place.skillexchange.backend.service.NoticeService;
 import place.skillexchange.backend.service.NoticeServiceImpl;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.security.Principal;
 import java.util.List;
 
@@ -50,7 +51,7 @@ public class NoticeController {
      * 공지사항 삭제
      */
     @DeleteMapping("/{noticeId}")
-    public NoticeDto.ResponseBasic delete(@PathVariable Long noticeId) {
+    public NoticeDto.ResponseBasic delete(@PathVariable Long noticeId) throws MalformedURLException {
         return noticeService.delete(noticeId);
     }
 

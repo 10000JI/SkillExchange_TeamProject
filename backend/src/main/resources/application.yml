@@ -10,6 +10,11 @@ spring:
   profiles:
       include: aws
 
+  servlet:
+    multipart:
+      max-file-size : 1MB
+      max-request-size : 10MB
+
 #  sql:
 #    init:
 #      mode: always

@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
+import java.util.UUID;
 
 @Slf4j
 @RequiredArgsConstructor    // final 멤버변수가 있으면 생성자 항목에 포함시킴
@@ -29,18 +30,24 @@ public class S3Uploader {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    // MultipartFile을 전달받아 File로 전환한 후 S3에 업로드
+    /**
+     * MultipartFile을 전달받아 File로 전환한 후 S3에 업로드
+     */
     public UploadFile upload(MultipartFile multipartFile, String dirName) throws IOException {
         File uploadFile = convert(multipartFile)
                 .orElseThrow(() -> new IllegalArgumentException("MultipartFile -> File 전환 실패"));
-        String uploadUrl = upload(uploadFile, dirName);
-        String originalFilename = multipartFile.getOriginalFilename(); //image.png
 
+        String originalFilename = multipartFile.getOriginalFilename(); //image.png
+        int index = originalFilename.lastIndexOf(".");
+        String ext = originalFilename.substring(index + 1);
+        String storeFileName = UUID.randomUUID() + "." + ext;
+
+        String uploadUrl = upload(uploadFile, dirName, storeFileName);
         return new UploadFile(originalFilename,uploadUrl);
     }
 
-    private String upload(File uploadFile, String dirName) {
-        String fileName = dirName + "/" + uploadFile.getName();
+    private String upload(File uploadFile, String dirName, String storeFileName) {
+        String fileName = dirName + "/" + storeFileName;
         String uploadImageUrl = putS3(uploadFile, fileName);
 
         removeNewFile(uploadFile);  // 로컬에 생성된 File 삭제 (MultipartFile -> File 전환 하며 로컬에 파일 생성됨)
@@ -75,4 +82,10 @@ public class S3Uploader {
         return Optional.empty();
     }
 
+    /**
+     * S3 파일 삭제
+     */
+    public void delete(String fileKey) {
+        amazonS3.deleteObject(bucket, fileKey);
+    }
 }

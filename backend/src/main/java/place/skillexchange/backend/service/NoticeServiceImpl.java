@@ -16,12 +16,14 @@ import place.skillexchange.backend.entity.QNotice;
 import place.skillexchange.backend.entity.User;
 import place.skillexchange.backend.exception.NoticeNotFoundException;
 import place.skillexchange.backend.exception.UserNotFoundException;
+import place.skillexchange.backend.repository.FileRepository;
 import place.skillexchange.backend.repository.NoticeRepository;
 import place.skillexchange.backend.repository.NoticeRepositoryImpl;
 import place.skillexchange.backend.repository.UserRepository;
 import place.skillexchange.backend.util.SecurityUtil;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -36,6 +38,9 @@ public class NoticeServiceImpl implements NoticeService{
     private final UserRepository userRepository;
     private final FileServiceImpl fileService;
 
+    /**
+     * 공지사항 등록
+     */
     @Override
     @Transactional
     public NoticeDto.RegisterResponse register(NoticeDto.RegisterRequest dto, List<MultipartFile> multipartFiles) throws IOException {
@@ -55,6 +60,9 @@ public class NoticeServiceImpl implements NoticeService{
         return new NoticeDto.RegisterResponse(user, files , notice,201,"공지가 등록되었습니다.");
     }
 
+    /**
+     * 공지사항 조회
+     */
     @Override
     @Transactional(readOnly = true)
     public NoticeDto.ReadResponse read(Long noticeId) {
@@ -64,6 +72,9 @@ public class NoticeServiceImpl implements NoticeService{
     }
 
 
+    /**
+     * 공지사항 업데이트
+     */
     @Override
     @Transactional
     public NoticeDto.UpdateResponse update(NoticeDto.RegisterRequest dto, List<MultipartFile> multipartFiles, Long noticeId) throws IOException {
@@ -81,19 +92,26 @@ public class NoticeServiceImpl implements NoticeService{
         return new NoticeDto.UpdateResponse(user, files , notice,200,"공지가 수정되었습니다.");
     }
 
+    /**
+     * 공지사항 삭제
+     */
     @Override
     @Transactional
     //Notice와 File은 양방향 매핑으로 Notice가 삭제되면 File도 삭제되도록 Cascade 설정을 했기 때문에 @Transactional이 필요
-    public NoticeDto.ResponseBasic delete(Long noticeId) {
+    public NoticeDto.ResponseBasic delete(Long noticeId) throws MalformedURLException {
         Optional<Notice> deletedNotice = noticeRepository.findById(noticeId);
         if (deletedNotice.isPresent()) {
             noticeRepository.deleteById(noticeId);
+            fileService.deleteNoticeImg(deletedNotice.get());
             return new NoticeDto.ResponseBasic(200, "공지사항이 성공적으로 삭제되었습니다.");
         } else {
             throw new NoticeNotFoundException("존재하지 않는 게시물 번호입니다: " + noticeId);
         }
     }
 
+    /**
+     * 공지사항 목록
+     */
     @Override
     public Page<NoticeDto.ListResponse> getNotices(int limit, int skip, String keyword) {
         Pageable pageable = PageRequest.of(skip, limit);
