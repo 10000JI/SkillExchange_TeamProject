@@ -36,6 +36,13 @@ public class File {
     @JoinColumn(name="board_id")
     private Notice notice;
 
+    /**
+     * 양방향 매핑
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="talent_id")
+    private Talent talent;
+
 
     /**
      * 프로필 이미지 수정

@@ -90,7 +90,7 @@ public class SecurityConfig {
                         .requestMatchers(request -> HttpMethod.DELETE.matches(request.getMethod()) && request.getServletPath().startsWith("/v1/comment/{commentId}")).hasRole("ADMIN") // DELETE 메서드에 대한 접근 제한
                         .requestMatchers("/myBalance").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/v1/notices/register").hasRole("ADMIN")
-                        .requestMatchers("/v1/user/**", "/v1/file/**", "/v1/notices/{noticeId}","/v1/comment/**","/v1/subjectCategory/**").permitAll())
+                        .requestMatchers("/v1/user/**", "/v1/file/**", "/v1/notices/{noticeId}","/v1/comment/**","/v1/subjectCategory/**","/v1/place/**").permitAll())
                 .formLogin(Customizer.withDefaults())
                 .httpBasic(Customizer.withDefaults());
         return http.build();

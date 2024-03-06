@@ -82,10 +82,10 @@ public class S3Uploader {
         return Optional.empty();
     }
 
-    /**
-     * S3 파일 삭제
-     */
-    public void delete(String fileKey) {
-        amazonS3.deleteObject(bucket, fileKey);
-    }
+//    /**
+//     * S3 파일 삭제
+//     */
+//    public void delete(String fileKey) {
+//        amazonS3.deleteObject(bucket, fileKey);
+//    }
 }

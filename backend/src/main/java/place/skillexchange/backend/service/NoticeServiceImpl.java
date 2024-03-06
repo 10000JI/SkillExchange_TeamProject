@@ -101,7 +101,7 @@ public class NoticeServiceImpl implements NoticeService{
         Optional<Notice> deletedNotice = noticeRepository.findById(noticeId);
         if (deletedNotice.isPresent()) {
             noticeRepository.deleteById(noticeId);
-            fileService.deleteNoticeImg(deletedNotice.get());
+//            fileService.deleteNoticeImg(deletedNotice.get());
             return new NoticeDto.ResponseBasic(200, "공지사항이 성공적으로 삭제되었습니다.");
         } else {
             throw new NoticeNotFoundException("존재하지 않는 게시물 번호입니다: " + noticeId);
