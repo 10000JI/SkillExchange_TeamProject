@@ -95,12 +95,10 @@ public class NoticeDto {
         private LocalDateTime regDate;
         private LocalDateTime modDate;
         private List<String> imgUrl = new ArrayList<>();
-        private int returnCode;
-        private String returnMessage;
         private Long hit;
 
         /* Entity -> Dto */
-        public ReadResponse(Notice notice, int returnCode, String returnMessage) {
+        public ReadResponse(Notice notice) {
             this.writer = notice.getWriter().getId();
             if (notice.getWriter() != null && notice.getWriter().getFile() != null) {
                 this.avatar = notice.getWriter().getFile().getFileUrl();
@@ -121,8 +119,6 @@ public class NoticeDto {
             } else {
                 this.imgUrl = null;
             }
-            this.returnCode = returnCode;
-            this.returnMessage = returnMessage;
         }
     }
 
@@ -163,7 +159,6 @@ public class NoticeDto {
         private List<String> imgUrl = new ArrayList<>();
         private int returnCode;
         private String returnMessage;
-        private Long hit;
 
         /* Entity -> Dto */
         public UpdateResponse(User user, List<File> files , Notice notice, int returnCode, String returnMessage) {
@@ -173,7 +168,6 @@ public class NoticeDto {
             this.content = notice.getContent();
             this.regDate = notice.getRegDate();
             this.modDate = notice.getModDate();
-            this.hit = notice.getHit();
 
 
             if (files != null && !files.isEmpty()) {

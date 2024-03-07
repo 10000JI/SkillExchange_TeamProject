@@ -9,7 +9,7 @@ import place.skillexchange.backend.entity.Comment;
 import place.skillexchange.backend.entity.DeleteStatus;
 import place.skillexchange.backend.entity.Notice;
 import place.skillexchange.backend.entity.User;
-import place.skillexchange.backend.exception.NoticeNotFoundException;
+import place.skillexchange.backend.exception.BoardNotFoundException;
 import place.skillexchange.backend.exception.UserNotFoundException;
 import place.skillexchange.backend.repository.CommentRepository;
 import place.skillexchange.backend.repository.NoticeRepository;
@@ -31,7 +31,7 @@ public class CommentServiceImpl implements CommentSerivce {
      */
     @Override
     public List<CommentDto.ViewResponse> findCommentsByNoticeId(Long noticeId) {
-        noticeRepository.findById(noticeId).orElseThrow(() -> new NoticeNotFoundException("존재하지 않는 게시물 번호입니다: " + noticeId));
+        noticeRepository.findById(noticeId).orElseThrow(() -> new BoardNotFoundException("존재하지 않는 게시물 번호입니다: " + noticeId));
         //댓글 조회 메서드 `convertNestedStructure`
         return convertNestedStructure(commentRepository.findCommentByNoticeId(noticeId));
     }
@@ -67,13 +67,13 @@ public class CommentServiceImpl implements CommentSerivce {
             throw new UserNotFoundException("로그인한 회원 정보와 글쓴이가 다릅니다.");
         }
         //dto의 게시물번호(pk)를 지닌 notice 가져옴
-        Notice notice = noticeRepository.findById(dto.getNoticeId()).orElseThrow(() -> new NoticeNotFoundException("존재하지 않는 게시물 번호입니다: " + dto.getNoticeId()));
+        Notice notice = noticeRepository.findById(dto.getNoticeId()).orElseThrow(() -> new BoardNotFoundException("존재하지 않는 게시물 번호입니다: " + dto.getNoticeId()));
 
         //dto의 부모댓글번호가 null 이라면 comment도 null
         //dto의 부모댓글번호가 존재한다면 부모댓글번호를 pk로 하는 comment 가져옴
         Comment comment = dto.getParentId() != null ?
                 commentRepository.findById(dto.getParentId())
-                        .orElseThrow(() -> new NoticeNotFoundException("존재하지 않는 댓글 번호입니다: " + dto.getParentId())) : null;
+                        .orElseThrow(() -> new BoardNotFoundException("존재하지 않는 댓글 번호입니다: " + dto.getParentId())) : null;
 
         //댓글 저장
         Comment saveComment = commentRepository.save(dto.toEntity(user, notice, comment));
@@ -84,7 +84,7 @@ public class CommentServiceImpl implements CommentSerivce {
     @Transactional
     public CommentDto.ResponseBasic deleteComment(Long commentId) {
         Comment comment = commentRepository.findCommentByIdWithParent(commentId)
-                .orElseThrow(() -> new NoticeNotFoundException("존재하지 않는 댓글 번호입니다: " + commentId));
+                .orElseThrow(() -> new BoardNotFoundException("존재하지 않는 댓글 번호입니다: " + commentId));
 
         //cacheService.deleteCommentsCache(comment.getTicket().getId());
 

@@ -1,6 +1,5 @@
 package place.skillexchange.backend.service;
 
-import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -12,11 +11,9 @@ import org.springframework.web.multipart.MultipartFile;
 import place.skillexchange.backend.dto.NoticeDto;
 import place.skillexchange.backend.entity.File;
 import place.skillexchange.backend.entity.Notice;
-import place.skillexchange.backend.entity.QNotice;
 import place.skillexchange.backend.entity.User;
-import place.skillexchange.backend.exception.NoticeNotFoundException;
+import place.skillexchange.backend.exception.BoardNotFoundException;
 import place.skillexchange.backend.exception.UserNotFoundException;
-import place.skillexchange.backend.repository.FileRepository;
 import place.skillexchange.backend.repository.NoticeRepository;
 import place.skillexchange.backend.repository.NoticeRepositoryImpl;
 import place.skillexchange.backend.repository.UserRepository;
@@ -63,12 +60,21 @@ public class NoticeServiceImpl implements NoticeService{
     /**
      * 공지사항 조회
      */
+    // 조회수 업데이트를 위한 별도의 메서드 예시
+    @Transactional
+    public void increaseHit(Long noticeId) {
+        noticeRepository.updateHit(noticeId);
+    }
+
+    // 조회 메서드 내에서 조회수 업데이트 호출 예시
     @Override
     @Transactional(readOnly = true)
     public NoticeDto.ReadResponse read(Long noticeId) {
-        noticeRepository.updateHit(noticeId);
-        Notice notice = noticeRepository.findById(noticeId).orElseThrow(() -> new NoticeNotFoundException("존재하지 않는 게시물 번호입니다: " + noticeId));
-        return new NoticeDto.ReadResponse(notice, 200, "조회하는데 성공하였습니다.");
+        Notice notice = noticeRepository.findById(noticeId)
+                .orElseThrow(() -> new BoardNotFoundException("존재하지 않는 게시물 번호입니다: " + noticeId));
+        // 별도의 트랜잭션으로 처리하기 위해 분리된 메서드 호출
+        increaseHit(noticeId);
+        return new NoticeDto.ReadResponse(notice);
     }
 
 
@@ -83,7 +89,7 @@ public class NoticeServiceImpl implements NoticeService{
         if (!Objects.equals(id, dto.getWriter())) {
             throw new UserNotFoundException("로그인한 회원 정보와 글쓴이가 다릅니다.");
         }
-        Notice notice = noticeRepository.findById(noticeId).orElseThrow(() -> new NoticeNotFoundException("존재하지 않는 게시물 번호입니다: " + noticeId));
+        Notice notice = noticeRepository.findById(noticeId).orElseThrow(() -> new BoardNotFoundException("존재하지 않는 게시물 번호입니다: " + noticeId));
         notice.changeNotice(dto);
 
         List<File> files = fileService.updateNoticeImg(dto.getImgUrl(), multipartFiles, notice);
@@ -104,7 +110,7 @@ public class NoticeServiceImpl implements NoticeService{
 //            fileService.deleteNoticeImg(deletedNotice.get());
             return new NoticeDto.ResponseBasic(200, "공지사항이 성공적으로 삭제되었습니다.");
         } else {
-            throw new NoticeNotFoundException("존재하지 않는 게시물 번호입니다: " + noticeId);
+            throw new BoardNotFoundException("존재하지 않는 게시물 번호입니다: " + noticeId);
         }
     }
 

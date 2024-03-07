@@ -6,22 +6,18 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import place.skillexchange.backend.dto.FileDto;
-import place.skillexchange.backend.dto.NoticeDto;
 import place.skillexchange.backend.entity.File;
 import place.skillexchange.backend.entity.Notice;
+import place.skillexchange.backend.entity.Talent;
 import place.skillexchange.backend.entity.User;
-import place.skillexchange.backend.exception.NoticeNotFoundException;
 import place.skillexchange.backend.file.S3Uploader;
 import place.skillexchange.backend.file.UploadFile;
 import place.skillexchange.backend.repository.FileRepository;
 import place.skillexchange.backend.repository.NoticeRepository;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -71,22 +67,35 @@ public class FileServiceImpl implements FileService{
     }
 
     /**
-     * 다중 파일 업로드 ( 공지사항 생성 )
+     * 다중 파일 업로드와 엔티티 저장을 위한 범용 메서드
      */
-    @Override
-    public List<File> registerNoticeImg(List<MultipartFile> multipartFiles, Notice notice) throws IOException {
+    public List<File> registerImages(List<MultipartFile> multipartFiles, Object reference) throws IOException {
         List<File> images = new ArrayList<>();
         if (multipartFiles != null) {
             for (MultipartFile multipartFile : multipartFiles) {
                 if (!multipartFile.isEmpty()) {
                     UploadFile image = s3Uploader.upload(multipartFile, "images");
                     // 새로운 파일 생성
-                    File newFile = fileRepository.save(new FileDto.NoticeDto().toEntity(image, notice));
+                    File newFile = fileRepository.save(new FileDto.EntityDto().toEntity(image, reference));
                     images.add(newFile);
                 }
             }
         }
         return images;
+    }
+
+    /**
+     * 다중 파일 업로드 ( 공지사항 생성 )
+     */
+    public List<File> registerNoticeImg(List<MultipartFile> multipartFiles, Notice notice) throws IOException {
+        return registerImages(multipartFiles, notice);
+    }
+
+    /**
+     * 다중 파일 업로드 ( 재능교환소 게시물 생성 )
+     */
+    public List<File> registerTalentImg(List<MultipartFile> multipartFiles, Talent talent) throws IOException {
+        return registerImages(multipartFiles, talent);
     }
 
 
@@ -140,7 +149,7 @@ public class FileServiceImpl implements FileService{
                     UploadFile uploadedImage = s3Uploader.upload(multipartFile, "images");
 
                     // 새로운 파일 생성
-                    File newFile = fileRepository.save(new FileDto.NoticeDto().toEntity(uploadedImage, notice));
+                    File newFile = fileRepository.save(new FileDto.EntityDto().toEntity(uploadedImage, notice));
                     updatedImages.add(newFile);
                 }
             }

@@ -1,15 +1,11 @@
 package place.skillexchange.backend.exception;
 
 import jakarta.mail.MessagingException;
-import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -18,7 +14,6 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.util.ArrayList;
@@ -98,8 +93,8 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
     /**
      * 존재하지 않는 게시물
      */
-    @ExceptionHandler(NoticeNotFoundException.class) //타 Controller 실행 중 UserNotFoundException 에러 발생 시 (=사용자 정보가 존재하지 않았을 때) handlerUserNotException()가 작업 우회
-    public final ResponseEntity<Object> handlerUserNotException(NoticeNotFoundException ex, WebRequest request) {
+    @ExceptionHandler(BoardNotFoundException.class) //타 Controller 실행 중 NoticeNotFoundException 에러 발생 시 handlerUserNotException()가 작업 우회
+    public final ResponseEntity<Object> handlerUserNotException(BoardNotFoundException ex, WebRequest request) {
         ExceptionResponse.OneDetail exceptionResponse = new ExceptionResponse.OneDetail(new Date(), ex.getMessage(), request.getDescription(false));
         return new ResponseEntity(exceptionResponse, HttpStatus.NOT_FOUND);
     }
@@ -116,10 +111,27 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
     /**
      * 계층형 카테고리 구조 생성시 오류
      */
-    @ExceptionHandler(CannotConvertNestedStructureException.class) //타 Controller 실행 중 UserNotFoundException 에러 발생 시 (=사용자 정보가 존재하지 않았을 때) handlerUserNotException()가 작업 우회
+    @ExceptionHandler(CannotConvertNestedStructureException.class) //타 Controller 실행 중 CannotConvertNestedStructureException 에러 발생 시 handlerUserNotException()가 작업 우회
     public final ResponseEntity<Object> cannotConvertNestedStructureException(CannotConvertNestedStructureException ex, WebRequest request) {
         ExceptionResponse.OneDetail exceptionResponse = new ExceptionResponse.OneDetail(new Date(), ex.getMessage(), request.getDescription(false));
         return new ResponseEntity(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    /**
+     * 존재하지 않는 장소
+     */
+    @ExceptionHandler(PlaceNotFoundException.class) //타 Controller 실행 중 PlaceNotFoundException 에러 발생 시 handlerUserNotException()가 작업 우회
+    public final ResponseEntity<Object> handlerPlaceNotException(PlaceNotFoundException ex, WebRequest request) {
+        ExceptionResponse.OneDetail exceptionResponse = new ExceptionResponse.OneDetail(new Date(), ex.getMessage(), request.getDescription(false));
+        return new ResponseEntity(exceptionResponse, HttpStatus.NOT_FOUND);
+    }
+
+    /**
+     * 존재하지 않는 장소
+     */
+    @ExceptionHandler(SubjectCategoryNotFoundException.class) //타 Controller 실행 중 SubjectCategoryNotFoundException 에러 발생 시 handlerUserNotException()가 작업 우회
+    public final ResponseEntity<Object> handlerSubjectCategoryNotException(SubjectCategoryNotFoundException ex, WebRequest request) {
+        ExceptionResponse.OneDetail exceptionResponse = new ExceptionResponse.OneDetail(new Date(), ex.getMessage(), request.getDescription(false));
+        return new ResponseEntity(exceptionResponse, HttpStatus.NOT_FOUND);
+    }
 }

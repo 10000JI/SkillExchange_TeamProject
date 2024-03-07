@@ -4,6 +4,7 @@ import jakarta.persistence.Lob;
 import lombok.Getter;
 import place.skillexchange.backend.entity.File;
 import place.skillexchange.backend.entity.Notice;
+import place.skillexchange.backend.entity.Talent;
 import place.skillexchange.backend.entity.User;
 import place.skillexchange.backend.file.UploadFile;
 
@@ -54,24 +55,26 @@ public class FileDto {
 //        }
 //    }
 
-
     /**
-     * 공지사항 이미지 추가시 사용할 Dto -> Entity
-     */
-    public static class NoticeDto{
+    * 공지사항 이미지 추가시 사용할 Dto -> Entity,  재능교환소 게시물 이미지 추가시 사용할 Dto -> Entity
+    */
+    public static class EntityDto {
         private String uploadFileName;
-//        private String storeFileName;
-
         private String fileUrl;
-//
-        /* Dto -> Entity */
-        public File toEntity(UploadFile uploadFile, Notice notice) {
-            File file = File.builder()
+
+        // Dto -> Entity, Object 타입의 reference를 받아 처리
+        public File toEntity(UploadFile uploadFile, Object reference) {
+            File.FileBuilder builder = File.builder()
                     .oriName(uploadFile.getUploadFileName())
-                    .notice(notice)
-                    .fileUrl(uploadFile.getFileUrl())
-                    .build();
-            return file;
+                    .fileUrl(uploadFile.getFileUrl());
+
+            if (reference instanceof Notice) {
+                builder.notice((Notice) reference);
+            } else if (reference instanceof Talent) {
+                builder.talent((Talent) reference);
+            }
+
+            return builder.build();
         }
     }
 }
