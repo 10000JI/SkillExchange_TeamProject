@@ -171,4 +171,80 @@ public class TalentDto {
             }
         }
     }
+
+    /**
+     * 게시물 수정 시 요청된 Dto
+     */
+    @Getter
+    public static class UpdateRequest {
+
+        @NotBlank(message = "작성자: 필수 정보입니다.")
+        private String writer;
+
+        @NotBlank(message = "내용: 필수 정보입니다.")
+        private String content;
+
+        @NotBlank(message = "장소: 필수 정보입니다.")
+        private String placeName;
+
+        @NotBlank(message = "가르쳐 줄 분야: 필수 정보입니다.")
+        private String teachingSubject;
+
+        @NotBlank(message = "가르침 받을 분야: 필수 정보입니다.")
+        private String teachedSubject;
+
+        @NotBlank(message = "연령대: 필수 정보입니다.")
+        private String ageGroup;
+
+        @NotBlank(message = "요일: 필수 정보입니다.")
+        private String week;
+
+        private List<String> imgUrl = new ArrayList<>();
+    }
+
+    /**
+     * 게시물 수정 성공시 보낼 Dto
+     */
+    @Getter
+    public static class UpdateResponse {
+        private Long id;
+        private String writer;
+        private String content;
+        private String placeName;
+        private String teachingSubject;
+        private String teachedSubject;
+        private String ageGroup;
+        private String week;
+        private LocalDateTime regDate;
+        private LocalDateTime modDate;
+        private List<String> oriName = new ArrayList<>();
+        private List<String> imgUrl = new ArrayList<>();
+        private int returnCode;
+        private String returnMessage;
+
+        /* Entity -> Dto */
+        public UpdateResponse(User user, Talent talent, List<File> files, int returnCode, String returnMessage) {
+            this.writer = user.getId();
+            this.id = talent.getId();
+            this.content = talent.getContent();
+            this.placeName = talent.getPlace().getPlaceName();
+            this.teachingSubject = talent.getTeachingSubject().getSubjectName();
+            this.teachedSubject = talent.getTeachedSubject().getSubjectName();
+            this.ageGroup = talent.getAgeGroup();
+            this.week = talent.getWeek();
+            this.regDate = talent.getRegDate();
+            this.modDate = talent.getModDate();
+            if (files != null && !files.isEmpty()) {
+                for (File file : files) {
+                    this.oriName.add(file.getOriName());
+                    this.imgUrl.add(file.getFileUrl());
+                }
+            } else {
+                this.oriName = null;
+                this.imgUrl = null;
+            }
+            this.returnCode = returnCode;
+            this.returnMessage = returnMessage;
+        }
+    }
 }

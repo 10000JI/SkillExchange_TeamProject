@@ -5,6 +5,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import place.skillexchange.backend.dto.NoticeDto;
 import place.skillexchange.backend.dto.TalentDto;
 import place.skillexchange.backend.entity.*;
 import place.skillexchange.backend.exception.BoardNotFoundException;
@@ -74,5 +75,34 @@ public class TalentServiceImpl implements TalentService {
                 .orElseThrow(() -> new BoardNotFoundException("존재하지 않는 게시물 번호입니다: " + talentId));
         increaseHit(talentId);
         return new TalentDto.ReadResponse(talent);
+    }
+
+    @Override
+    public TalentDto.UpdateResponse update(TalentDto.UpdateRequest dto, List<MultipartFile> multipartFiles, Long talentId) throws IOException {
+        String id = securityUtil.getCurrentMemberUsername();
+        User user = userRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("해당 유저를 찾지 못했습니다: " + id));
+        if (!Objects.equals(id, dto.getWriter())) {
+            throw new UserNotFoundException("로그인한 회원 정보와 글쓴이가 다릅니다.");
+        }
+        Talent talent = talentRepository.findById(talentId)
+                .orElseThrow(() -> new BoardNotFoundException("존재하지 않는 게시물 번호입니다: " + talentId));
+        Place place = null;
+        if (!talent.getPlace().getPlaceName().equals(dto.getPlaceName())) {
+            place = placeRepository.findByPlaceName(dto.getPlaceName()).orElseThrow(() -> new PlaceNotFoundException("해당 장소는 등록되지 않은 장소입니다: " + dto.getPlaceName()));
+        }
+        SubjectCategory teachedSubject = null;
+        if (!talent.getTeachedSubject().getSubjectName().equals(dto.getTeachedSubject())) {
+            teachedSubject = categoryRepository.findBySubjectName(dto.getTeachedSubject()).orElseThrow(() -> new SubjectCategoryNotFoundException("해당 분야는 등록되지 않은 분야입니다: " + dto.getTeachedSubject()));
+        }
+        SubjectCategory teachingSubject = null;
+        if(!talent.getTeachingSubject().getSubjectName().equals(dto.getTeachingSubject())) {
+            teachingSubject = categoryRepository.findBySubjectName(dto.getTeachingSubject()).orElseThrow(() -> new SubjectCategoryNotFoundException("해당 분야는 등록되지 않은 분야입니다: " + dto.getTeachedSubject()));
+        }
+        talent.changeNotice(dto, place, teachedSubject, teachingSubject);
+
+        List<File> files = fileService.updateTalentImg(dto.getImgUrl(), multipartFiles, talent);
+
+
+        return new TalentDto.UpdateResponse(user, talent, files, 200, "공지가 수정되었습니다.");
     }
 }

@@ -27,7 +27,7 @@ class NoticeRepositoryImplTest {
         Optional<User> userOptional = userRepository.findById("admin");
 
         userOptional.ifPresent(user -> {
-            IntStream.rangeClosed(1, 10).forEach(i -> {
+            IntStream.rangeClosed(2, 20).forEach(i -> {
                 Notice notice = Notice.builder()
                         .title("공지사항입니다 ..." + i)
                         .content("내용입니다 ..." + i)

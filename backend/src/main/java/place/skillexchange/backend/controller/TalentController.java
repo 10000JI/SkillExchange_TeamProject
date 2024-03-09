@@ -24,7 +24,7 @@ public class TalentController {
      * 재능교환 게시물 등록
      */
     @PostMapping("/register")
-    public ResponseEntity<TalentDto.RegisterResponse>  register(@Validated @RequestPart("talentDto") TalentDto.RegisterRequest dto, @RequestPart(value = "files", required = false) List<MultipartFile> multipartFiles) throws IOException {
+    public ResponseEntity<TalentDto.RegisterResponse> register(@Validated @RequestPart("talentDto") TalentDto.RegisterRequest dto, @RequestPart(value = "files", required = false) List<MultipartFile> multipartFiles) throws IOException {
         return ResponseEntity.status(HttpStatus.CREATED).body(talentService.register(dto,multipartFiles));
     }
 
@@ -42,5 +42,13 @@ public class TalentController {
     @GetMapping("/{talentId}")
     public TalentDto.ReadResponse read(@PathVariable Long talentId){
         return talentService.read(talentId);
+    }
+
+    /**
+     * 게시물 정보 수정
+     */
+    @PatchMapping("/{talentId}")
+    public TalentDto.UpdateResponse update(@Validated @RequestPart("talentDto") TalentDto.UpdateRequest dto, @RequestPart(value = "files", required = false) List<MultipartFile> multipartFiles, @PathVariable Long talentId) throws IOException {
+        return talentService.update(dto, multipartFiles, talentId);
     }
 }

@@ -125,10 +125,7 @@ public class NoticeDto {
     /**
      * 게시물 수정 시 요청된 Dto
      */
-    @Data
-    @AllArgsConstructor
-    @NoArgsConstructor
-    @Builder
+    @Getter
     public static class UpdateRequest {
 
         @NotBlank(message = "작성자: 필수 정보입니다.")

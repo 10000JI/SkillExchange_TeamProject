@@ -29,13 +29,13 @@ public class Notice extends BaseEntity{
     @JoinColumn(name="writer")
     private User writer;
 
-    @Column(name = "board_title", length = 50, nullable = false)
+    @Column(name = "notice_title", length = 50, nullable = false)
     private String title;
 
-    @Column(name = "board_content", length = 4000, nullable = false)
+    @Column(name = "notice_content", length = 4000, nullable = false)
     private String content;
 
-    @Column(name = "board_hit")
+    @Column(name = "notice_hit")
     @ColumnDefault("0")
     private Long hit;
 

@@ -17,4 +17,5 @@ public class Place {
 
     @Column(name = "place_Name", nullable = false)
     private String placeName;
+
 }

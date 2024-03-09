@@ -3,6 +3,7 @@ package place.skillexchange.backend.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import place.skillexchange.backend.entity.File;
 import place.skillexchange.backend.entity.Notice;
+import place.skillexchange.backend.entity.Talent;
 import place.skillexchange.backend.entity.User;
 
 import java.util.List;
@@ -16,5 +17,8 @@ public interface FileRepository extends JpaRepository<File,Long> {
 
     //notice를 가지고 있는 File들 (게시물)
     List<File> findAllByNotice(Notice notice);
+
+    //talent를 가지고 있는 File들 (게시물)
+    List<File> findAllByTalent(Talent talent);
 
 }

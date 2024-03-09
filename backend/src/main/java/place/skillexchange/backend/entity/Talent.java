@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import place.skillexchange.backend.dto.NoticeDto;
+import place.skillexchange.backend.dto.TalentDto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,5 +71,22 @@ public class Talent extends BaseEntity{
     @OneToMany(mappedBy = "talent", cascade = CascadeType.ALL)
     private List<File> files = new ArrayList<>();
 
+    /**
+     * 게시물 내용, 장소, 가르쳐줄 분야, 가르침 받을 분야, 요일, 연령대 수정
+     */
+    public void changeNotice(TalentDto.UpdateRequest dto, Place place, SubjectCategory teachedSubject, SubjectCategory teachingSubject) {
+        this.content = dto.getContent();
+        if (place != null) {
+            this.place = place;
+        }
+        if (teachedSubject != null) {
+            this.teachedSubject = teachedSubject;
+        }
+        if (teachingSubject != null) {
+            this.teachingSubject = teachingSubject;
+        }
+        this.week = dto.getWeek();
+        this.ageGroup = dto.getAgeGroup();
+    }
 }
 

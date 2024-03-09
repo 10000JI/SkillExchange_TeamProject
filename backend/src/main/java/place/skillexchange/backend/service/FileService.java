@@ -18,4 +18,7 @@ public interface FileService {
     public List<File> registerTalentImg(List<MultipartFile> multipartFiles, Talent talent) throws IOException;
 
     public List<File> updateNoticeImg(List<String> imgUrls, List<MultipartFile> multipartFiles, Notice notice) throws IOException;
+
+    public List<File> updateTalentImg(List<String> imgUrl, List<MultipartFile> multipartFiles, Talent talent) throws IOException;
+
 }
