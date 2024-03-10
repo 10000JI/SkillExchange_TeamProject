@@ -85,11 +85,11 @@ public class TalentServiceImpl implements TalentService {
     public TalentDto.UpdateResponse update(TalentDto.UpdateRequest dto, List<MultipartFile> multipartFiles, Long talentId) throws IOException {
         String id = securityUtil.getCurrentMemberUsername();
         User user = userRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("해당 유저를 찾지 못했습니다: " + id));
-        if (!Objects.equals(id, dto.getWriter())) {
-            throw new UserNotFoundException("로그인한 회원 정보와 글쓴이가 다릅니다.");
-        }
         Talent talent = talentRepository.findById(talentId)
                 .orElseThrow(() -> new BoardNotFoundException("존재하지 않는 게시물 번호입니다: " + talentId));
+        if (!Objects.equals(id, dto.getWriter()) || !Objects.equals(id,talent.getWriter().getId()) || !Objects.equals(dto.getWriter(),talent.getWriter().getId())) {
+            throw new UserNotFoundException("로그인한 회원 정보와 글쓴이가 다릅니다.");
+        }
         Place place = null;
         if (!talent.getPlace().getPlaceName().equals(dto.getPlaceName())) {
             place = placeRepository.findByPlaceName(dto.getPlaceName()).orElseThrow(() -> new PlaceNotFoundException("해당 장소는 등록되지 않은 장소입니다: " + dto.getPlaceName()));
@@ -110,6 +110,7 @@ public class TalentServiceImpl implements TalentService {
         return new TalentDto.UpdateResponse(user, talent, files, 200, "재능교환 게시물이 수정되었습니다.");
     }
 
+    //게시물 삭제
     @Override
     public TalentDto.ResponseBasic delete(Long talentId) {
         String id = securityUtil.getCurrentMemberUsername();

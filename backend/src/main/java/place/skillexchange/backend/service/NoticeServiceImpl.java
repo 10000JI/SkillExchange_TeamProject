@@ -86,10 +86,12 @@ public class NoticeServiceImpl implements NoticeService{
     public NoticeDto.UpdateResponse update(NoticeDto.UpdateRequest dto, List<MultipartFile> multipartFiles, Long noticeId) throws IOException {
         String id = securityUtil.getCurrentMemberUsername();
         User user = userRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("해당 유저를 찾지 못했습니다 : " + id));
-        if (!Objects.equals(id, dto.getWriter())) {
+        Notice notice = noticeRepository.findById(noticeId).orElseThrow(() -> new BoardNotFoundException("존재하지 않는 게시물 번호입니다: " + noticeId));
+
+        if (!Objects.equals(id, dto.getWriter()) || !Objects.equals(id, notice.getWriter().getId()) || !Objects.equals(dto.getWriter(), notice.getWriter().getId())) {
             throw new UserNotFoundException("로그인한 회원 정보와 글쓴이가 다릅니다.");
         }
-        Notice notice = noticeRepository.findById(noticeId).orElseThrow(() -> new BoardNotFoundException("존재하지 않는 게시물 번호입니다: " + noticeId));
+
         notice.changeNotice(dto);
 
         List<File> files = fileService.updateNoticeImg(dto.getImgUrl(), multipartFiles, notice);
