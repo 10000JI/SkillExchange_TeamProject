@@ -13,20 +13,27 @@ export const loadUser = createAsyncThunk("user/loadUser", async () => {
     const accessToken = localStorage.getItem("accessToken");
     // axios를 사용하여 API 호출을 수행합니다.
     const { data } = await axios.get(
-      process.env.REACT_APP_SERVER + `/v1/user/findId`,
+      process.env.REACT_APP_SERVER + `/v1/user/userInfo`,
       {
         headers: {
           Authorization: accessToken,
         },
-      },
-      
+        withCredentials: true, // withCredentials 옵션 추가
+      }
     );
 
     // API 호출이 성공하면 콘솔에 사용자 정보를 출력하고 해당 정보를 반환합니다.
-    console.log(data.user);
-    return data.user;
+    return data;
   } catch (error) {
     // API 호출 중에 오류가 발생하면 오류 응답 메시지를 throw하여 Redux에 전달합니다.
     throw error.response.data.message;
   }
 });
+
+
+
+export const clearUser = createAsyncThunk("user/clearUser", async () => {
+
+  return null;
+
+})

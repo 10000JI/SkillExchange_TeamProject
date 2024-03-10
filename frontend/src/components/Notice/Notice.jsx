@@ -64,6 +64,7 @@ const Notice = () => {
                 className="integration-single-container tab rounded-xl bg-white px-5 py-16 shadow-lg md:px-10"
                 data-tab-group="service-tab"
               >
+                
                 <h1 className="text-center">공지사항</h1>
                 <TableForm />
                 {/* Content goes here */}

@@ -3,7 +3,7 @@
 
 // loadUser와 clearErrors 액션 생성자 함수를 임포트합니다. 이들은 userAction 파일에서 정의된 것이어야 합니다.
 import { createSlice } from "@reduxjs/toolkit";
-import { loadUser, clearErrors } from "./userAction";
+import { loadUser, clearErrors, clearUser } from "./userAction";
 
 // userSlice를 생성합니다.
 const userSlice = createSlice({
@@ -38,7 +38,21 @@ const userSlice = createSlice({
       // clearErrors 액션이 fulfilled 상태일 때의 리듀서를 정의합니다.
       .addCase(clearErrors.fulfilled, (state) => {
         state.error = null; // 오류 상태를 초기화하여 오류가 없음을 나타냅니다.
-      });
+      })
+
+      .addCase(clearUser.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(clearUser.fulfilled, (state) => {
+        state.isAuthenticated = false;
+        state.loading = false;
+        state.user = null;
+      })
+      .addCase(clearUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message
+        state.isAuthenticated = false;
+      })
   },
 });
 

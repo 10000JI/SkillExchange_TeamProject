@@ -12,7 +12,7 @@ const NoticePage = () => {
     <>
       <Header />
       <FloatingBubbles />
-      <CommonHero />
+      {/* <CommonHero /> */}
       <IntegrationSingleSection />
       <Footer />
 
