@@ -179,7 +179,7 @@ public class FileServiceImpl implements FileService{
             for (File file : files) {
                 // 저장했던 이미지Url
                 String fileUrl = file.getFileUrl();
-                // 이미지Url이 요청이 들어온 이미지Url들과 동일한지 비교하기 위한 논리 자료형
+                // 이미지Url이 요청이 들어온 이미지Url들과 동일한지 비교하기 위한 !! 논리 자료형 !!
                 boolean isUrlFoundInImgUrl = false;
 
                 // 요청이 들어온 이미지Url들 for문

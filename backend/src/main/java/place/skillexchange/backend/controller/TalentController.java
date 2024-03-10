@@ -6,11 +6,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import place.skillexchange.backend.dto.NoticeDto;
 import place.skillexchange.backend.dto.PlaceDto;
 import place.skillexchange.backend.dto.TalentDto;
 import place.skillexchange.backend.service.TalentService;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.List;
 
 @RestController
@@ -50,5 +52,14 @@ public class TalentController {
     @PatchMapping("/{talentId}")
     public TalentDto.UpdateResponse update(@Validated @RequestPart("talentDto") TalentDto.UpdateRequest dto, @RequestPart(value = "files", required = false) List<MultipartFile> multipartFiles, @PathVariable Long talentId) throws IOException {
         return talentService.update(dto, multipartFiles, talentId);
+    }
+
+
+    /**
+     * 게시물 삭제
+     */
+    @DeleteMapping("/{talentId}")
+    public TalentDto.ResponseBasic delete(@PathVariable Long talentId) {
+        return talentService.delete(talentId);
     }
 }

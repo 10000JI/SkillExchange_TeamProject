@@ -103,9 +103,13 @@ public class NoticeServiceImpl implements NoticeService{
     @Override
     @Transactional
     //Notice와 File은 양방향 매핑으로 Notice가 삭제되면 File도 삭제되도록 Cascade 설정을 했기 때문에 @Transactional이 필요
-    public NoticeDto.ResponseBasic delete(Long noticeId) throws MalformedURLException {
+    public NoticeDto.ResponseBasic delete(Long noticeId) {
+        String id = securityUtil.getCurrentMemberUsername();
         Optional<Notice> deletedNotice = noticeRepository.findById(noticeId);
         if (deletedNotice.isPresent()) {
+            if (!Objects.equals(id, deletedNotice.get().getWriter().getId())) {
+                throw new UserNotFoundException("로그인한 회원 정보와 글쓴이가 다릅니다.");
+            }
             noticeRepository.deleteById(noticeId);
 //            fileService.deleteNoticeImg(deletedNotice.get());
             return new NoticeDto.ResponseBasic(200, "공지사항이 성공적으로 삭제되었습니다.");

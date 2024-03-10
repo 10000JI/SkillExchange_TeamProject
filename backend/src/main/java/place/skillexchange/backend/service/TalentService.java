@@ -19,4 +19,5 @@ public interface TalentService {
 
     public TalentDto.UpdateResponse update(TalentDto.UpdateRequest dto, List<MultipartFile> multipartFiles, Long talentId) throws IOException;
 
+    public TalentDto.ResponseBasic delete(Long talentId);
 }

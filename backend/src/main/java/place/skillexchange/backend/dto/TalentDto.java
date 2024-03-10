@@ -247,4 +247,15 @@ public class TalentDto {
             this.returnMessage = returnMessage;
         }
     }
+
+
+    /**
+     * 응답코드, 응답메세지
+     */
+    @Getter
+    @AllArgsConstructor
+    public static class ResponseBasic {
+        private int returnCode;
+        private String returnMessage;
+    }
 }

@@ -51,7 +51,7 @@ public class NoticeController {
      * 공지사항 삭제
      */
     @DeleteMapping("/{noticeId}")
-    public NoticeDto.ResponseBasic delete(@PathVariable Long noticeId) throws MalformedURLException {
+    public NoticeDto.ResponseBasic delete(@PathVariable Long noticeId)  {
         return noticeService.delete(noticeId);
     }
 

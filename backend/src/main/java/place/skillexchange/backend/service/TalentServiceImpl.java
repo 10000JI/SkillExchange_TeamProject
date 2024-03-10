@@ -32,7 +32,7 @@ public class TalentServiceImpl implements TalentService {
     private final UserRepository userRepository;
     private final PlaceRepository placeRepository;
     private final SubjectCategoryRepository categoryRepository;
-    private final FileServiceImpl fileService;
+    private final FileService fileService;
 
     //재능교환 게시물 생성
     @Override
@@ -64,10 +64,13 @@ public class TalentServiceImpl implements TalentService {
         return new TalentDto.writerInfoResponse(user);
     }
 
+    // 조회수 증가를 위한 업데이트
     @Transactional
     public void increaseHit(Long talentId) {
         talentRepository.updateHit(talentId);
     }
+
+    // 게시물 조회
     @Override
     @Transactional(readOnly = true)
     public TalentDto.ReadResponse read(Long talentId) {
@@ -77,6 +80,7 @@ public class TalentServiceImpl implements TalentService {
         return new TalentDto.ReadResponse(talent);
     }
 
+    // 게시물 수정
     @Override
     public TalentDto.UpdateResponse update(TalentDto.UpdateRequest dto, List<MultipartFile> multipartFiles, Long talentId) throws IOException {
         String id = securityUtil.getCurrentMemberUsername();
@@ -96,13 +100,28 @@ public class TalentServiceImpl implements TalentService {
         }
         SubjectCategory teachingSubject = null;
         if(!talent.getTeachingSubject().getSubjectName().equals(dto.getTeachingSubject())) {
-            teachingSubject = categoryRepository.findBySubjectName(dto.getTeachingSubject()).orElseThrow(() -> new SubjectCategoryNotFoundException("해당 분야는 등록되지 않은 분야입니다: " + dto.getTeachedSubject()));
+            teachingSubject = categoryRepository.findBySubjectName(dto.getTeachingSubject()).orElseThrow(() -> new SubjectCategoryNotFoundException("해당 분야는 등록되지 않은 분야입니다: " + dto.getTeachingSubject()));
         }
         talent.changeNotice(dto, place, teachedSubject, teachingSubject);
 
         List<File> files = fileService.updateTalentImg(dto.getImgUrl(), multipartFiles, talent);
 
 
-        return new TalentDto.UpdateResponse(user, talent, files, 200, "공지가 수정되었습니다.");
+        return new TalentDto.UpdateResponse(user, talent, files, 200, "재능교환 게시물이 수정되었습니다.");
+    }
+
+    @Override
+    public TalentDto.ResponseBasic delete(Long talentId) {
+        String id = securityUtil.getCurrentMemberUsername();
+        Optional<Talent> deleteTalent = talentRepository.findById(talentId);
+        if (deleteTalent.isPresent()) {
+            if (!Objects.equals(id, deleteTalent.get().getWriter().getId())) {
+                throw new UserNotFoundException("로그인한 회원 정보와 글쓴이가 다릅니다.");
+            }
+            talentRepository.deleteById(talentId);
+            return new TalentDto.ResponseBasic(200, "재능교환 게시물이 성공적으로 삭제되었습니다.");
+        } else {
+            throw new BoardNotFoundException("존재하지 않는 게시물 번호입니다: " + talentId);
+        }
     }
 }
