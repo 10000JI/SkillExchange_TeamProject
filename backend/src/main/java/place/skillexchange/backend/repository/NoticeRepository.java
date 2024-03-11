@@ -13,7 +13,7 @@ import place.skillexchange.backend.entity.Notice;
 import java.util.List;
 import java.util.Optional;
 
-public interface NoticeRepository extends JpaRepository<Notice,Long>{
+public interface NoticeRepository extends JpaRepository<Notice,Long>, CustomNoticeRepository{
     Optional<Notice> findById(Long noticeId);
 
     void deleteById(Long noticeId);

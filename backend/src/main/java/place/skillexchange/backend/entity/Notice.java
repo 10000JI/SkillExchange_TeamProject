@@ -46,6 +46,12 @@ public class Notice extends BaseEntity{
     private List<File> files = new ArrayList<>();
 
     /**
+     * 양방향
+     */
+    @OneToMany(mappedBy = "notice", cascade = CascadeType.ALL)
+    private List<Comment> comments = new ArrayList<>();
+
+    /**
      * 공지사항 제목,내용 수정
      */
     public void changeNotice(NoticeDto.UpdateRequest dto) {

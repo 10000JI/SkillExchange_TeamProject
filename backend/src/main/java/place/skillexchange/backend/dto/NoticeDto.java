@@ -202,13 +202,15 @@ public class NoticeDto {
         private String writer;
         private String title;
         private Long hit;
+        private Long commentCount; // 댓글 개수 필드 추가
         private LocalDateTime regDate;
 
-        public ListResponse(Notice notice) {
+        public ListResponse(Notice notice, Long commentCount) {
             this.id = notice.getId();
             this.writer = notice.getWriter().getId();
             this.title = notice.getTitle();
             this.hit = notice.getHit();
+            this.commentCount = commentCount;
             this.regDate = notice.getRegDate();
         }
     }

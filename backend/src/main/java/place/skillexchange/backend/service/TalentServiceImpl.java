@@ -1,6 +1,10 @@
 package place.skillexchange.backend.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +26,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -124,5 +129,11 @@ public class TalentServiceImpl implements TalentService {
         } else {
             throw new BoardNotFoundException("존재하지 않는 게시물 번호입니다: " + talentId);
         }
+    }
+
+    @Override
+    public Page<TalentDto.ListResponse> list(int limit, int skip, String keyword, Long subjectCategoryId) {
+        Pageable pageable = PageRequest.of(skip, limit);
+        return talentRepository.findAllWithPagingAndSearch(keyword, pageable, subjectCategoryId);
     }
 }

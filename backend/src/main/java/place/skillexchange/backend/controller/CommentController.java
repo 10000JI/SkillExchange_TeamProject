@@ -36,7 +36,7 @@ public class CommentController {
     /**
      * 공지사항 댓글 삭제
      */
-    @DeleteMapping(value = "/{commentId}")
+    @DeleteMapping(value =  "/{commentId}")
     public CommentDto.ResponseBasic deleteComment(@PathVariable("commentId") Long commentId) {
         return commentServiceImpl.deleteComment(commentId);
     }

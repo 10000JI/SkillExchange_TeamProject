@@ -1,6 +1,7 @@
 package place.skillexchange.backend.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -9,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import place.skillexchange.backend.dto.NoticeDto;
 import place.skillexchange.backend.dto.PlaceDto;
 import place.skillexchange.backend.dto.TalentDto;
+import place.skillexchange.backend.entity.Talent;
 import place.skillexchange.backend.service.TalentService;
 
 import java.io.IOException;
@@ -54,12 +56,25 @@ public class TalentController {
         return talentService.update(dto, multipartFiles, talentId);
     }
 
-
     /**
      * 게시물 삭제
      */
     @DeleteMapping("/{talentId}")
     public TalentDto.ResponseBasic delete(@PathVariable Long talentId) {
         return talentService.delete(talentId);
+    }
+
+    /**
+     * 카테고리 별 게시물 목록
+     */
+    @GetMapping("/list")
+    public ResponseEntity<Page<TalentDto.ListResponse>> list (
+            @RequestParam(defaultValue = "20") int limit,
+            @RequestParam(defaultValue = "0") int skip,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) Long subjectCategoryId) {
+        Page<TalentDto.ListResponse> talent = talentService.list(limit, skip, keyword, subjectCategoryId);
+
+        return ResponseEntity.ok(talent);
     }
 }

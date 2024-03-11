@@ -1,7 +1,10 @@
 package place.skillexchange.backend.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 import place.skillexchange.backend.dto.TalentDto;
@@ -20,4 +23,6 @@ public interface TalentService {
     public TalentDto.UpdateResponse update(TalentDto.UpdateRequest dto, List<MultipartFile> multipartFiles, Long talentId) throws IOException;
 
     public TalentDto.ResponseBasic delete(Long talentId);
+
+    public Page<TalentDto.ListResponse> list(int limit, int skip, String keyword, Long subjectCategoryId);
 }

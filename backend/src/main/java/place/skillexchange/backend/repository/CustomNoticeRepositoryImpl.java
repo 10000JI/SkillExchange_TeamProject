@@ -3,22 +3,19 @@ package place.skillexchange.backend.repository;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import place.skillexchange.backend.dto.NoticeDto;
-import place.skillexchange.backend.entity.Notice;
 import place.skillexchange.backend.entity.QNotice;
 
 import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
-public class NoticeRepositoryImpl implements CustomNoticeRepository {
+public class CustomNoticeRepositoryImpl implements CustomNoticeRepository {
 
     private final JPAQueryFactory queryFactory;
 
@@ -39,24 +36,22 @@ public class NoticeRepositoryImpl implements CustomNoticeRepository {
         //Projections: QueryDSL에서 쿼리 결과를 변환하거나 특정 필드만 선택할 때 사용되는 기능
         //NoticeDto.ListResponse 클래스의 생성자를 사용하여 조회된 공지사항을 DTO로 변환
         /**
-         SELECT
-             notice.id,
-             notice.title,
-             notice.content,
-             notice.writer,
-             notice.regdate,
-             notice.moddate,
-             notice.hit
-         FROM
-             notice
-         WHERE
-             (LOWER(notice.title) LIKE '%검색어%' OR LOWER(notice.content) LIKE '%검색어%')
-         ORDER BY
-             notice.id DESC
-         LIMIT
-             페이지_사이즈 OFFSET 시작_인덱스
+         * SELECT
+         *     n.id, n.title, n.writer, n.regdate, n.hit,
+         *     (SELECT COUNT(*) FROM comment c WHERE c.notice_id = n.id) AS comment_count
+         * FROM
+         *     notice n
+         * WHERE
+         *     (LOWER(n.title) LIKE CONCAT('%', #{keyword}, '%') OR LOWER(n.content) LIKE CONCAT('%', #{keyword}, '%'))
+         * ORDER BY
+         *     n.id DESC
+         * LIMIT #{pageSize} OFFSET #{offset}
          */
-        List<NoticeDto.ListResponse> notices = queryFactory.select(Projections.constructor(NoticeDto.ListResponse.class, qNotice))
+        List<NoticeDto.ListResponse> notices = queryFactory
+                .select(Projections.constructor(NoticeDto.ListResponse.class,
+                        qNotice,
+                        qNotice.comments.size().longValue() // 댓글 개수 조회
+                ))
                 .from(qNotice)
                 .where(predicate)
                 .orderBy(qNotice.id.desc())

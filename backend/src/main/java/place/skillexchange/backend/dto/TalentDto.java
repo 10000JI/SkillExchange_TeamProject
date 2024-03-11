@@ -258,4 +258,32 @@ public class TalentDto {
         private int returnCode;
         private String returnMessage;
     }
+
+    /**
+     * 게시물 목록 응답 Dto
+     */
+    @Getter
+    public static class ListResponse {
+        private Long id;
+        private String writer;
+        private String content;
+        private String placeName;
+        private String teachingSubject;
+        private String teachedSubject;
+        private String ageGroup;
+        private LocalDateTime regDate;
+        private Long hit;
+
+        public ListResponse(Talent talent) {
+            this.id = talent.getId();
+            this.writer = talent.getWriter().getId();
+            this.content = talent.getContent();
+            this.placeName = talent.getPlace().getPlaceName();
+            this.teachingSubject = talent.getTeachingSubject().getSubjectName();
+            this.teachedSubject = talent.getTeachedSubject().getSubjectName();
+            this.ageGroup = talent.getAgeGroup();
+            this.regDate = talent.getRegDate();
+            this.hit = talent.getHit();
+        }
+    }
 }

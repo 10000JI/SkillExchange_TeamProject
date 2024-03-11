@@ -13,7 +13,7 @@ import java.util.stream.IntStream;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-class NoticeRepositoryImplTest {
+class CustomNoticeRepositoryImplTest {
 
     @Autowired
     private NoticeRepository noticeRepository;

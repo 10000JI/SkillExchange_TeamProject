@@ -15,12 +15,10 @@ import place.skillexchange.backend.entity.User;
 import place.skillexchange.backend.exception.BoardNotFoundException;
 import place.skillexchange.backend.exception.UserNotFoundException;
 import place.skillexchange.backend.repository.NoticeRepository;
-import place.skillexchange.backend.repository.NoticeRepositoryImpl;
 import place.skillexchange.backend.repository.UserRepository;
 import place.skillexchange.backend.util.SecurityUtil;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -31,7 +29,6 @@ public class NoticeServiceImpl implements NoticeService{
 
     private final SecurityUtil securityUtil;
     private final NoticeRepository noticeRepository;
-    private final NoticeRepositoryImpl noticeRepositoryImpl;
     private final UserRepository userRepository;
     private final FileServiceImpl fileService;
 
@@ -105,6 +102,7 @@ public class NoticeServiceImpl implements NoticeService{
     @Override
     @Transactional
     //Notice와 File은 양방향 매핑으로 Notice가 삭제되면 File도 삭제되도록 Cascade 설정을 했기 때문에 @Transactional이 필요
+    //Notice와 Comment은 양방향 매핑으로 Notice가 삭제되면 Comment도 삭제되도록 Cascade 설정을 했기 때문에 @Transactional이 필요
     public NoticeDto.ResponseBasic delete(Long noticeId) {
         String id = securityUtil.getCurrentMemberUsername();
         Optional<Notice> deletedNotice = noticeRepository.findById(noticeId);
@@ -126,6 +124,6 @@ public class NoticeServiceImpl implements NoticeService{
     @Override
     public Page<NoticeDto.ListResponse> getNotices(int limit, int skip, String keyword) {
         Pageable pageable = PageRequest.of(skip, limit);
-        return noticeRepositoryImpl.findNoticesWithPagingAndKeyword(keyword, pageable);
+        return noticeRepository.findNoticesWithPagingAndKeyword(keyword, pageable);
     }
 }

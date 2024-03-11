@@ -30,6 +30,9 @@ public class Comment extends CreatedDateEntity{
     @Enumerated(value = EnumType.STRING)
     private DeleteStatus isDeleted;
 
+    /**
+     * 양방향
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "notice_id")
     private Notice notice;
