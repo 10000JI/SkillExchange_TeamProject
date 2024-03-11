@@ -25,4 +25,6 @@ public interface TalentService {
     public TalentDto.ResponseBasic delete(Long talentId);
 
     public Page<TalentDto.ListResponse> list(int limit, int skip, String keyword, Long subjectCategoryId);
+
+    public TalentDto.ResponseBasic scrap(Long talentId);
 }

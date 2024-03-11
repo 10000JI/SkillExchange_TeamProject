@@ -16,16 +16,14 @@ import place.skillexchange.backend.exception.BoardNotFoundException;
 import place.skillexchange.backend.exception.PlaceNotFoundException;
 import place.skillexchange.backend.exception.SubjectCategoryNotFoundException;
 import place.skillexchange.backend.exception.UserNotFoundException;
-import place.skillexchange.backend.repository.PlaceRepository;
-import place.skillexchange.backend.repository.SubjectCategoryRepository;
-import place.skillexchange.backend.repository.TalentRepository;
-import place.skillexchange.backend.repository.UserRepository;
+import place.skillexchange.backend.repository.*;
 import place.skillexchange.backend.util.SecurityUtil;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,6 +36,7 @@ public class TalentServiceImpl implements TalentService {
     private final PlaceRepository placeRepository;
     private final SubjectCategoryRepository categoryRepository;
     private final FileService fileService;
+    private final TalentScrapRepository scrapRepository;
 
     //재능교환 게시물 생성
     @Override
@@ -131,9 +130,26 @@ public class TalentServiceImpl implements TalentService {
         }
     }
 
+    //게시물 목록
     @Override
     public Page<TalentDto.ListResponse> list(int limit, int skip, String keyword, Long subjectCategoryId) {
         Pageable pageable = PageRequest.of(skip, limit);
         return talentRepository.findAllWithPagingAndSearch(keyword, pageable, subjectCategoryId);
+    }
+
+    //게시물 스크랩
+    @Override
+    public TalentDto.ResponseBasic scrap(Long talentId) {
+        String id = securityUtil.getCurrentMemberUsername();
+        User user = userRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("해당 유저를 찾지 못했습니다: " + id));
+        if (scrapRepository.findByTalentId(talentId, user.getId()) != null) {
+            throw new BoardNotFoundException("이미 스크랩한 게시물 입니다.");
+        }
+        Talent talent = talentRepository.findById(talentId).orElseThrow(() -> new BoardNotFoundException("존재하지 않는 게시물 번호입니다: " + talentId));
+
+        TalentScrap scrap = TalentScrap.of(user, talent);
+        scrapRepository.save(scrap);
+
+        return new TalentDto.ResponseBasic(201,"스크랩이 완료되었습니다.");
     }
 }

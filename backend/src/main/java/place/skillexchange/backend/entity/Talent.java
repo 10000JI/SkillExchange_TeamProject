@@ -12,6 +12,7 @@ import place.skillexchange.backend.dto.NoticeDto;
 import place.skillexchange.backend.dto.TalentDto;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -71,8 +72,10 @@ public class Talent extends BaseEntity{
     @OneToMany(mappedBy = "talent", cascade = CascadeType.ALL)
     private List<File> files = new ArrayList<>();
 
+
     /**
      * 게시물 내용, 장소, 가르쳐줄 분야, 가르침 받을 분야, 요일, 연령대 수정
+     * : null 이 아니라면 변경내용이 존재하는 것, null이라면 변경내용이 존재하지 않으므로 그대로 유지
      */
     public void changeNotice(TalentDto.UpdateRequest dto, Place place, SubjectCategory teachedSubject, SubjectCategory teachingSubject) {
         this.content = dto.getContent();
