@@ -8,10 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import place.skillexchange.backend.dto.NoticeDto;
 import place.skillexchange.backend.dto.TalentDto;
 import place.skillexchange.backend.entity.QTalent;
-import place.skillexchange.backend.entity.Talent;
 
 import java.util.List;
 
@@ -20,7 +18,7 @@ public class CustomTalentRepositoryImpl implements CustomTalentRepository {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Page<TalentDto.ListResponse> findAllWithPagingAndSearch(String keyword, Pageable pageable, Long subjectCategoryId) {
+    public Page<TalentDto.TalentListResponse> findAllWithPagingAndSearch(String keyword, Pageable pageable, Long subjectCategoryId) {
         QTalent qTalent = QTalent.talent;
 
         BooleanExpression predicate = qTalent.isNotNull();
@@ -35,8 +33,8 @@ public class CustomTalentRepositoryImpl implements CustomTalentRepository {
                     .or(qTalent.place.placeName.containsIgnoreCase(keyword)));
         }
 
-        List<TalentDto.ListResponse> talents = queryFactory
-                .select(Projections.constructor(TalentDto.ListResponse.class, qTalent))
+        List<TalentDto.TalentListResponse> talents = queryFactory
+                .select(Projections.constructor(TalentDto.TalentListResponse.class, qTalent))
                 .from(qTalent)
                 .where(predicate)
                 .orderBy(qTalent.id.desc())

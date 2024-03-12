@@ -37,7 +37,7 @@ public class NoticeServiceImpl implements NoticeService{
      */
     @Override
     @Transactional
-    public NoticeDto.RegisterResponse register(NoticeDto.RegisterRequest dto, List<MultipartFile> multipartFiles) throws IOException {
+    public NoticeDto.NoticeRegisterResponse register(NoticeDto.NoticeRegisterRequest dto, List<MultipartFile> multipartFiles) throws IOException {
         String id = securityUtil.getCurrentMemberUsername();
         User user = userRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("해당 유저를 찾지 못했습니다 : " + id));
         if (!Objects.equals(id, dto.getWriter())) {
@@ -51,7 +51,7 @@ public class NoticeServiceImpl implements NoticeService{
             files = fileService.registerNoticeImg(multipartFiles,notice);
         }
 
-        return new NoticeDto.RegisterResponse(user, files , notice,201,"공지가 등록되었습니다.");
+        return new NoticeDto.NoticeRegisterResponse(user, files , notice,201,"공지가 등록되었습니다.");
     }
 
     /**
@@ -66,12 +66,12 @@ public class NoticeServiceImpl implements NoticeService{
     // 조회 메서드 내에서 조회수 업데이트 호출 예시
     @Override
     @Transactional(readOnly = true)
-    public NoticeDto.ReadResponse read(Long noticeId) {
+    public NoticeDto.NoticeReadResponse read(Long noticeId) {
         Notice notice = noticeRepository.findById(noticeId)
                 .orElseThrow(() -> new BoardNotFoundException("존재하지 않는 게시물 번호입니다: " + noticeId));
         // 별도의 트랜잭션으로 처리하기 위해 분리된 메서드 호출
         increaseHit(noticeId);
-        return new NoticeDto.ReadResponse(notice);
+        return new NoticeDto.NoticeReadResponse(notice);
     }
 
 
@@ -80,7 +80,7 @@ public class NoticeServiceImpl implements NoticeService{
      */
     @Override
     @Transactional
-    public NoticeDto.UpdateResponse update(NoticeDto.UpdateRequest dto, List<MultipartFile> multipartFiles, Long noticeId) throws IOException {
+    public NoticeDto.NoticeUpdateResponse update(NoticeDto.NoticeUpdateRequest dto, List<MultipartFile> multipartFiles, Long noticeId) throws IOException {
         String id = securityUtil.getCurrentMemberUsername();
         User user = userRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("해당 유저를 찾지 못했습니다 : " + id));
         Notice notice = noticeRepository.findById(noticeId).orElseThrow(() -> new BoardNotFoundException("존재하지 않는 게시물 번호입니다: " + noticeId));
@@ -93,7 +93,7 @@ public class NoticeServiceImpl implements NoticeService{
 
         List<File> files = fileService.updateNoticeImg(dto.getImgUrl(), multipartFiles, notice);
 
-        return new NoticeDto.UpdateResponse(user, files , notice,200,"공지가 수정되었습니다.");
+        return new NoticeDto.NoticeUpdateResponse(user, files , notice,200,"공지가 수정되었습니다.");
     }
 
     /**
@@ -122,7 +122,7 @@ public class NoticeServiceImpl implements NoticeService{
      * 공지사항 목록
      */
     @Override
-    public Page<NoticeDto.ListResponse> getNotices(int limit, int skip, String keyword) {
+    public Page<NoticeDto.NoticeListResponse> getNotices(int limit, int skip, String keyword) {
         Pageable pageable = PageRequest.of(skip, limit);
         return noticeRepository.findNoticesWithPagingAndKeyword(keyword, pageable);
     }

@@ -73,7 +73,7 @@ public class SecurityConfig {
                         return config;
                     }
                 })).csrf((csrf) -> csrf.csrfTokenRequestHandler(requestHandler)
-                        .ignoringRequestMatchers("/v1/user/**", "/v1/file/**", "/v1/notices/register", "/v1/comment/**","/v1/notices/**","/v1/talent/**")
+                        .ignoringRequestMatchers("/v1/user/**", "/v1/file/**", "/v1/notices/register", "/v1/comment/**","/v1/notices/**","/v1/talent/**","/swagger-ui/**", "/v3/api-docs/**")
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
                 //DaoAuthenticationProvider의 세부 내역을 AuthenticationProvider 빈을 만들어 정의했으므로 인증을 구성해줘야 한다.
                 .authenticationProvider(authenticationProvider)
@@ -90,7 +90,7 @@ public class SecurityConfig {
                         .requestMatchers(request -> HttpMethod.DELETE.matches(request.getMethod()) && request.getServletPath().startsWith("/v1/comment/{commentId}")).hasRole("ADMIN") // DELETE 메서드에 대한 접근 제한
                         .requestMatchers("/myBalance").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/v1/notices/register").hasRole("ADMIN")
-                        .requestMatchers("/v1/user/**", "/v1/file/**", "/v1/notices/{noticeId}","/v1/comment/**","/v1/subjectCategory/**","/v1/place/**","/v1/talent/**").permitAll())
+                        .requestMatchers("/v1/user/**", "/v1/file/**", "/v1/notices/{noticeId}","/v1/comment/**","/v1/subjectCategory/**","/v1/place/**","/v1/talent/**","/swagger-ui/**", "/v3/api-docs/**").permitAll())
                 .formLogin(Customizer.withDefaults())
                 .httpBasic(Customizer.withDefaults());
         return http.build();

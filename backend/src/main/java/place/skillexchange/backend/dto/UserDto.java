@@ -1,5 +1,6 @@
 package place.skillexchange.backend.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -24,18 +25,22 @@ public class UserDto {
 
         @NotBlank(message = "아이디: 필수 정보입니다.")
         @Size(min = 5 , message="id는 5글자 이상 입력해 주세요.")
+        @Schema(title = "사용자 ID",description = "사용자 ID를 입력합니다.")
         private String id;
 
         @NotBlank(message = "이메일: 필수 정보입니다.")
         @Email(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+.[A-Za-z]{2,6}$", message = "이메일 형식이 올바르지 않습니다.")
+        @Schema(title = "사용자 이메일",description = "사용자 이메일을 입력합니다.")
         private String email;
 
         @NotBlank(message = "비밀번호: 필수 정보입니다.")
         @Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{8,16}", message = "8~16자 영문 대 소문자, 숫자, 특수문자를 사용하세요.")
+        @Schema(title = "사용자 패스워드",description = "사용자 비밀번호를 입력합니다.")
         private String password;
 
         @NotBlank(message = "비밀번호 확인: 필수 정보입니다.")
         @Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{8,16}", message = "8~16자 영문 대 소문자, 숫자, 특수문자를 사용하세요.")
+        @Schema(title = "사용자 패스워드",description = "사용자 비밀번호를 재입력합니다.")
         private String passwordCheck;
 
         //Authority 객체를 생성하고, 권한 이름을 "ROLE_USER"로 설정

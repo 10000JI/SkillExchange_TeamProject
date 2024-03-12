@@ -14,8 +14,8 @@ public class SubjectCategoryServiceImpl implements SubjectCategoryService {
     private final SubjectCategoryRepository subjectCategoryRepository;
 
     @Override
-    public List<SubjectCategoryDto.ListResponse> findAll() {
+    public List<SubjectCategoryDto.CategoryListResponse> findAll() {
         List<SubjectCategory> subjectCategories = subjectCategoryRepository.findAllOrderByParentIdAscNullsFirstCategoryIdAsc();
-        return SubjectCategoryDto.ListResponse.toDtoList(subjectCategories);
+        return SubjectCategoryDto.CategoryListResponse.toDtoList(subjectCategories);
     }
 }

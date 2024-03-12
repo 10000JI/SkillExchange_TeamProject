@@ -1,11 +1,6 @@
 package place.skillexchange.backend.service;
 
 import org.springframework.data.domain.Page;
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 import place.skillexchange.backend.dto.TalentDto;
 
@@ -14,17 +9,17 @@ import java.util.List;
 
 public interface TalentService {
 
-    public TalentDto.RegisterResponse register(TalentDto.RegisterRequest dto, List<MultipartFile> multipartFiles) throws IOException;
+    public TalentDto.TalentRegisterResponse register(TalentDto.TalentRegisterRequest dto, List<MultipartFile> multipartFiles) throws IOException;
 
-    public TalentDto.writerInfoResponse writerInfo(Long writerId);
+    public TalentDto.WriterInfoResponse writerInfo(Long writerId);
 
-    public TalentDto.ReadResponse read(Long writerId);
+    public TalentDto.TalentReadResponse read(Long writerId);
 
-    public TalentDto.UpdateResponse update(TalentDto.UpdateRequest dto, List<MultipartFile> multipartFiles, Long talentId) throws IOException;
+    public TalentDto.TalentUpdateResponse update(TalentDto.TalentUpdateRequest dto, List<MultipartFile> multipartFiles, Long talentId) throws IOException;
 
     public TalentDto.ResponseBasic delete(Long talentId);
 
-    public Page<TalentDto.ListResponse> list(int limit, int skip, String keyword, Long subjectCategoryId);
+    public Page<TalentDto.TalentListResponse> list(int limit, int skip, String keyword, Long subjectCategoryId);
 
     public TalentDto.ResponseBasic scrap(Long talentId);
 }

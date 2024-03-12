@@ -27,7 +27,7 @@ public class RefreshToken {
     @Column(nullable = false)
     private Date expirationTime;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="user_id")
     private User user;
 

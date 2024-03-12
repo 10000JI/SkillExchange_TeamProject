@@ -17,7 +17,7 @@ public class TalentDto {
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
-    public static class RegisterRequest {
+    public static class TalentRegisterRequest {
 
         @NotBlank(message = "작성자: 필수 정보입니다.")
         private String writer;
@@ -60,7 +60,7 @@ public class TalentDto {
      * 게시물 등록 성공시 보낼 Dto
      */
     @Getter
-    public static class RegisterResponse {
+    public static class TalentRegisterResponse {
         private Long id;
         private String writer;
         private String content;
@@ -77,7 +77,7 @@ public class TalentDto {
         private String returnMessage;
 
         /* Entity -> Dto */
-        public RegisterResponse(User user, Talent talent, List<File> files, int returnCode, String returnMessage) {
+        public TalentRegisterResponse(User user, Talent talent, List<File> files, int returnCode, String returnMessage) {
             this.writer = user.getId();
             this.id = talent.getId();
             this.content = talent.getContent();
@@ -106,7 +106,7 @@ public class TalentDto {
      * 프로필 조회 시 응답 Dto
      */
     @Getter
-    public static class writerInfoResponse {
+    public static class WriterInfoResponse {
         private String id;
         private String gender;
         private String job;
@@ -115,7 +115,7 @@ public class TalentDto {
         private String mySubject;
 
         /* Entity -> Dto */
-        public writerInfoResponse(User user) {
+        public WriterInfoResponse(User user) {
             this.id = user.getId();
             this.gender = user.getGender();
             this.job = user.getJob();
@@ -129,7 +129,7 @@ public class TalentDto {
      * 게시물 조회 성공시 보낼 Dto
      */
     @Getter
-    public static class ReadResponse {
+    public static class TalentReadResponse {
         private Long id;
         private String writer;
         private String avatar;
@@ -145,7 +145,7 @@ public class TalentDto {
         private Long hit;
 
         /* Entity -> Dto */
-        public ReadResponse(Talent talent) {
+        public TalentReadResponse(Talent talent) {
             this.writer = talent.getWriter().getId();
             if (talent.getWriter() != null && talent.getWriter().getFile() != null) {
                 this.avatar = talent.getWriter().getFile().getFileUrl();
@@ -176,7 +176,7 @@ public class TalentDto {
      * 게시물 수정 시 요청된 Dto
      */
     @Getter
-    public static class UpdateRequest {
+    public static class TalentUpdateRequest {
 
         @NotBlank(message = "작성자: 필수 정보입니다.")
         private String writer;
@@ -206,7 +206,7 @@ public class TalentDto {
      * 게시물 수정 성공시 보낼 Dto
      */
     @Getter
-    public static class UpdateResponse {
+    public static class TalentUpdateResponse {
         private Long id;
         private String writer;
         private String content;
@@ -223,7 +223,7 @@ public class TalentDto {
         private String returnMessage;
 
         /* Entity -> Dto */
-        public UpdateResponse(User user, Talent talent, List<File> files, int returnCode, String returnMessage) {
+        public TalentUpdateResponse(User user, Talent talent, List<File> files, int returnCode, String returnMessage) {
             this.writer = user.getId();
             this.id = talent.getId();
             this.content = talent.getContent();
@@ -263,7 +263,7 @@ public class TalentDto {
      * 게시물 목록 응답 Dto
      */
     @Getter
-    public static class ListResponse {
+    public static class TalentListResponse {
         private Long id;
         private String writer;
         private String content;
@@ -274,7 +274,7 @@ public class TalentDto {
         private LocalDateTime regDate;
         private Long hit;
 
-        public ListResponse(Talent talent) {
+        public TalentListResponse(Talent talent) {
             this.id = talent.getId();
             this.writer = talent.getWriter().getId();
             this.content = talent.getContent();

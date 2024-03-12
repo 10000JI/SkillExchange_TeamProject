@@ -7,14 +7,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import place.skillexchange.backend.dto.NoticeDto;
-import place.skillexchange.backend.dto.PlaceDto;
 import place.skillexchange.backend.dto.TalentDto;
-import place.skillexchange.backend.entity.Talent;
 import place.skillexchange.backend.service.TalentService;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.List;
 
 @RestController
@@ -28,7 +24,7 @@ public class TalentController {
      * 재능교환 게시물 등록
      */
     @PostMapping("/register")
-    public ResponseEntity<TalentDto.RegisterResponse> register(@Validated @RequestPart("talentDto") TalentDto.RegisterRequest dto, @RequestPart(value = "files", required = false) List<MultipartFile> multipartFiles) throws IOException {
+    public ResponseEntity<TalentDto.TalentRegisterResponse> register(@Validated @RequestPart("talentDto") TalentDto.TalentRegisterRequest dto, @RequestPart(value = "files", required = false) List<MultipartFile> multipartFiles) throws IOException {
         return ResponseEntity.status(HttpStatus.CREATED).body(talentService.register(dto, multipartFiles));
     }
 
@@ -36,7 +32,7 @@ public class TalentController {
      * 게시물 올린 글쓴이의 프로필 정보 불러오기
      */
     @GetMapping("/writerInfo/{talentId}")
-    public TalentDto.writerInfoResponse writerInfo(@PathVariable Long talentId) {
+    public TalentDto.WriterInfoResponse writerInfo(@PathVariable Long talentId) {
         return talentService.writerInfo(talentId);
     }
 
@@ -44,7 +40,7 @@ public class TalentController {
      * 게시물 정보 불러오기
      */
     @GetMapping("/{talentId}")
-    public TalentDto.ReadResponse read(@PathVariable Long talentId) {
+    public TalentDto.TalentReadResponse read(@PathVariable Long talentId) {
         return talentService.read(talentId);
     }
 
@@ -52,7 +48,7 @@ public class TalentController {
      * 게시물 정보 수정
      */
     @PatchMapping("/{talentId}")
-    public TalentDto.UpdateResponse update(@Validated @RequestPart("talentDto") TalentDto.UpdateRequest dto, @RequestPart(value = "files", required = false) List<MultipartFile> multipartFiles, @PathVariable Long talentId) throws IOException {
+    public TalentDto.TalentUpdateResponse update(@Validated @RequestPart("talentDto") TalentDto.TalentUpdateRequest dto, @RequestPart(value = "files", required = false) List<MultipartFile> multipartFiles, @PathVariable Long talentId) throws IOException {
         return talentService.update(dto, multipartFiles, talentId);
     }
 
@@ -68,12 +64,12 @@ public class TalentController {
      * 카테고리 별 게시물 목록
      */
     @GetMapping("/list")
-    public ResponseEntity<Page<TalentDto.ListResponse>> list(
+    public ResponseEntity<Page<TalentDto.TalentListResponse>> list(
             @RequestParam(defaultValue = "20") int limit,
             @RequestParam(defaultValue = "0") int skip,
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) Long subjectCategoryId) {
-        Page<TalentDto.ListResponse> talent = talentService.list(limit, skip, keyword, subjectCategoryId);
+        Page<TalentDto.TalentListResponse> talent = talentService.list(limit, skip, keyword, subjectCategoryId);
 
         return ResponseEntity.ok(talent);
     }

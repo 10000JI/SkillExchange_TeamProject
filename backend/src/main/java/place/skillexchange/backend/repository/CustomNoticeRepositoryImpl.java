@@ -21,7 +21,7 @@ public class CustomNoticeRepositoryImpl implements CustomNoticeRepository {
 
     //공지사항 페이징 처리 및 검색어 처리
     @Override
-    public Page<NoticeDto.ListResponse> findNoticesWithPagingAndKeyword(String keyword, Pageable pageable) {
+    public Page<NoticeDto.NoticeListResponse> findNoticesWithPagingAndKeyword(String keyword, Pageable pageable) {
         QNotice qNotice = QNotice.notice;
 
         // QueryDSL 라이브러리에서 사용되는 조건 표현식, 데이터베이스 쿼리의 WHERE 절에 사용
@@ -47,8 +47,8 @@ public class CustomNoticeRepositoryImpl implements CustomNoticeRepository {
          *     n.id DESC
          * LIMIT #{pageSize} OFFSET #{offset}
          */
-        List<NoticeDto.ListResponse> notices = queryFactory
-                .select(Projections.constructor(NoticeDto.ListResponse.class,
+        List<NoticeDto.NoticeListResponse> notices = queryFactory
+                .select(Projections.constructor(NoticeDto.NoticeListResponse.class,
                         qNotice,
                         qNotice.comments.size().longValue() // 댓글 개수 조회
                 ))

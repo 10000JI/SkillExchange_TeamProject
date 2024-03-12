@@ -17,15 +17,15 @@ public class CommentDto {
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class ViewResponse {
+    public static class CommentViewResponse {
         private Long id;
         private String content;
         private String userId;
         private String imgUrl;
         private LocalDateTime regDate;
-        private List<ViewResponse> children = new ArrayList<>();
+        private List<CommentViewResponse> children = new ArrayList<>();
 
-        public ViewResponse(Long id, String content, String userId, String imgUrl, LocalDateTime regDate) {
+        public CommentViewResponse(Long id, String content, String userId, String imgUrl, LocalDateTime regDate) {
             this.id = id;
             this.content = content;
             this.userId = userId;
@@ -35,11 +35,11 @@ public class CommentDto {
 
         //DeleteStatus(삭제된 상태)가 Y(맞다면)라면 new ViewResponse(comment.getId(), "삭제된 댓글입니다.", null)
         //아니라면(N이라면) new ViewResponse(comment.getId(), comment.getContent(), comment.getWriter().getId())
-        public static ViewResponse entityToDto(Comment comment) {
+        public static CommentViewResponse entityToDto(Comment comment) {
             String imgUrl = comment.getWriter() != null && comment.getWriter().getFile() != null ? comment.getWriter().getFile().getFileUrl() : null;
             return comment.getIsDeleted() == DeleteStatus.Y ?
-                    new ViewResponse(comment.getId(), "삭제된 댓글입니다.", null, imgUrl, comment.getRegDate()) :
-                    new ViewResponse(comment.getId(), comment.getContent(), comment.getWriter().getId(), imgUrl, comment.getRegDate());
+                    new CommentViewResponse(comment.getId(), "삭제된 댓글입니다.", null, imgUrl, comment.getRegDate()) :
+                    new CommentViewResponse(comment.getId(), comment.getContent(), comment.getWriter().getId(), imgUrl, comment.getRegDate());
         }
     }
 
@@ -47,7 +47,7 @@ public class CommentDto {
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
-    public static class RegisterRequest {
+    public static class CommentRegisterRequest {
 
         private Long noticeId;
 
@@ -73,7 +73,7 @@ public class CommentDto {
     }
 
     @Getter
-    public static class RegisterResponse {
+    public static class CommentRegisterResponse {
         private Long id;
         private String writer;
         private String content;
@@ -82,7 +82,7 @@ public class CommentDto {
         private String returnMessage;
 
         /* Dto -> Entity */
-        public RegisterResponse(Comment comment, int returnCode, String returnMessage) {
+        public CommentRegisterResponse(Comment comment, int returnCode, String returnMessage) {
             this.id = comment.getId();
             this.writer = comment.getWriter().getId();
             this.content = comment.getContent();

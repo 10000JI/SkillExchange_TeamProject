@@ -1,5 +1,9 @@
 package place.skillexchange.backend.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -39,6 +43,7 @@ import java.util.TimerTask;
 @RequiredArgsConstructor
 @RequestMapping("/v1/user/")
 @Slf4j
+@Tag(name = "user-controller", description = "일반 사용자를 위한 컨트롤러입니다.")
 public class UserController {
 
     private final AuthService authService;
@@ -51,6 +56,11 @@ public class UserController {
     /**
      * 회원가입
      */
+    @Operation(summary = "사용자 회원가입 API", description = "사용자 ID, 이메일, 패스워드만 가지고 회원가입을 진행합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "회원가입 성공"),
+            @ApiResponse(responseCode = "400", description = "유효성 검사 실패"),
+    })
     @PostMapping("/signUp")
     public ResponseEntity<UserDto.SignUpInResponse> register(@Validated @RequestBody UserDto.SignUpRequest dto, BindingResult bindingResult) throws MethodArgumentNotValidException, MessagingException, IOException {
         return ResponseEntity.status(HttpStatus.CREATED).body(authService.register(dto, bindingResult));
@@ -60,6 +70,11 @@ public class UserController {
     /**
      * active Token (계정 활성화 토큰) 검증
      */
+    @Operation(summary = "active Token (계정 활성화 토큰) 검증 API", description = "회원가입 한 사용자가 로그인이 가능하도록 계정 활성화 토큰 검증")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "계정 활성화 완료"),
+            @ApiResponse(responseCode = "401", description = "토큰 만료"),
+    })
     @PostMapping("/activation")
     public UserDto.ResponseBasic activation(@RequestBody Map<String, String> requestBody) {
         return authService.activation(requestBody);

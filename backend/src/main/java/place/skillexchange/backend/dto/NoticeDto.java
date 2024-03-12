@@ -19,7 +19,7 @@ public class NoticeDto {
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
-    public static class RegisterRequest {
+    public static class NoticeRegisterRequest {
 
         @NotBlank(message = "작성자: 필수 정보입니다.")
         private String writer;
@@ -46,7 +46,7 @@ public class NoticeDto {
      * 게시물 등록 성공시 보낼 Dto
      */
     @Getter
-    public static class RegisterResponse {
+    public static class NoticeRegisterResponse {
         private Long id;
         private String writer;
         private String title;
@@ -59,7 +59,7 @@ public class NoticeDto {
         private String returnMessage;
 
         /* Entity -> Dto */
-        public RegisterResponse(User user, List<File> files , Notice notice, int returnCode, String returnMessage) {
+        public NoticeRegisterResponse(User user, List<File> files , Notice notice, int returnCode, String returnMessage) {
             this.writer = user.getId();
             this.id = notice.getId();
             this.title = notice.getTitle();
@@ -86,7 +86,7 @@ public class NoticeDto {
      * 게시물 조회 성공시 보낼 Dto
      */
     @Getter
-    public static class ReadResponse {
+    public static class NoticeReadResponse {
         private Long id;
         private String writer;
         private String avatar;
@@ -98,7 +98,7 @@ public class NoticeDto {
         private Long hit;
 
         /* Entity -> Dto */
-        public ReadResponse(Notice notice) {
+        public NoticeReadResponse(Notice notice) {
             this.writer = notice.getWriter().getId();
             if (notice.getWriter() != null && notice.getWriter().getFile() != null) {
                 this.avatar = notice.getWriter().getFile().getFileUrl();
@@ -126,7 +126,7 @@ public class NoticeDto {
      * 게시물 수정 시 요청된 Dto
      */
     @Getter
-    public static class UpdateRequest {
+    public static class NoticeUpdateRequest {
 
         @NotBlank(message = "작성자: 필수 정보입니다.")
         private String writer;
@@ -145,7 +145,7 @@ public class NoticeDto {
      * 게시물 수정 성공시 보낼 Dto
      */
     @Getter
-    public static class UpdateResponse {
+    public static class NoticeUpdateResponse {
         private Long id;
         private String writer;
         private String title;
@@ -158,7 +158,7 @@ public class NoticeDto {
         private String returnMessage;
 
         /* Entity -> Dto */
-        public UpdateResponse(User user, List<File> files , Notice notice, int returnCode, String returnMessage) {
+        public NoticeUpdateResponse(User user, List<File> files , Notice notice, int returnCode, String returnMessage) {
             this.writer = user.getId();
             this.id = notice.getId();
             this.title = notice.getTitle();
@@ -197,7 +197,7 @@ public class NoticeDto {
      * 게시물 목록 응답 Dto
      */
     @Getter
-    public static class ListResponse {
+    public static class NoticeListResponse {
         private Long id;
         private String writer;
         private String title;
@@ -205,7 +205,7 @@ public class NoticeDto {
         private Long commentCount; // 댓글 개수 필드 추가
         private LocalDateTime regDate;
 
-        public ListResponse(Notice notice, Long commentCount) {
+        public NoticeListResponse(Notice notice, Long commentCount) {
             this.id = notice.getId();
             this.writer = notice.getWriter().getId();
             this.title = notice.getTitle();

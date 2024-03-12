@@ -4,12 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import place.skillexchange.backend.dto.NoticeDto;
 import place.skillexchange.backend.dto.TalentDto;
 import place.skillexchange.backend.entity.*;
 import place.skillexchange.backend.exception.BoardNotFoundException;
@@ -23,8 +21,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -40,7 +36,7 @@ public class TalentServiceImpl implements TalentService {
 
     //재능교환 게시물 생성
     @Override
-    public TalentDto.RegisterResponse register(TalentDto.RegisterRequest dto, List<MultipartFile> multipartFiles) throws IOException {
+    public TalentDto.TalentRegisterResponse register(TalentDto.TalentRegisterRequest dto, List<MultipartFile> multipartFiles) throws IOException {
         String id = securityUtil.getCurrentMemberUsername();
         User user = userRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("해당 유저를 찾지 못했습니다: " + id));
         if (!Objects.equals(id, dto.getWriter())) {
@@ -57,15 +53,15 @@ public class TalentServiceImpl implements TalentService {
         if (multipartFiles != null) {
             files = fileService.registerTalentImg(multipartFiles,talent);
         }
-        return new TalentDto.RegisterResponse(user,talent,files,201,"재능교환 게시물이 등록되었습니다.");
+        return new TalentDto.TalentRegisterResponse(user,talent,files,201,"재능교환 게시물이 등록되었습니다.");
     }
 
     //게시물 올린 글쓴이의 프로필 정보 불러오기
     @Override
-    public TalentDto.writerInfoResponse writerInfo(Long writerId) {
+    public TalentDto.WriterInfoResponse writerInfo(Long writerId) {
         Talent talent = talentRepository.findById(writerId).orElseThrow(() -> new BoardNotFoundException("존재하지 않는 게시물 번호입니다: " + writerId));
         User user = userRepository.findById(talent.getWriter().getId()).orElseThrow(() -> new UsernameNotFoundException("해당 유저를 찾지 못했습니다: " + talent.getWriter().getId()));
-        return new TalentDto.writerInfoResponse(user);
+        return new TalentDto.WriterInfoResponse(user);
     }
 
     // 조회수 증가를 위한 업데이트
@@ -77,16 +73,16 @@ public class TalentServiceImpl implements TalentService {
     // 게시물 조회
     @Override
     @Transactional(readOnly = true)
-    public TalentDto.ReadResponse read(Long talentId) {
+    public TalentDto.TalentReadResponse read(Long talentId) {
         Talent talent = talentRepository.findById(talentId)
                 .orElseThrow(() -> new BoardNotFoundException("존재하지 않는 게시물 번호입니다: " + talentId));
         increaseHit(talentId);
-        return new TalentDto.ReadResponse(talent);
+        return new TalentDto.TalentReadResponse(talent);
     }
 
     // 게시물 수정
     @Override
-    public TalentDto.UpdateResponse update(TalentDto.UpdateRequest dto, List<MultipartFile> multipartFiles, Long talentId) throws IOException {
+    public TalentDto.TalentUpdateResponse update(TalentDto.TalentUpdateRequest dto, List<MultipartFile> multipartFiles, Long talentId) throws IOException {
         String id = securityUtil.getCurrentMemberUsername();
         User user = userRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("해당 유저를 찾지 못했습니다: " + id));
         Talent talent = talentRepository.findById(talentId)
@@ -111,7 +107,7 @@ public class TalentServiceImpl implements TalentService {
         List<File> files = fileService.updateTalentImg(dto.getImgUrl(), multipartFiles, talent);
 
 
-        return new TalentDto.UpdateResponse(user, talent, files, 200, "재능교환 게시물이 수정되었습니다.");
+        return new TalentDto.TalentUpdateResponse(user, talent, files, 200, "재능교환 게시물이 수정되었습니다.");
     }
 
     //게시물 삭제
@@ -132,7 +128,7 @@ public class TalentServiceImpl implements TalentService {
 
     //게시물 목록
     @Override
-    public Page<TalentDto.ListResponse> list(int limit, int skip, String keyword, Long subjectCategoryId) {
+    public Page<TalentDto.TalentListResponse> list(int limit, int skip, String keyword, Long subjectCategoryId) {
         Pageable pageable = PageRequest.of(skip, limit);
         return talentRepository.findAllWithPagingAndSearch(keyword, pageable, subjectCategoryId);
     }
@@ -142,11 +138,10 @@ public class TalentServiceImpl implements TalentService {
     public TalentDto.ResponseBasic scrap(Long talentId) {
         String id = securityUtil.getCurrentMemberUsername();
         User user = userRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("해당 유저를 찾지 못했습니다: " + id));
-        if (scrapRepository.findByTalentId(talentId, user.getId()) != null) {
+        if (scrapRepository.findByTalentId(talentId, id) != null) {
             throw new BoardNotFoundException("이미 스크랩한 게시물 입니다.");
         }
         Talent talent = talentRepository.findById(talentId).orElseThrow(() -> new BoardNotFoundException("존재하지 않는 게시물 번호입니다: " + talentId));
-
         TalentScrap scrap = TalentScrap.of(user, talent);
         scrapRepository.save(scrap);
 
