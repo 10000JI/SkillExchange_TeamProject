@@ -1,5 +1,6 @@
 package place.skillexchange.backend.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import place.skillexchange.backend.entity.Comment;
@@ -17,11 +18,17 @@ public class CommentDto {
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
+    @Schema(description = "공지사항 게시물 번호의 댓글 조회를 위한 도메인 객체")
     public static class CommentViewResponse {
+        @Schema(title = "댓글 ID",description = "댓글 ID를 반환합니다.")
         private Long id;
+        @Schema(title = "댓글 내용",description = "댓글 내용을 반환합니다.")
         private String content;
+        @Schema(title = "댓글 작성자",description = "댓글 작성자를 반환합니다.")
         private String userId;
+        @Schema(title = "작성자의 아바타 이미지 URL",description = "작성자의 아바타 이미지 URL를 반환합니다.")
         private String imgUrl;
+        @Schema(title = "댓글 등록일",description = "댓글 등록일을 반환합니다.")
         private LocalDateTime regDate;
         private List<CommentViewResponse> children = new ArrayList<>();
 

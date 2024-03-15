@@ -22,6 +22,9 @@ public class TalentDto {
         @NotBlank(message = "작성자: 필수 정보입니다.")
         private String writer;
 
+        @NotBlank(message = "제목: 필수 정보입니다.")
+        private String title;
+
         @NotBlank(message = "내용: 필수 정보입니다.")
         private String content;
 
@@ -45,6 +48,7 @@ public class TalentDto {
             Talent talent = Talent.builder()
                     .writer(user)
                     .content(content)
+                    .title(title)
                     .teachingSubject(teachingSubject)
                     .teachedSubject(teachedSubject)
                     .place(place)
@@ -63,6 +67,7 @@ public class TalentDto {
     public static class TalentRegisterResponse {
         private Long id;
         private String writer;
+        private String title;
         private String content;
         private String placeName;
         private String teachingSubject;
@@ -81,6 +86,7 @@ public class TalentDto {
             this.writer = user.getId();
             this.id = talent.getId();
             this.content = talent.getContent();
+            this.title = talent.getTitle();
             this.placeName = talent.getPlace().getPlaceName();
             this.teachingSubject = talent.getTeachingSubject().getSubjectName();
             this.teachedSubject = talent.getTeachedSubject().getSubjectName();
@@ -133,6 +139,7 @@ public class TalentDto {
         private Long id;
         private String writer;
         private String avatar;
+        private String title;
         private String content;
         private String placeName;
         private String teachingSubject;
@@ -154,6 +161,7 @@ public class TalentDto {
             }
             this.id = talent.getId();
             this.content = talent.getContent();
+            this.title = talent.getTitle();
             this.placeName = talent.getPlace().getPlaceName();
             this.teachingSubject = talent.getTeachingSubject().getSubjectName();
             this.teachedSubject = talent.getTeachedSubject().getSubjectName();
@@ -180,6 +188,9 @@ public class TalentDto {
 
         @NotBlank(message = "작성자: 필수 정보입니다.")
         private String writer;
+
+        @NotBlank(message = "제목: 필수 정보입니다.")
+        private String title;
 
         @NotBlank(message = "내용: 필수 정보입니다.")
         private String content;
@@ -209,6 +220,7 @@ public class TalentDto {
     public static class TalentUpdateResponse {
         private Long id;
         private String writer;
+        private String title;
         private String content;
         private String placeName;
         private String teachingSubject;
@@ -226,6 +238,7 @@ public class TalentDto {
         public TalentUpdateResponse(User user, Talent talent, List<File> files, int returnCode, String returnMessage) {
             this.writer = user.getId();
             this.id = talent.getId();
+            this.title = talent.getTitle();
             this.content = talent.getContent();
             this.placeName = talent.getPlace().getPlaceName();
             this.teachingSubject = talent.getTeachingSubject().getSubjectName();
@@ -266,11 +279,13 @@ public class TalentDto {
     public static class TalentListResponse {
         private Long id;
         private String writer;
+        private String title;
         private String content;
         private String placeName;
         private String teachingSubject;
         private String teachedSubject;
         private String ageGroup;
+        private String avatar;
         private LocalDateTime regDate;
         private Long hit;
 
@@ -278,10 +293,12 @@ public class TalentDto {
             this.id = talent.getId();
             this.writer = talent.getWriter().getId();
             this.content = talent.getContent();
+            this.title = talent.getTitle();
             this.placeName = talent.getPlace().getPlaceName();
             this.teachingSubject = talent.getTeachingSubject().getSubjectName();
             this.teachedSubject = talent.getTeachedSubject().getSubjectName();
             this.ageGroup = talent.getAgeGroup();
+            this.avatar = talent.getWriter().getFile().getFileUrl();
             this.regDate = talent.getRegDate();
             this.hit = talent.getHit();
         }

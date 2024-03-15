@@ -9,7 +9,9 @@ import org.hibernate.annotations.ColumnDefault;
 import place.skillexchange.backend.dto.TalentDto;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Builder
@@ -48,6 +50,9 @@ public class Talent extends BaseEntity{
     @JoinColumn(name = "teaching_subject_id", nullable = false)
     private SubjectCategory teachingSubject;
 
+    @Column(name = "talent_title", length = 50, nullable = false)
+    private String title;
+
     @Column(name = "talent_content", length = 4000, nullable = false)
     private String content;
 
@@ -66,6 +71,13 @@ public class Talent extends BaseEntity{
      */
     @OneToMany(mappedBy = "talent", cascade = CascadeType.ALL)
     private List<File> files = new ArrayList<>();
+
+    /**
+     * Talent와 TalentScrap 양방향 매핑
+     */
+    //Talent 엔티티를 삭제하기 전에 해당 Talent 엔티티와 관련된 모든 TalentScrap 엔티티를 삭제
+    @OneToMany(mappedBy = "talent", cascade = CascadeType.REMOVE)
+    private Set<TalentScrap> talentScraps = new HashSet<>();
 
 
     /**

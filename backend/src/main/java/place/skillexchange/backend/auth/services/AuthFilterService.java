@@ -1,6 +1,5 @@
 package place.skillexchange.backend.auth.services;
 
-import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -8,27 +7,20 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.filter.OncePerRequestFilter;
 import place.skillexchange.backend.entity.RefreshToken;
 import place.skillexchange.backend.entity.User;
-import place.skillexchange.backend.exception.UserUnAuthorizedException;
-import place.skillexchange.backend.repository.RefreshTokenRepository;
 import place.skillexchange.backend.repository.UserRepository;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Enumeration;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -39,8 +31,6 @@ public class AuthFilterService extends OncePerRequestFilter {
     private final JwtService jwtService;
 
     private final UserDetailsService userDetailsService;
-
-    private final UserRepository userRepository;
 
     private final RefreshTokenService refreshTokenService;
 

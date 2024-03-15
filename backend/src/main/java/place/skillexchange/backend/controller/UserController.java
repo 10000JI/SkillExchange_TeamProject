@@ -1,43 +1,29 @@
 package place.skillexchange.backend.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.mail.MessagingException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.NonNull;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import place.skillexchange.backend.auth.services.AuthService;
-import place.skillexchange.backend.auth.services.AuthServiceImpl;
-import place.skillexchange.backend.auth.services.JwtService;
-import place.skillexchange.backend.auth.services.RefreshTokenService;
 import place.skillexchange.backend.dto.UserDto;
-import place.skillexchange.backend.entity.RefreshToken;
-import place.skillexchange.backend.entity.User;
-import place.skillexchange.backend.exception.UserUnAuthorizedException;
-import place.skillexchange.backend.repository.UserRepository;
 import place.skillexchange.backend.service.MailService;
 import place.skillexchange.backend.service.UserService;
-import place.skillexchange.backend.service.UserServiceImpl;
-import place.skillexchange.backend.util.SecurityUtil;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 
 @RestController
 @RequiredArgsConstructor
@@ -47,10 +33,7 @@ import java.util.TimerTask;
 public class UserController {
 
     private final AuthService authService;
-    private final JwtService jwtService;
     private final MailService mailService;
-    private final UserDetailsService userDetailsService;
-    private final UserRepository userRepository;
     private final UserService userService;
 
     /**
@@ -58,8 +41,7 @@ public class UserController {
      */
     @Operation(summary = "사용자 회원가입 API", description = "사용자 ID, 이메일, 패스워드만 가지고 회원가입을 진행합니다.")
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "회원가입 성공"),
-            @ApiResponse(responseCode = "400", description = "유효성 검사 실패"),
+            @ApiResponse(responseCode = "201", description = "회원가입 성공")
     })
     @PostMapping("/signUp")
     public ResponseEntity<UserDto.SignUpInResponse> register(@Validated @RequestBody UserDto.SignUpRequest dto, BindingResult bindingResult) throws MethodArgumentNotValidException, MessagingException, IOException {
@@ -72,8 +54,7 @@ public class UserController {
      */
     @Operation(summary = "active Token (계정 활성화 토큰) 검증 API", description = "회원가입 한 사용자가 로그인이 가능하도록 계정 활성화 토큰 검증")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "계정 활성화 완료"),
-            @ApiResponse(responseCode = "401", description = "토큰 만료"),
+            @ApiResponse(responseCode = "200", description = "계정 활성화 완료")
     })
     @PostMapping("/activation")
     public UserDto.ResponseBasic activation(@RequestBody Map<String, String> requestBody) {
@@ -83,6 +64,10 @@ public class UserController {
     /**
      * 사용자 로그인
      */
+    @Operation(summary = "사용자 로그인 API", description = "활성화 토큰 검증 이후 로그인이 가능하다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "로그인 성공")
+    })
     @PostMapping("/signIn")
     public ResponseEntity<UserDto.SignUpInResponse> login(@RequestBody UserDto.SignInRequest dto) {
         return authService.login(dto);
@@ -91,8 +76,12 @@ public class UserController {
     /**
      * 아이디 찾기
      */
+    @Operation(summary = "아이디 찾기 API", description = "사용자 이메일로 회원가입 했던 ID를 보내준다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "로그인 성공")
+    })
     @PostMapping("/emailToFindId")
-    public UserDto.ResponseBasic emailToFindId(@RequestBody UserDto.EmailRequest dto) throws MessagingException, IOException {
+    public UserDto.ResponseBasic emailToFindId(@Parameter @RequestBody UserDto.EmailRequest dto) throws MessagingException, IOException {
         mailService.getEmailToFindId(dto.getEmail());
         return new UserDto.ResponseBasic(200, "이메일이 성공적으로 전송되었습니다.");
     }
@@ -100,6 +89,10 @@ public class UserController {
     /**
      * 비밀번호 찾기
      */
+    @Operation(summary = "비밀번호 찾기 API", description = "사용자 이메일로 임시 비밀번호를 보내준다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "로그인 성공")
+    })
     @PostMapping("/emailToFindPw")
     public UserDto.ResponseBasic emailToFindPw(@RequestBody UserDto.EmailRequest dto) throws MessagingException, IOException {
         mailService.getEmailToFindPw(dto.getEmail());
@@ -109,6 +102,10 @@ public class UserController {
     /**
      * 프로필 수정
      */
+    @Operation(summary = "프로필 수정 API", description = "사용자가 입력/수정 하고 싶은 필드만 보내준다. (NULL 가능)")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "로그인 성공")
+    })
     @PatchMapping("/profileUpdate")
     public UserDto.ProfileResponse profileUpdate(@RequestPart("profileDto") UserDto.ProfileRequest dto, @RequestPart(value="imgFile", required = false) MultipartFile multipartFile) throws IOException {
         return userService.profileUpdate(dto, multipartFile);
@@ -117,6 +114,10 @@ public class UserController {
     /**
      * 프로필 조회
      */
+    @Operation(summary = "프로필 조회 API", description = "엑세스 토큰을 보내주면 검증 이후 프로필 조회한다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "로그인 성공")
+    })
     @GetMapping("/userInfo")
     public UserDto.MyProfileResponse profileRead() {
         return userService.profileRead();
@@ -125,6 +126,10 @@ public class UserController {
     /**
      * 비밀번호 변경
      */
+    @Operation(summary = "비밀번호 변경 API", description = "임시비밀번호 발급 이후 비밀번호 변경, 보안을 위해 비밀번호 변경을 진행한다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "로그인 성공")
+    })
     @PostMapping("/updatePw")
     public UserDto.ResponseBasic updatePw(@Validated @RequestBody UserDto.UpdatePwRequest dto, BindingResult bindingResult) throws MethodArgumentNotValidException {
         return userService.updatePw(dto, bindingResult);

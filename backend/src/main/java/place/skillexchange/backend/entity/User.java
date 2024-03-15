@@ -74,17 +74,10 @@ public class User implements UserDetails {
     @OneToOne(mappedBy = "user", cascade = CascadeType.REMOVE)
     private File file;
 
-//    /**
-//     * User와 Talent 사이에 있는 TALENT_SCRAP , cascade 옵션 필요로 하면 변경하기
-//     */
-//    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-//    @JoinTable(
-//            name = "talent_scrap",
-//            joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "user_id")},
-//            inverseJoinColumns = {@JoinColumn(name = "talent_id", referencedColumnName = "talent_id")})
-//    private Set<Talent> scrap;
-
-    @OneToMany(mappedBy = "user")
+    /**
+     * User와 TalentScrap 양방향 매핑
+     */
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private Set<TalentScrap> talentScraps = new HashSet<>();
 
     @Override

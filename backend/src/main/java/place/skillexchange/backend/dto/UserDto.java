@@ -21,6 +21,7 @@ public class UserDto {
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
+    @Schema(description = "회원가입 요청을 위한 도메인 객체")
     public static class SignUpRequest {
 
         @NotBlank(message = "아이디: 필수 정보입니다.")
@@ -35,12 +36,12 @@ public class UserDto {
 
         @NotBlank(message = "비밀번호: 필수 정보입니다.")
         @Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{8,16}", message = "8~16자 영문 대 소문자, 숫자, 특수문자를 사용하세요.")
-        @Schema(title = "사용자 패스워드",description = "사용자 비밀번호를 입력합니다.")
+        @Schema(title = "사용자 비밀번호",description = "사용자 비밀번호를 입력합니다.")
         private String password;
 
         @NotBlank(message = "비밀번호 확인: 필수 정보입니다.")
         @Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{8,16}", message = "8~16자 영문 대 소문자, 숫자, 특수문자를 사용하세요.")
-        @Schema(title = "사용자 패스워드",description = "사용자 비밀번호를 재입력합니다.")
+        @Schema(title = "사용자 비밀번호 확인",description = "사용자 비밀번호를 재입력합니다.")
         private String passwordCheck;
 
         //Authority 객체를 생성하고, 권한 이름을 "ROLE_USER"로 설정
@@ -49,7 +50,7 @@ public class UserDto {
                 .build();
 
         /* Dto -> Entity */
-        //toEntity는 패스워드 확인 일치하면 사용
+        //toEntity는 `패스`워드 확인 일치하면 사용
         public User toEntity() {
             User user = User.builder()
                     .id(id)
@@ -66,8 +67,11 @@ public class UserDto {
      */
     @Getter
     @AllArgsConstructor
+    @Schema(description = "로그인 요청을 위한 도메인 객체")
     public static class SignInRequest {
+        @Schema(title = "사용자 ID",description = "사용자 ID를 입력합니다.")
         private String id;
+        @Schema(title = "사용자 비밀번호",description = "사용자 비밀번호를 입력합니다.")
         private String password;
     }
 
@@ -75,10 +79,16 @@ public class UserDto {
      * 회원가입, 로그인 성공시 보낼 Dto
      */
     @Getter
+    @Schema(description ="회원가입 응답을 위한 도메인 객체")
     public static class SignUpInResponse {
+
+        @Schema(title = "사용자 ID",description = "사용자 ID를 반환합니다.")
         private String id;
+        @Schema(title = "사용자 이메일",description = "사용자 이메일를 반환합니다.")
         private String email;
+        @Schema(title = "HTTP 상태 코드")
         private int returnCode;
+        @Schema(title = "응답 메시지")
         private String returnMessage;
 
         /* Entity -> Dto */
@@ -95,7 +105,9 @@ public class UserDto {
     @Getter
     @AllArgsConstructor
     public static class ResponseBasic {
+        @Schema(title = "HTTP 상태 코드")
         private int returnCode;
+        @Schema(title = "응답 메시지")
         private String returnMessage;
     }
 
@@ -103,6 +115,7 @@ public class UserDto {
      * 로그인 성공시 요청된 Dto
      */
     @Getter
+    @Schema(description = "이메일로 아이디 혹은 비밀번호 찾기")
     public static class EmailRequest {
         private String email;
     }
@@ -111,11 +124,17 @@ public class UserDto {
      * 프로필 수정 시 요청된 Dto
      */
     @Getter
+    @Schema(description = "프로필 수정 요청을 위한 도메인 객체")
     public static class ProfileRequest {
+        @Schema(title = "사용자 성별",description = "사용자 성별을 입력합니다.")
         private String gender;
+        @Schema(title = "사용자 직업",description = "사용자 직업을 입력합니다.")
         private String job;
+        @Schema(title = "사용자 경력기술",description = "사용자 경력기술을 입력합니다.")
         private String careerSkills;
+        @Schema(title = "사용자 관심분야",description = "사용자 관심분야을 입력합니다.")
         private String preferredSubject;
+        @Schema(title = "사용자 전공분야",description = "사용자 전공분야를 입력합니다.")
         private String mySubject;
     }
 
@@ -123,17 +142,29 @@ public class UserDto {
      * 프로필 수정 시 응답 Dto
      */
     @Getter
+    @Schema(description = "프로필 수정 응답을 위한 도메인 객체")
     public static class ProfileResponse {
+        @Schema(title = "사용자 아이디",description = "사용자 아이디을 반환합니다.")
         private String id;
+        @Schema(title = "사용자 이메일",description = "사용자 성별을 반환합니다.")
         private String email;
+        @Schema(title = "사용자 성별",description = "사용자 성별을 반환합니다.")
         private String gender;
+        @Schema(title = "사용자 직업",description = "사용자 직업을 반환합니다.")
         private String job;
+        @Schema(title = "사용자 경력기술",description = "사용자 경력기술을 반환합니다.")
         private String careerSkills;
+        @Schema(title = "사용자 관심분야",description = "사용자 관심분야을 반환합니다.")
         private String preferredSubject;
+        @Schema(title = "사용자 전공분야",description = "사용자 전공분야를 반환합니다.")
         private String mySubject;
+        @Schema(title = "이미지명",description = "이미지명을 반환합니다.")
         private String oriName;
+        @Schema(title = "이미지주소",description = "이미지주소를 반환합니다.")
         private String imgUrl;
+        @Schema(title = "HTTP 상태 코드")
         private int returnCode;
+        @Schema(title = "응답 메시지")
         private String returnMessage;
 
         /* Entity -> Dto */
@@ -161,16 +192,27 @@ public class UserDto {
      * 프로필 조회 시 응답 Dto
      */
     @Getter
-    public static class MyProfileResponse {
+    @Schema(description = "프로필 조회 응답을 위한 도메인 객체")
+    public static class MyProfileResponse{
+        @Schema(title = "사용자 아이디",description = "사용자 아이디을 반환합니다.")
         private String id;
+        @Schema(title = "사용자 이메일",description = "사용자 이메일을 반환합니다.")
         private String email;
+        @Schema(title = "사용자 성별",description = "사용자 성별을 반환합니다.")
         private String gender;
+        @Schema(title = "사용자 직업",description = "사용자 직업을 반환합니다.")
         private String job;
+        @Schema(title = "사용자 경력기술",description = "사용자 경력기술을 반환합니다.")
         private String careerSkills;
+        @Schema(title = "사용자 관심분야",description = "사용자 관심분야을 반환합니다.")
         private String preferredSubject;
+        @Schema(title = "사용자 전공분야",description = "사용자 전공분야를 반환합니다.")
         private String mySubject;
+        @Schema(title = "이미지주소",description = "이미지주소를 반환합니다.")
         private String imgUrl;
+        @Schema(title = "HTTP 상태 코드")
         private int returnCode;
+        @Schema(title = "응답 메시지")
         private String returnMessage;
 
         /* Entity -> Dto */
@@ -196,17 +238,21 @@ public class UserDto {
      * 비밀번호 변경 시 요청된 Dto
      */
     @Getter
+    @Schema(description = "비밀번호 변경 요청을 위한 도메인 객체")
     public static class UpdatePwRequest {
         @NotBlank(message = "현재 비밀번호: 필수 정보입니다.")
         @Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{8,16}", message = "8~16자 영문 대 소문자, 숫자, 특수문자를 사용하세요.")
+        @Schema(title = "사용자 현재 비밀번호",description = "사용자 현재 비밀번호를 반환합니다.")
         private String password;
 
         @NotBlank(message = "새 비밀번호: 필수 정보입니다.")
         @Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{8,16}", message = "8~16자 영문 대 소문자, 숫자, 특수문자를 사용하세요.")
+        @Schema(title = "사용자 새 비밀번호",description = "사용자 새 비밀번호를 반환합니다.")
         private String newPassword;
 
         @NotBlank(message = "새 비밀번호 확인: 필수 정보입니다.")
         @Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{8,16}", message = "8~16자 영문 대 소문자, 숫자, 특수문자를 사용하세요.")
+        @Schema(title = "사용자 새 비밀번호 확인",description = "사용자 새 비밀번호를 반환합니다.")
         private String newPasswordCheck;
     }
 }

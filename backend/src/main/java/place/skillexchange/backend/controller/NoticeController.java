@@ -38,7 +38,7 @@ public class NoticeController {
      */
     @Operation(summary = "공지사항 조회 API", description = "noticeId를 이용해서 게시물을 조회합니다.")
     @GetMapping("/{noticeId}")
-    public NoticeDto.NoticeReadResponse read(@PathVariable Long noticeId) {
+    public NoticeDto.NoticeReadResponse read(@Parameter(description = "게시물 번호", required = true, example = "1") @PathVariable Long noticeId) {
         return noticeService.read(noticeId);
     }
 
@@ -47,7 +47,7 @@ public class NoticeController {
      */
     @Operation(summary = "공지사항 수정 API", description = "noticeId를 이용해서 게시물을 수정합니다. noticeDto: 게시물 필드 요소들(application/json), files: 업로드 할 이미지들(multipart/form-data)")
     @PatchMapping("/{noticeId}")
-    public NoticeDto.NoticeUpdateResponse update(@Validated @RequestPart("noticeDto") NoticeDto.NoticeUpdateRequest dto, @RequestPart(value = "files", required = false) List<MultipartFile> multipartFiles, @PathVariable Long noticeId) throws IOException {
+    public NoticeDto.NoticeUpdateResponse update(@Validated @RequestPart("noticeDto") NoticeDto.NoticeUpdateRequest dto, @RequestPart(value = "files", required = false) List<MultipartFile> multipartFiles, @Parameter(description = "게시물 번호", required = true, example = "1") @PathVariable Long noticeId) throws IOException {
         return noticeService.update(dto, multipartFiles, noticeId);
     }
 
@@ -56,7 +56,7 @@ public class NoticeController {
      */
     @Operation(summary = "공지사항 삭제 API", description = "noticeId를 이용해서 게시물을 삭제합니다.")
     @DeleteMapping("/{noticeId}")
-    public NoticeDto.ResponseBasic delete(@PathVariable Long noticeId)  {
+    public NoticeDto.ResponseBasic delete(@Parameter(description = "게시물 번호", required = true, example = "1") @PathVariable Long noticeId)  {
         return noticeService.delete(noticeId);
     }
 
