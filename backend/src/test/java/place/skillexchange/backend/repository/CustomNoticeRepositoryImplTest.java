@@ -4,13 +4,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import place.skillexchange.backend.entity.Notice;
-import place.skillexchange.backend.entity.User;
+import place.skillexchange.backend.notice.entity.Notice;
+import place.skillexchange.backend.notice.repository.NoticeRepository;
+import place.skillexchange.backend.user.entity.User;
+import place.skillexchange.backend.user.repository.UserRepository;
 
 import java.util.Optional;
 import java.util.stream.IntStream;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class CustomNoticeRepositoryImplTest {

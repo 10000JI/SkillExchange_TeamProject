@@ -6,8 +6,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import place.skillexchange.backend.dto.UserDto;
-import place.skillexchange.backend.entity.User;
+import place.skillexchange.backend.user.dto.UserDto;
 
 import java.io.IOException;
 import java.util.Map;

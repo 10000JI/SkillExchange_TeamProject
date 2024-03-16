@@ -15,9 +15,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.filter.OncePerRequestFilter;
-import place.skillexchange.backend.entity.RefreshToken;
-import place.skillexchange.backend.entity.User;
-import place.skillexchange.backend.repository.UserRepository;
+import place.skillexchange.backend.user.entity.RefreshToken;
+import place.skillexchange.backend.user.entity.User;
 
 import java.io.IOException;
 import java.util.Enumeration;

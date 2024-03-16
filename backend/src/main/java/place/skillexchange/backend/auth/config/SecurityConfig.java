@@ -19,8 +19,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import place.skillexchange.backend.auth.services.AuthFilterService;
 import place.skillexchange.backend.auth.services.CsrfCookieFilterService;
-import place.skillexchange.backend.exception.CustomAccessDeniedHandler;
-import place.skillexchange.backend.exception.CustomAuthenticationEntryPoint;
+import place.skillexchange.backend.exception.user.CustomAccessDeniedHandler;
+import place.skillexchange.backend.exception.user.CustomAuthenticationEntryPoint;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -81,13 +81,13 @@ public class SecurityConfig {
                 .addFilterBefore(authFilterService, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(configurer -> configurer
                         .accessDeniedHandler(accessDeniedHandler)
-                        .authenticationEntryPoint(authenticationEntryPoint))
+                        .authenticationEntryPoint(authenticationEntryPoint)
+                        )
                 //authFilterService가 인증 전에 실행되어 항상 검증되기 때문에 requestMatchers의 authenticated()과 permitAll()은 영향 X
                 //하지만 코드 가독성을 위해 requestMatchers를 사용해 명시해주자
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers(request -> HttpMethod.PATCH.matches(request.getMethod()) && request.getServletPath().startsWith("/v1/notices/{noticeId}")).hasRole("ADMIN") // PATCH 메서드에 대한 접근 제한
-                        .requestMatchers(request -> HttpMethod.DELETE.matches(request.getMethod()) && request.getServletPath().startsWith("/v1/notices/{noticeId}")).hasRole("ADMIN") // DELETE 메서드에 대한 접근 제한
-                        .requestMatchers(request -> HttpMethod.DELETE.matches(request.getMethod()) && request.getServletPath().startsWith("/v1/comment/{commentId}")).hasRole("ADMIN") // DELETE 메서드에 대한 접근 제한
+                        .requestMatchers(HttpMethod.PATCH,"/v1/notices/{noticeId}").hasRole("ADMIN") // PATCH 메서드에 대한 접근 제한
+                        .requestMatchers(HttpMethod.DELETE,"/v1/notices/{noticeId}").hasRole("ADMIN") // DELETE 메서드에 대한 접근 제한
                         .requestMatchers("/myBalance").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/v1/notices/register").hasRole("ADMIN")
                         .requestMatchers("/v1/user/**", "/v1/file/**", "/v1/notices/{noticeId}","/v1/comment/**","/v1/subjectCategory/**","/v1/place/**","/v1/talent/**","/swagger-ui/**", "/v3/api-docs/**").permitAll())

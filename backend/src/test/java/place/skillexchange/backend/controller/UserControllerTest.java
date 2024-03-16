@@ -12,18 +12,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import place.skillexchange.backend.auth.services.AuthService;
-import place.skillexchange.backend.auth.services.JwtService;
-import place.skillexchange.backend.dto.UserDto;
+import place.skillexchange.backend.user.controller.UserController;
+import place.skillexchange.backend.user.dto.UserDto;
 import org.springframework.validation.BindingResult;
-import place.skillexchange.backend.entity.User;
-import place.skillexchange.backend.service.MailService;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.*;
-
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;

@@ -11,6 +11,9 @@ import java.util.List;
 //일반화된 예외 객체 생성
 public class ExceptionResponse {
 
+
+    private final boolean success = false;
+
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
@@ -24,19 +27,12 @@ public class ExceptionResponse {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class ManyDetails{
-        private Date timeStamp;
+        private final boolean success = false;
+        private int status;
         private String message;
         private List<String> details;
+        private Date timeStamp;
     }
-
-    @Data
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class SmallDetails{
-        private String message;
-        private String details;
-    }
-
 
 }
 

@@ -14,18 +14,19 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import place.skillexchange.backend.dto.UserDto;
-import place.skillexchange.backend.entity.RefreshToken;
-import place.skillexchange.backend.entity.User;
-import place.skillexchange.backend.exception.UserUnAuthorizedException;
-import place.skillexchange.backend.repository.UserRepository;
-import place.skillexchange.backend.service.MailService;
+import place.skillexchange.backend.exception.user.UserIdLoginException;
+import place.skillexchange.backend.user.dto.UserDto;
+import place.skillexchange.backend.user.entity.RefreshToken;
+import place.skillexchange.backend.user.entity.User;
+import place.skillexchange.backend.exception.user.UserNotFoundException;
+import place.skillexchange.backend.exception.user.UserTokenExpriedException;
+import place.skillexchange.backend.user.repository.UserRepository;
+import place.skillexchange.backend.common.service.MailService;
 
 import java.io.IOException;
 import java.util.Map;
@@ -145,7 +146,7 @@ public class AuthServiceImpl implements AuthService{
         //isTokenValid가 false일때 토큰 만료 exception이 출려되어야 함 !!!
         if (!jwtService.isActiveTokenValid(activeToken, userDetails)) {
             // 토큰이 유효하지 않은 경우 예외를 발생시킴
-            throw new UserUnAuthorizedException("토큰이 만료되었습니다");
+            throw UserTokenExpriedException.EXCEPTION;
         }
 
         // active 0->1 로 변경 (active가 1이여야 로그인 가능)
@@ -160,7 +161,7 @@ public class AuthServiceImpl implements AuthService{
     @Transactional
     @Override
     public void updateUserActiveStatus(String id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("해당 유저를 찾지 못했습니다 : " + id));
+        User user = userRepository.findById(id).orElseThrow(() -> UserNotFoundException.EXCEPTION);
         user.changeActive(true);
         //userRepository.save(user);
     }
@@ -181,13 +182,13 @@ public class AuthServiceImpl implements AuthService{
             );
         } catch (AuthenticationException ex) {
             // 잘못된 아이디 패스워드 입력으로 인한 예외 처리
-            throw new UserUnAuthorizedException("잘못된 정보입니다. 다시 입력하세요.");
+            throw UserIdLoginException.EXCEPTION;
         }
 
         //유저의 아이디 및 계정활성화 유무를 가지고 유저 객체 조회
         User user = userRepository.findByIdAndActiveIsTrue(dto.getId());
         if (user == null) {
-            throw new UsernameNotFoundException(String.format("ID[%s]를 찾을 수 없습니다.", dto.getId()));
+            throw UserIdLoginException.EXCEPTION;
         }
 
         //accessToken 생성

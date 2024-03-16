@@ -7,10 +7,10 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import place.skillexchange.backend.repository.UserRepository;
+import place.skillexchange.backend.exception.user.UserNotFoundException;
+import place.skillexchange.backend.user.repository.UserRepository;
 
 @Configuration
 public class ApplicationConfig {
@@ -27,7 +27,7 @@ public class ApplicationConfig {
     @Bean
     public UserDetailsService userDetailsService() {
         return id -> userRepository.findById(id)
-                .orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 id 입니다: " + id));
+                .orElseThrow(() -> UserNotFoundException.EXCEPTION);
     }
 
     /**
