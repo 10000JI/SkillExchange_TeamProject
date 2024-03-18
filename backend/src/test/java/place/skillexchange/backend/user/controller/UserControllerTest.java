@@ -1,4 +1,4 @@
-package place.skillexchange.backend.controller;
+package place.skillexchange.backend.user.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;

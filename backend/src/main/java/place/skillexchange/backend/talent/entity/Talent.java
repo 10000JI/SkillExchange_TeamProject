@@ -89,6 +89,7 @@ public class Talent extends BaseEntity {
      */
     public void changeNotice(TalentDto.TalentUpdateRequest dto, Place place, SubjectCategory teachedSubject, SubjectCategory teachingSubject) {
         this.content = dto.getContent();
+        this.title = dto.getTitle();
         if (place != null) {
             this.place = place;
         }

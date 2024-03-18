@@ -1,4 +1,4 @@
-package place.skillexchange.backend.repository;
+package place.skillexchange.backend.notice.repository;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

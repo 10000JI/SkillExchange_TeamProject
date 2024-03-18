@@ -45,7 +45,9 @@ public class TalentServiceImpl implements TalentService {
     private final FileService fileService;
     private final TalentScrapRepository scrapRepository;
 
-    //재능교환 게시물 생성
+    /**
+     * 재능교환 게시물 생성
+     */
     @Override
     public TalentDto.TalentRegisterResponse register(TalentDto.TalentRegisterRequest dto, List<MultipartFile> multipartFiles) throws IOException {
         String id = securityUtil.getCurrentMemberUsername();
@@ -67,7 +69,9 @@ public class TalentServiceImpl implements TalentService {
         return new TalentDto.TalentRegisterResponse(user,talent,files,201,"재능교환 게시물이 등록되었습니다.");
     }
 
-    //게시물 올린 글쓴이의 프로필 정보 불러오기
+    /**
+     * 게시물 올린 글쓴이의 프로필 정보 불러오기
+     */
     @Override
     public TalentDto.WriterInfoResponse writerInfo(Long writerId) {
         Talent talent = talentRepository.findById(writerId).orElseThrow(() -> BoardNotFoundException.EXCEPTION);
@@ -81,7 +85,9 @@ public class TalentServiceImpl implements TalentService {
         talentRepository.updateHit(talentId);
     }
 
-    // 게시물 조회
+    /**
+     * 재능교환 게시물 조회
+     */
     @Override
     @Transactional(readOnly = true)
     public TalentDto.TalentReadResponse read(Long talentId) {
@@ -91,7 +97,9 @@ public class TalentServiceImpl implements TalentService {
         return new TalentDto.TalentReadResponse(talent);
     }
 
-    // 게시물 수정
+    /**
+     * 게시물 수정
+     */
     @Override
     public TalentDto.TalentUpdateResponse update(TalentDto.TalentUpdateRequest dto, List<MultipartFile> multipartFiles, Long talentId) throws IOException {
         String id = securityUtil.getCurrentMemberUsername();
@@ -121,7 +129,9 @@ public class TalentServiceImpl implements TalentService {
         return new TalentDto.TalentUpdateResponse(user, talent, files, 200, "재능교환 게시물이 수정되었습니다.");
     }
 
-    //게시물 삭제
+    /**
+     * 게시물 삭제
+     */
     @Override
     public TalentDto.ResponseBasic delete(Long talentId) {
         String id = securityUtil.getCurrentMemberUsername();
@@ -137,14 +147,18 @@ public class TalentServiceImpl implements TalentService {
         }
     }
 
-    //게시물 목록
+    /**
+     * 게시물 목록
+     */
     @Override
     public Page<TalentDto.TalentListResponse> list(int limit, int skip, String keyword, Long subjectCategoryId) {
         Pageable pageable = PageRequest.of(skip, limit);
         return talentRepository.findAllWithPagingAndSearch(keyword, pageable, subjectCategoryId);
     }
 
-    //게시물 스크랩
+    /**
+     * 게시물 스크랩
+     */
     @Override
     public TalentDto.ResponseBasic scrap(Long talentId) {
         String id = securityUtil.getCurrentMemberUsername();

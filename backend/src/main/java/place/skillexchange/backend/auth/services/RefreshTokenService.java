@@ -1,6 +1,9 @@
 package place.skillexchange.backend.auth.services;
 
 
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +17,7 @@ import place.skillexchange.backend.user.repository.UserRepository;
 
 import java.time.Instant;
 import java.util.Date;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -42,13 +46,13 @@ public class RefreshTokenService {
                     //refreshToken은 UUID로 생성
                     .refreshToken(UUID.randomUUID().toString())
                     //만료일은 2분 (실제로는 2주 정도로 설정)
-                    .expirationTime(new Date((new Date()).getTime() + 2 * 60 * 1000))
+                    .expirationTime(new Date((new Date()).getTime() + 14 * 24 * 60 * 60 * 1000))
                     .user(user)
                     .build();
 
             refreshTokenRepository.save(refreshToken);
         } else {
-            refreshToken.changeRefreshTokenExp(new Date((new Date()).getTime() + 2 * 60 * 1000),UUID.randomUUID().toString());
+            refreshToken.changeRefreshTokenExp(new Date((new Date()).getTime() +  14 * 24 * 60 * 60 * 1000),UUID.randomUUID().toString());
             //refreshTokenRepository.save(refreshToken);
         }
 
@@ -59,13 +63,11 @@ public class RefreshTokenService {
      * refreshToken 확인
      */
     public RefreshToken verifyRefreshToken(String refreshToken) {
-        RefreshToken refToken = refreshTokenRepository.findByRefreshToken(refreshToken)
-                .orElseThrow(() -> RefreshTokenNotFoundException.EXCEPTION);
+        RefreshToken refToken = refreshTokenRepository.findByRefreshToken(refreshToken).get();
 
         //refreshToken의 만료시간이 현재 시간보다 작다면 refreshToken 삭제
         if (refToken.getExpirationTime().compareTo(Date.from(Instant.now())) < 0) {
             refreshTokenRepository.delete(refToken);
-            throw RefreshTokenExpiredException.EXCEPTION;
         }
 
         return refToken;

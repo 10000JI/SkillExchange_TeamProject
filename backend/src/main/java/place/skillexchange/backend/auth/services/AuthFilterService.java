@@ -51,13 +51,6 @@ public class AuthFilterService extends OncePerRequestFilter {
         final String authHeader = request.getHeader("Authorization");
         String jwt;
 
-        Enumeration<String> parameterNames = request.getParameterNames();
-        while (parameterNames.hasMoreElements()) {
-            String paramName = parameterNames.nextElement();
-            String paramValue = request.getParameter(paramName);
-            log.info("Parameter Name: {}, Value: {}", paramName, paramValue);
-        }
-
         //authHeader가 null이고, Bearer로 시작하지 않다면 체인 내의 다음 필터를 호출
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             //체인 내의 다음 필터를 호출
@@ -73,7 +66,7 @@ public class AuthFilterService extends OncePerRequestFilter {
             //accessToken이 만료되었다면
             if (jwtService.isTokenExpired(jwt)) {
                 //쿠키의 refreshToken과 db에 저장된 refreshToken의 만료일을 확인하고 accessToken 재발급 / 만료되면 재로그인 exception
-                handleExpiredToken(request, response);
+                handleExpiredToken(request, response, filterChain);
             } else {
                 //accessToken이 만료되지 않았다면 유효한지 검증
                 authenticateUser(jwt, request, response);
@@ -83,7 +76,7 @@ public class AuthFilterService extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private void handleExpiredToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    private void handleExpiredToken(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
         String refreshTokenValue = extractRefreshTokenFromCookie(request);
         if (refreshTokenValue != null) {
             RefreshToken refreshToken = refreshTokenService.verifyRefreshToken(refreshTokenValue);

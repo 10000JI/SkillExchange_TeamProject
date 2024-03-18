@@ -88,13 +88,20 @@ public class CommentServiceImpl implements CommentSerivce {
         return new CommentDto.CommentRegisterResponse(saveComment,201,"댓글이 성공적으로 등록되었습니다.");
     }
 
+    /**
+     * 댓글 삭제
+     */
     @Override
     @Transactional
     public CommentDto.ResponseBasic deleteComment(Long commentId) {
+        String id = securityUtil.getCurrentMemberUsername();
+
         Comment comment = commentRepository.findCommentByIdWithParent(commentId)
                 .orElseThrow(() -> CommentNotFoundException.EXCEPTION);
 
-        //cacheService.deleteCommentsCache(comment.getTicket().getId());
+        if (!Objects.equals(id, comment.getWriter().getId())) {
+            throw WriterAndLoggedInUserMismatchExceptionAll.EXCEPTION;
+        }
 
         //해당 댓글이 자식 댓글을 가지고 있는지 확인
         if(comment.getChildren().size() != 0) {

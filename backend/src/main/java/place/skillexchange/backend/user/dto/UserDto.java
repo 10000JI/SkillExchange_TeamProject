@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.springframework.web.bind.annotation.BindParam;
 import place.skillexchange.backend.user.entity.Authority;
 import place.skillexchange.backend.file.entity.File;
 import place.skillexchange.backend.user.entity.User;
@@ -68,6 +69,7 @@ public class UserDto {
     @Getter
     @AllArgsConstructor
     @Schema(description = "로그인 요청을 위한 도메인 객체")
+    @Builder
     public static class SignInRequest {
         @Schema(title = "사용자 ID",description = "사용자 ID를 입력합니다.")
         private String id;
@@ -126,6 +128,7 @@ public class UserDto {
      */
     @Getter
     @Schema(description = "프로필 수정 요청을 위한 도메인 객체")
+    @Builder
     public static class ProfileRequest {
         @Schema(title = "사용자 성별",description = "사용자 성별을 입력합니다.")
         private String gender;
@@ -240,6 +243,7 @@ public class UserDto {
      */
     @Getter
     @Schema(description = "비밀번호 변경 요청을 위한 도메인 객체")
+    @AllArgsConstructor
     public static class UpdatePwRequest {
         @NotBlank(message = "현재 비밀번호: 필수 정보입니다.")
         @Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{8,16}", message = "8~16자 영문 대 소문자, 숫자, 특수문자를 사용하세요.")
