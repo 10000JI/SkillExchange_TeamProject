@@ -24,7 +24,6 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.*;
 import static org.mockito.Mockito.mock;
 
@@ -47,27 +46,31 @@ class UserServiceImplTest {
     @DisplayName("프로필 수정 테스트")
     public void testProfileUpdate() throws IOException {
         // given
+        // 테스트에 필요한 데이터 설정
         UserDto.ProfileRequest profileRequest = UserDto.ProfileRequest.builder()
                 .gender("femail")
-                .careerSkills("작년까지 회사 다니다가 프리랜서로 전향한 백엔드 개발자입니다")
-                .preferredSubject("베이스 기타")
-                .mySubject("React, Spring Boot, Java, JavaScript.. 등 보유").build();// 필요한 프로파일 요청 정보 생성
+                .careerSkills("mySkill")
+                .preferredSubject("guitar")
+                .mySubject("Programming").build();// 필요한 프로파일 요청 정보 생성
+
         MultipartFile multipartFile = mock(MultipartFile.class); // MultipartFile 모킹
 
-        Authentication authentication = new TestingAuthenticationToken("sksk436", "12345qwerQWER!", "ROLE_USER");
-        //해당 인증 객체를 SecurityContextHolder에 authenticationToken 설정
+        // 현재 인증된 사용자 설정
+        Authentication authentication = new TestingAuthenticationToken("testUser", null, "ROLE_USER");
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        // userRepository.findById() 메서드 모킹
-        given(userRepository.findById(authentication.getPrincipal().toString())).willReturn(Optional.of(mock(User.class)));
+        // UserRepository의 findById() 메서드를 모킹하여 반환값 설정
+        given(userRepository.findById(authentication.getPrincipal().toString())).willReturn(Optional.of(new User()));
 
         // fileHandler.uploadFilePR() 메서드의 반환값 설정
-        given(fileHandler.uploadFilePR(any(MultipartFile.class), any(User.class))).willReturn(mock(File.class));
+        given(fileHandler.uploadFilePR(any(MultipartFile.class), any(User.class))).willReturn(new File());
 
         // when
+        // 프로필 수정 서비스 메서드 호출
         UserDto.ProfileResponse result = userService.profileUpdate(profileRequest, multipartFile);
 
         // then
+        // 결과 검증
         assertThat(result.getReturnMessage()).isEqualTo("프로필이 성공적으로 변경되었습니다.");
     }
 
@@ -75,7 +78,8 @@ class UserServiceImplTest {
     @DisplayName("프로필 조회 테스트")
     public void testProfileRead_Success() {
         // Given
-        Authentication authentication = new TestingAuthenticationToken("sksk436", "12345qwerQWER!", "ROLE_USER");
+        // 현재 인증된 사용자 설정
+        Authentication authentication = new TestingAuthenticationToken("testUser", null, "ROLE_USER");
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         User user = User.builder().id(authentication.getPrincipal().toString()).build();
@@ -93,22 +97,29 @@ class UserServiceImplTest {
     @DisplayName("현재 비밀번호가 일치하지 않는 경우")
     public void testUpdatePassword_NewPasswordNotMatch() {
         // Given
+        // 테스트에 필요한 입력 데이터와 사용자 인증 정보를 설정
         UserDto.UpdatePwRequest request = new UserDto.UpdatePwRequest("wrongPassword", "newPassword", "newPassword");
         BindingResult bindingResult = mock(BindingResult.class);
 
-        Authentication authentication = new TestingAuthenticationToken("sksk436", "wrongPassword", "ROLE_USER");
+        // 현재 인증된 사용자 정보를 설정
+        Authentication authentication = new TestingAuthenticationToken("testUser", null, "ROLE_USER");
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
+        // UserRepository의 findById() 메서드를 모킹하여 사용자 객체를 반환하도록 설정
         User user = User.builder().id(authentication.getPrincipal().toString()).password("encodedPassword").build();
         given(userRepository.findById(authentication.getPrincipal().toString()))
                 .willReturn(Optional.of(user));
+        // 사용자의 실제 비밀번호와 입력한 현재 비밀번호가 일치하지 않도록 설정
         given(passwordEncoder.matches(request.getPassword(), user.getPassword())).willReturn(false);
 
         // When
+        // 비밀번호 업데이트 서비스 메서드를 호출
         Throwable thrown = catchThrowable(() -> userService.updatePw(request, bindingResult));
 
         // Then
+        // 예외가 발생하는지 확인, 만약 예외가 발생하지 않으면 테스트는 실패
         assertThat(thrown).isInstanceOf(MethodArgumentNotValidException.class);
+        // 예외가 발생했을 때, 예상대로 메서드에서 예외를 던지는지 확인
         verify(bindingResult).rejectValue("password", "user.nowPassword.notEqual");
     }
 
@@ -123,10 +134,10 @@ class UserServiceImplTest {
         UserDto.UpdatePwRequest request = new UserDto.UpdatePwRequest(currentPassword, newPassword, newPassword);
         BindingResult bindingResult = mock(BindingResult.class);
 
-        Authentication authentication = new TestingAuthenticationToken("sksk436", "currentPassword", "ROLE_USER");
+        Authentication authentication = new TestingAuthenticationToken("testUser", null, "ROLE_USER");
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        User user = User.builder().id(authentication.getPrincipal().toString()).password(passwordEncoder.encode(currentPassword)).build();
+        User user = User.builder().id(authentication.getPrincipal().toString()).password("encodedPassword").build();
         given(userRepository.findById(authentication.getPrincipal().toString()))
                 .willReturn(Optional.of(user));
         given(passwordEncoder.matches(request.getPassword(), user.getPassword())).willReturn(true);

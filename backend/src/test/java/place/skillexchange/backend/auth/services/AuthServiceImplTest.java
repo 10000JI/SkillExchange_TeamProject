@@ -1,9 +1,7 @@
 package place.skillexchange.backend.auth.services;
 
 import jakarta.mail.MessagingException;
-import jakarta.servlet.http.Cookie;
 import lombok.extern.slf4j.Slf4j;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,16 +21,13 @@ import place.skillexchange.backend.user.dto.UserDto;
 import place.skillexchange.backend.user.entity.RefreshToken;
 import place.skillexchange.backend.user.entity.User;
 import place.skillexchange.backend.user.repository.UserRepository;
-import place.skillexchange.backend.user.service.UserServiceImpl;
 
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
@@ -42,22 +37,16 @@ class AuthServiceImplTest {
 
     @Mock
     private UserRepository userRepository;
-
     @Mock
     private PasswordEncoder passwordEncoder;
-
     @Mock
     private JwtService jwtService;
-
     @Mock
     private MailService mailService;
-
     @Mock
     private AuthenticationManager authenticationManager;
-
     @Mock
     private RefreshTokenService refreshTokenService;
-
     @InjectMocks
     private AuthServiceImpl authService;
 
@@ -90,7 +79,7 @@ class AuthServiceImplTest {
 
         //메서드가 특정한 인수로 한 번 호출되었는지를 확인//
 
-        // 중복 회원 검증 확인
+        // 중복 회원 검증 확인 (active가 0이면서 다음과 같은 id와 email을 가지고 있는 사람이 존재하는지 확인하는 메서드)
         verify(userRepository, times(1)).findByEmailAndIdAndActiveIsFalse(eq("test@example.com"), eq("testUser"));
 
         // 회원 저장 확인

@@ -171,7 +171,6 @@ public class AuthServiceImpl implements AuthService{
      */
     @Override
     public ResponseEntity<UserDto.SignUpInResponse> login(UserDto.SignInRequest dto) {
-        //authenticationManager가 authenticate() = 인증한다.
         try {
             //authenticationManager가 authenticate() = 인증한다.
             authenticationManager.authenticate(
