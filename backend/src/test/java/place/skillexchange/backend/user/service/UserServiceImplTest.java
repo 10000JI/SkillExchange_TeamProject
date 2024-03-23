@@ -94,7 +94,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    @DisplayName("현재 비밀번호가 일치하지 않는 경우")
+    @DisplayName("비밀번호 변경 실패: 현재 비밀번호가 일치하지 않는 경우")
     public void testUpdatePassword_NewPasswordNotMatch() {
         // Given
         // 테스트에 필요한 입력 데이터와 사용자 인증 정보를 설정

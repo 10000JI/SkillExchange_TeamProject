@@ -80,13 +80,13 @@ class AuthServiceImplTest {
         //메서드가 특정한 인수로 한 번 호출되었는지를 확인//
 
         // 중복 회원 검증 확인 (active가 0이면서 다음과 같은 id와 email을 가지고 있는 사람이 존재하는지 확인하는 메서드)
-        verify(userRepository, times(1)).findByEmailAndIdAndActiveIsFalse(eq("test@example.com"), eq("testUser"));
+        verify(userRepository).findByEmailAndIdAndActiveIsFalse(eq("test@example.com"), eq("testUser"));
 
         // 회원 저장 확인
-        verify(userRepository, times(1)).save(any(User.class));
+        verify(userRepository).save(any(User.class));
 
         // 회원 활성화 이메일 전송 확인
-        verify(mailService, times(1)).getEmail(eq("test@example.com"), eq("testUser"), eq("dummyActiveToken"));
+        verify(mailService).getEmail(eq("test@example.com"), eq("testUser"), eq("dummyActiveToken"));
     }
 
     @Test
