@@ -200,6 +200,7 @@ public class NoticeDto {
      * 게시물 목록 응답 Dto
      */
     @Getter
+    @AllArgsConstructor
     public static class NoticeListResponse {
         private Long id;
         private String writer;
