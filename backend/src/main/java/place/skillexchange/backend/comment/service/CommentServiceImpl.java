@@ -46,9 +46,9 @@ public class CommentServiceImpl implements CommentSerivce {
             CommentDto.CommentViewResponse dto = CommentDto.CommentViewResponse.entityToDto(c);
             //자식 댓글을 확인할 때는 부모 댓글이 이미 map에 들어가있는 상황
             map.put(dto.getId(), dto);
-            //부모가 있는 자식 댓글이라면 부모DTO의 자식 댓글 리스트로 add
+            //부모가 있는 자식 댓글이라면 부모 댓글의 자식 댓글 리스트에 현재 자식 댓글을 추가
             if(c.getParent() != null) map.get(c.getParent().getId()).getChildren().add(dto);
-            //최상위 댓글이라면 result에 넣어줌
+            //최상위 댓글(부모)이라면 result에 넣어줌
             else result.add(dto);
         });
         return result;
