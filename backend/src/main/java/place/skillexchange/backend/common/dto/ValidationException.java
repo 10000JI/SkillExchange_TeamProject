@@ -1,15 +1,10 @@
 package place.skillexchange.backend.common.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
-//일반화된 예외 객체 생성
 public class ValidationException {
 
     private final boolean success = false;

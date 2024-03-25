@@ -8,7 +8,7 @@ spring:
     username: root
     password: root1234
   profiles:
-      include: aws
+      include: sub
 
 #  sql:
 #    init:
