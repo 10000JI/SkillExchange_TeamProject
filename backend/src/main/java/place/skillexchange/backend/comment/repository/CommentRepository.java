@@ -9,7 +9,8 @@ import java.util.Optional;
 
 public interface CommentRepository extends JpaRepository<Comment, Long>,  CustomCommentRepository {
 
-    @Query("select c from Comment c left join fetch c.notice where c.id = :id")
+    //FetchType.LAZY로 설정된 연관 관계에서도 left join fetch를 사용하여 특정 엔티티의 일부를 즉시 로드
+    @Query("select c from Comment c left join fetch c.parent where c.id = :id")
     Optional<Comment> findCommentByIdWithParent(@Param("id") Long id);
 
 }

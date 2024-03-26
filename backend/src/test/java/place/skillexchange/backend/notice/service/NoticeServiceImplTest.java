@@ -37,8 +37,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @Slf4j
@@ -337,6 +336,8 @@ class NoticeServiceImplTest {
 
         // noticeRepository 동작을 모의화
         when(noticeRepository.findById(noticeId)).thenReturn(Optional.of(notice));
+        // noticeRepository.deleteById 메서드의 동작을 모의화하여 설정
+        doNothing().when(noticeRepository).deleteById(noticeId);
 
         //When
         NoticeDto.ResponseBasic response = noticeService.delete(noticeId);
@@ -363,6 +364,8 @@ class NoticeServiceImplTest {
 
         // noticeRepository 동작을 모의화
         when(noticeRepository.findById(noticeId)).thenReturn((Optional.empty()));
+        // noticeRepository.delete 메서드의 동작을 모의화하여 설정
+        doThrow(BoardNotFoundException.class).when(noticeRepository).deleteById(noticeId);
 
         // When
         Throwable thrown = catchThrowable(() -> noticeService.delete(noticeId));

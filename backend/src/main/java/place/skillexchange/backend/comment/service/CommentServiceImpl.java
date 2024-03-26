@@ -79,12 +79,12 @@ public class CommentServiceImpl implements CommentSerivce {
 
         //dto의 부모댓글번호가 null 이라면 comment도 null
         //dto의 부모댓글번호가 존재한다면 부모댓글번호를 pk로 하는 comment 가져옴
-        Comment comment = dto.getParentId() != null ?
+        Comment parent = dto.getParentId() != null ?
                 commentRepository.findById(dto.getParentId())
                         .orElseThrow(() -> CommentNotFoundException.EXCEPTION) : null;
 
         //댓글 저장
-        Comment saveComment = commentRepository.save(dto.toEntity(user, notice, comment));
+        Comment saveComment = commentRepository.save(dto.toEntity(user, notice, parent));
         return new CommentDto.CommentRegisterResponse(saveComment,201,"댓글이 성공적으로 등록되었습니다.");
     }
 
@@ -116,7 +116,7 @@ public class CommentServiceImpl implements CommentSerivce {
     }
 
     //댓글의 삭제 가능한 부모 댓글을 찾기 위한 보조 메소드
-    private Comment getDeletableAncestorComment(Comment comment) {
+    public Comment getDeletableAncestorComment(Comment comment) {
         //댓글의 부모를 확인
         Comment parent = comment.getParent();
 

@@ -32,8 +32,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @Slf4j
@@ -58,7 +57,6 @@ class CommentServiceImplTest {
         Long noticeId = 1L;
         Long parentId = 1L;
         Long childId = 2L;
-        String userId = "testUser";
         String writer = "testUser";
         String parentContent = "testParentContent";
         String childContent = "testChildContent";
@@ -145,9 +143,60 @@ class CommentServiceImplTest {
 
         // userRepository.findById가 올바른 userId로 호출되었는지 확인
         verify(userRepository).findById(userId);
+        // noticeRepository.findById 올바른 noticeId로 호출되었는지 확인
         verify(noticeRepository).findById(noticeId);
+        // commentRepository.findById가 올바른 parentId로 호출되었는지 확인
         verify(commentRepository).findById(parentId);
+        // commentRepository.save 올바른 comment로 호출되었는지 확인
         verify(commentRepository).save(any(Comment.class));
+    }
+
+    @Test
+    @DisplayName("공지사항 게시물 번호의 댓글 삭제 테스트")
+    public void deleteCreateComment() {
+        // Given
+        Long commentId = 2L; //매개변수로 받음. childId이다.
+        Long parentId = 1L;
+        Long noticeId = 1L;
+        String userId = "testUser"; //이하 하단 부분은 엔티티를 채우기 위한 더미 데이터
+        String writer = "testUser";
+        String content = "testContent";
+
+        Notice notice = Notice.builder().id(noticeId).build();
+        User user = User.builder().id(writer).build();
+        //자식 댓글 Entity 미리 선언
+        Comment child = new Comment();
+        //부모의 자식 댓글 리스트
+        List<Comment> childOfParent = new ArrayList<>();
+        childOfParent.add(child);
+        //자식의 자식 댓글 리스트 (공백, 존재X)
+        List<Comment> childOfChild = new ArrayList<>();
+        //부모 댓글 선언과 동시에 초기화
+        Comment parent = Comment.builder().id(parentId).content(content).isDeleted(DeleteStatus.Y).writer(user).notice(notice).children(childOfParent).build();
+        //자식 댓글 초기화
+        child = Comment.builder().id(commentId).content(content).writer(user).notice(notice).isDeleted(DeleteStatus.N).parent(parent).children(childOfChild).build();
+
+        // 현재 인증된 사용자 설정
+        Authentication authentication = new TestingAuthenticationToken(userId, null, "ROLE_USER");
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        //commentRepository의 동작을 모의화
+        when(commentRepository.findCommentByIdWithParent(commentId)).thenReturn(Optional.of(child));
+        //commentRepository의 동작을 모의화, 내부에선 getDeletableAncestorComment까지 실행 (댓글의 삭제 가능한 부모 댓글을 찾기 위한 메서드)
+        doNothing().when(commentRepository).delete(commentService.getDeletableAncestorComment(child)); // child 객체로 delete 메서드 호출을 확인하기 위해 수정
+
+        // When
+        CommentDto.ResponseBasic response = commentService.deleteComment(commentId);
+
+        // Then
+        assertNotNull(response);
+        assertEquals(200, response.getReturnCode());
+        assertEquals("댓글이 성공적으로 삭제되었습니다.", response.getReturnMessage());
+
+        // commentRepository.findCommentByIdWithParent가 올바른 commentId로 호출되었는지 확인
+        verify(commentRepository).findCommentByIdWithParent(commentId);
+        // commentRepository.delete가 호출되었는지 확인
+        verify(commentRepository).delete(commentService.getDeletableAncestorComment(child)); // delete 메서드에 올바른 인수가 전달되었는지 확인
     }
 
 }
