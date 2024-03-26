@@ -102,5 +102,9 @@ public class Talent extends BaseEntity {
         this.week = dto.getWeek();
         this.ageGroup = dto.getAgeGroup();
     }
+
+    public Object thenReturn(Talent talent) {
+        return null;
+    }
 }
 

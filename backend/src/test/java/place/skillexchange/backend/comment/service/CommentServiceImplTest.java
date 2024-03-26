@@ -1,8 +1,6 @@
 package place.skillexchange.backend.comment.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.assertj.core.api.Assertions;
-import org.checkerframework.checker.units.qual.C;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,15 +14,11 @@ import place.skillexchange.backend.comment.dto.CommentDto;
 import place.skillexchange.backend.comment.entity.Comment;
 import place.skillexchange.backend.comment.entity.DeleteStatus;
 import place.skillexchange.backend.comment.repository.CommentRepository;
-import place.skillexchange.backend.exception.board.CommentNotFoundException;
-import place.skillexchange.backend.file.entity.File;
-import place.skillexchange.backend.notice.dto.NoticeDto;
 import place.skillexchange.backend.notice.entity.Notice;
 import place.skillexchange.backend.notice.repository.NoticeRepository;
 import place.skillexchange.backend.user.entity.User;
 import place.skillexchange.backend.user.repository.UserRepository;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;

@@ -1,13 +1,15 @@
 package place.skillexchange.backend.talent.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor
 @Getter
+@AllArgsConstructor
 public class Place {
 
     @Id
