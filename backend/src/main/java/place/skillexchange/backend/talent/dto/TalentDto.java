@@ -188,6 +188,7 @@ public class TalentDto {
      * 게시물 수정 시 요청된 Dto
      */
     @Getter
+    @Builder
     public static class TalentUpdateRequest {
 
         @NotBlank(message = "작성자: 필수 정보입니다.")
@@ -280,6 +281,7 @@ public class TalentDto {
      * 게시물 목록 응답 Dto
      */
     @Getter
+    @AllArgsConstructor
     public static class TalentListResponse {
         private Long id;
         private String writer;

@@ -73,8 +73,8 @@ public class TalentServiceImpl implements TalentService {
      * 게시물 올린 글쓴이의 프로필 정보 불러오기
      */
     @Override
-    public TalentDto.WriterInfoResponse writerInfo(Long writerId) {
-        Talent talent = talentRepository.findById(writerId).orElseThrow(() -> BoardNotFoundException.EXCEPTION);
+    public TalentDto.WriterInfoResponse writerInfo(Long talentId) {
+        Talent talent = talentRepository.findById(talentId).orElseThrow(() -> BoardNotFoundException.EXCEPTION);
         User user = userRepository.findById(talent.getWriter().getId()).orElseThrow(() -> UserNotFoundException.EXCEPTION);
         return new TalentDto.WriterInfoResponse(user);
     }

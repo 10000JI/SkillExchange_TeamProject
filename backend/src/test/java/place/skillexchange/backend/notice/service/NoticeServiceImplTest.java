@@ -375,7 +375,7 @@ class NoticeServiceImplTest {
     }
 
     @Test
-    @DisplayName("공지사항 목록")
+    @DisplayName("공지사항 목록 조회 테스트")
     public void testGetNotices()  {
         // Given
         int limit = 10;

@@ -21,11 +21,13 @@ public class CustomTalentRepositoryImpl implements CustomTalentRepository {
     public Page<TalentDto.TalentListResponse> findAllWithPagingAndSearch(String keyword, Pageable pageable, Long subjectCategoryId) {
         QTalent qTalent = QTalent.talent;
 
+        //subjectCategoryId가 있다면 카테고리 별 게시물 목록
         BooleanExpression predicate = qTalent.isNotNull();
         if (subjectCategoryId != null) {
             predicate = predicate.and(qTalent.teachedSubject.id.eq(subjectCategoryId));
         }
 
+        //content, teachedSubject, teachingSubject, place를 검색조건으로 함
         if (keyword != null && !keyword.isEmpty()) {
             predicate = predicate.and(qTalent.content.containsIgnoreCase(keyword)
                     .or(qTalent.teachedSubject.subjectName.containsIgnoreCase(keyword))
