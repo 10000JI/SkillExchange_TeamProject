@@ -152,6 +152,9 @@ public class TalentServiceImpl implements TalentService {
      */
     @Override
     public Page<TalentDto.TalentListResponse> list(int limit, int skip, String keyword, Long subjectCategoryId) {
+        if (subjectCategoryId != null) {
+            categoryRepository.findById(subjectCategoryId).orElseThrow(() -> SubjectCategoryNotFoundException.EXCEPTION);
+        }
         Pageable pageable = PageRequest.of(skip, limit);
         return talentRepository.findAllWithPagingAndSearch(keyword, pageable, subjectCategoryId);
     }

@@ -29,7 +29,6 @@ import place.skillexchange.backend.user.entity.User;
 import place.skillexchange.backend.user.repository.UserRepository;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
