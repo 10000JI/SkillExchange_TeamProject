@@ -77,7 +77,7 @@ public class Talent extends BaseEntity {
     @ElementCollection
     @Enumerated(EnumType.STRING)
     @Column(name = "day_of_week")
-    private List<DayOfWeek> dayOfWeek = new ArrayList<>();
+    private Set<DayOfWeek> dayOfWeek = new HashSet<>();
     /**
      * 이미지와 양방향 매핑
      */

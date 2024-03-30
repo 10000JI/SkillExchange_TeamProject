@@ -51,7 +51,7 @@ public class TalentDto {
         private Long maxAge;
 
         @NotEmpty(message = "요일: 최소 한 개 이상의 요일을 선택해야 합니다.")
-        private List<String> selectedDays = new ArrayList<>();
+        private Set<String> selectedDays = new HashSet<>();
 
         @NotBlank(message = "성: 필수 정보입니다.")
         private String gender;
@@ -87,7 +87,7 @@ public class TalentDto {
         private String placeName;
         private String teachingSubject;
         private String teachedSubject;
-        private List<String> selectedDays;
+        private Set<String> selectedDays;
         private String gender;
         private Long minAge;
         private Long maxAge;
@@ -143,7 +143,7 @@ public class TalentDto {
         /* Entity -> Dto */
         public WriterInfoResponse(User user) {
             this.id = user.getId();
-            this.gender = user.getGender();
+            this.gender = user.getGender().toString();
             this.job = user.getJob();
             this.careerSkills = user.getCareerSkills();
             this.preferredSubject = user.getPreferredSubject();
@@ -164,7 +164,7 @@ public class TalentDto {
         private String placeName;
         private String teachingSubject;
         private String teachedSubject;
-        private List<String> selectedDays;
+        private Set<String> selectedDays;
         private String gender;
         private Long minAge;
         private Long maxAge;
@@ -236,7 +236,7 @@ public class TalentDto {
         private Long maxAge;
 
         @NotEmpty(message = "요일: 최소 한 개 이상의 요일을 선택해야 합니다.")
-        private List<String> selectedDays = new ArrayList<>();
+        private Set<String> selectedDays = new HashSet<>();
 
         @NotBlank(message = "성: 필수 정보입니다.")
         private String gender;
@@ -256,7 +256,7 @@ public class TalentDto {
         private String placeName;
         private String teachingSubject;
         private String teachedSubject;
-        private List<String> selectedDays;
+        private Set<String> selectedDays;
         private String gender;
         private Long minAge;
         private Long maxAge;
