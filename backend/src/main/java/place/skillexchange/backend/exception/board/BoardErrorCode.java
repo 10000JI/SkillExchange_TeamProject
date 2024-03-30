@@ -28,7 +28,9 @@ public enum BoardErrorCode implements BaseErrorCode {
     @ExplainError("게시물 번호가 null인 경우")
     BOARD_NUM_NOT_FOUND(NOT_FOUND, "COMMENT_404_2", "게시글 번호를 입력해주세요"),
     @ExplainError("중첩된 구조의 변환 작업에서 변환이 불가능한 상황을 나타나는 예외")
-    NESTED_STRUCTURE_CONVERSION_FAILURE(INTERNAL_SERVER, "CATEGORY_500_1", "중첩된 구조를 변환하는 도중 문제가 발생했습니다. 데이터 구조를 다시 확인해주세요.");
+    NESTED_STRUCTURE_CONVERSION_FAILURE(INTERNAL_SERVER, "CATEGORY_500_1", "중첩된 구조를 변환하는 도중 문제가 발생했습니다. 데이터 구조를 다시 확인해주세요."),
+    @ExplainError("부모 카테고리로 재능교환 게시물을 찾으려고 하는 경우 (자식 카테고리 별 재능교환 게시물 목록 출력 가능)")
+    SUBJECT_CATEGORY_BAD_REQUEST(BAD_REQUEST, "SUBJECT_CATEGORY_400_1", "선택한 카테고리에 대한 게시물을 찾을 수 없습니다. 부모 카테고리에 속한 게시물은 확인할 수 없습니다. 자식 카테고리로 다시 시도해주세요.");
 
 
 

@@ -7,10 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import place.skillexchange.backend.exception.board.BoardAleadyScrappedException;
-import place.skillexchange.backend.exception.board.BoardNotFoundException;
-import place.skillexchange.backend.exception.board.PlaceNotFoundException;
-import place.skillexchange.backend.exception.board.SubjectCategoryNotFoundException;
+import place.skillexchange.backend.exception.board.*;
 import place.skillexchange.backend.talent.dto.TalentDto;
 import place.skillexchange.backend.exception.user.WriterAndLoggedInUserMismatchExceptionAll;
 import place.skillexchange.backend.exception.user.UserNotFoundException;
@@ -154,6 +151,7 @@ public class TalentServiceImpl implements TalentService {
     public Page<TalentDto.TalentListResponse> list(int limit, int skip, String keyword, Long subjectCategoryId) {
         if (subjectCategoryId != null) {
             categoryRepository.findById(subjectCategoryId).orElseThrow(() -> SubjectCategoryNotFoundException.EXCEPTION);
+            categoryRepository.findByIdAndParentIsNotNull(subjectCategoryId).orElseThrow(() -> SubjectCategoryBadRequestException.EXCEPTION);
         }
         Pageable pageable = PageRequest.of(skip, limit);
         return talentRepository.findAllWithPagingAndSearch(keyword, pageable, subjectCategoryId);

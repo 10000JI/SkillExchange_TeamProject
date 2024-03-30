@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import place.skillexchange.backend.common.entity.BaseEntity;
+import place.skillexchange.backend.common.util.DayOfWeekUtil;
 import place.skillexchange.backend.talent.dto.TalentDto;
 import place.skillexchange.backend.file.entity.File;
 import place.skillexchange.backend.user.entity.User;
@@ -63,12 +64,20 @@ public class Talent extends BaseEntity {
     @ColumnDefault("0")
     private Long hit;
 
-    @Column(name = "age_group", length = 50, nullable = false)
-    private String ageGroup;
+    @Column(name = "max_age", nullable = false)
+    private Long maxAge;
 
-    @Column(name = "talent_week", length = 50, nullable = false)
-    private String week;
+    @Column(name = "min_age", nullable = false)
+    private Long minAge;
 
+    @Enumerated(EnumType.STRING)
+    @Column(length = 6)
+    private GenderForTalent gender;
+
+    @ElementCollection
+    @Enumerated(EnumType.STRING)
+    @Column(name = "day_of_week")
+    private List<DayOfWeek> dayOfWeek = new ArrayList<>();
     /**
      * 이미지와 양방향 매핑
      */
@@ -99,8 +108,11 @@ public class Talent extends BaseEntity {
         if (teachingSubject != null) {
             this.teachingSubject = teachingSubject;
         }
-        this.week = dto.getWeek();
-        this.ageGroup = dto.getAgeGroup();
+
+        this.gender = GenderForTalent.valueOf(dto.getGender());
+        this.minAge = dto.getMinAge();
+        this.maxAge = dto.getMaxAge();
+        this.dayOfWeek = DayOfWeekUtil.convertSelectedDaysToEnum(dto.getSelectedDays());
     }
 
     public Object thenReturn(Talent talent) {

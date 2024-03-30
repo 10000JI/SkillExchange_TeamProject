@@ -1,16 +1,19 @@
 package place.skillexchange.backend.talent.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import place.skillexchange.backend.common.util.DayOfWeekUtil;
 import place.skillexchange.backend.file.entity.File;
-import place.skillexchange.backend.talent.entity.Place;
-import place.skillexchange.backend.talent.entity.SubjectCategory;
-import place.skillexchange.backend.talent.entity.Talent;
+import place.skillexchange.backend.talent.entity.*;
 import place.skillexchange.backend.user.entity.User;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class TalentDto {
 
@@ -41,11 +44,17 @@ public class TalentDto {
         @NotBlank(message = "가르침 받을 분야: 필수 정보입니다.")
         private String teachedSubject;
 
-        @NotBlank(message = "연령대: 필수 정보입니다.")
-        private String ageGroup;
+        @NotNull(message = "최소 연령대: 필수 정보입니다.")
+        private Long minAge;
 
-        @NotBlank(message = "요일: 필수 정보입니다.")
-        private String week;
+        @NotNull(message = "최대 연령대: 필수 정보입니다.")
+        private Long maxAge;
+
+        @NotEmpty(message = "요일: 최소 한 개 이상의 요일을 선택해야 합니다.")
+        private List<String> selectedDays = new ArrayList<>();
+
+        @NotBlank(message = "성: 필수 정보입니다.")
+        private String gender;
 
         /* Dto -> Entity */
         public Talent toEntity(User user, Place place, SubjectCategory teachingSubject, SubjectCategory teachedSubject) {
@@ -57,8 +66,10 @@ public class TalentDto {
                     .teachedSubject(teachedSubject)
                     .place(place)
                     .hit(0L)
-                    .ageGroup(ageGroup)
-                    .week(week)
+                    .dayOfWeek(DayOfWeekUtil.convertSelectedDaysToEnum(selectedDays))
+                    .minAge(minAge)
+                    .maxAge(maxAge)
+                    .gender(GenderForTalent.valueOf(gender)) // 문자열로 받은 gender 값을 GenderForTalent 열거형(enum)으로 변환하여 빌더 패턴에 설정
                     .build();
             return talent;
         }
@@ -76,8 +87,10 @@ public class TalentDto {
         private String placeName;
         private String teachingSubject;
         private String teachedSubject;
-        private String ageGroup;
-        private String week;
+        private List<String> selectedDays;
+        private String gender;
+        private Long minAge;
+        private Long maxAge;
         private LocalDateTime regDate;
         private LocalDateTime modDate;
         private List<String> oriName = new ArrayList<>();
@@ -94,8 +107,10 @@ public class TalentDto {
             this.placeName = talent.getPlace().getPlaceName();
             this.teachingSubject = talent.getTeachingSubject().getSubjectName();
             this.teachedSubject = talent.getTeachedSubject().getSubjectName();
-            this.ageGroup = talent.getAgeGroup();
-            this.week = talent.getWeek();
+            this.gender = talent.getGender().toString();
+            this.minAge = talent.getMinAge();
+            this.maxAge = talent.getMaxAge();
+            this.selectedDays = DayOfWeekUtil.convertSelectedDaysToString(talent.getDayOfWeek());
             this.regDate = talent.getRegDate();
             this.modDate = talent.getModDate();
             if (files != null && !files.isEmpty()) {
@@ -110,6 +125,7 @@ public class TalentDto {
             this.returnCode = returnCode;
             this.returnMessage = returnMessage;
         }
+
     }
 
     /**
@@ -148,8 +164,10 @@ public class TalentDto {
         private String placeName;
         private String teachingSubject;
         private String teachedSubject;
-        private String ageGroup;
-        private String week;
+        private List<String> selectedDays;
+        private String gender;
+        private Long minAge;
+        private Long maxAge;
         private LocalDateTime regDate;
         private LocalDateTime modDate;
         private List<String> imgUrl = new ArrayList<>();
@@ -169,8 +187,10 @@ public class TalentDto {
             this.placeName = talent.getPlace().getPlaceName();
             this.teachingSubject = talent.getTeachingSubject().getSubjectName();
             this.teachedSubject = talent.getTeachedSubject().getSubjectName();
-            this.ageGroup = talent.getAgeGroup();
-            this.week = talent.getWeek();
+            this.gender = talent.getGender().toString();
+            this.minAge = talent.getMinAge();
+            this.maxAge = talent.getMaxAge();
+            this.selectedDays = DayOfWeekUtil.convertSelectedDaysToString(talent.getDayOfWeek());
             this.regDate = talent.getRegDate();
             this.modDate = talent.getModDate();
             this.hit = talent.getHit();
@@ -209,11 +229,17 @@ public class TalentDto {
         @NotBlank(message = "가르침 받을 분야: 필수 정보입니다.")
         private String teachedSubject;
 
-        @NotBlank(message = "연령대: 필수 정보입니다.")
-        private String ageGroup;
+        @NotNull(message = "최소 연령대: 필수 정보입니다.")
+        private Long minAge;
 
-        @NotBlank(message = "요일: 필수 정보입니다.")
-        private String week;
+        @NotNull(message = "최대 연령대: 필수 정보입니다.")
+        private Long maxAge;
+
+        @NotEmpty(message = "요일: 최소 한 개 이상의 요일을 선택해야 합니다.")
+        private List<String> selectedDays = new ArrayList<>();
+
+        @NotBlank(message = "성: 필수 정보입니다.")
+        private String gender;
 
         private List<String> imgUrl = new ArrayList<>();
     }
@@ -230,8 +256,10 @@ public class TalentDto {
         private String placeName;
         private String teachingSubject;
         private String teachedSubject;
-        private String ageGroup;
-        private String week;
+        private List<String> selectedDays;
+        private String gender;
+        private Long minAge;
+        private Long maxAge;
         private LocalDateTime regDate;
         private LocalDateTime modDate;
         private List<String> oriName = new ArrayList<>();
@@ -248,8 +276,10 @@ public class TalentDto {
             this.placeName = talent.getPlace().getPlaceName();
             this.teachingSubject = talent.getTeachingSubject().getSubjectName();
             this.teachedSubject = talent.getTeachedSubject().getSubjectName();
-            this.ageGroup = talent.getAgeGroup();
-            this.week = talent.getWeek();
+            this.gender = talent.getGender().toString();
+            this.minAge = talent.getMinAge();
+            this.maxAge = talent.getMaxAge();
+            this.selectedDays = DayOfWeekUtil.convertSelectedDaysToString(talent.getDayOfWeek());
             this.regDate = talent.getRegDate();
             this.modDate = talent.getModDate();
             if (files != null && !files.isEmpty()) {
@@ -290,7 +320,8 @@ public class TalentDto {
         private String placeName;
         private String teachingSubject;
         private String teachedSubject;
-        private String ageGroup;
+        private Long minAge;
+        private Long maxAge;
         private String avatar;
         private LocalDateTime regDate;
         private Long hit;
@@ -303,7 +334,8 @@ public class TalentDto {
             this.placeName = talent.getPlace().getPlaceName();
             this.teachingSubject = talent.getTeachingSubject().getSubjectName();
             this.teachedSubject = talent.getTeachedSubject().getSubjectName();
-            this.ageGroup = talent.getAgeGroup();
+            this.minAge = talent.getMinAge();
+            this.maxAge = talent.getMaxAge();
             this.avatar = talent.getWriter().getFile() != null ? talent.getWriter().getFile().getFileUrl() : null; // null 체크 추가
             this.regDate = talent.getRegDate();
             this.hit = talent.getHit();

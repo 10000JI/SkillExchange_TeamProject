@@ -73,24 +73,24 @@ public class SecurityConfig {
                         return config;
                     }
                 })).csrf((csrf) -> csrf.csrfTokenRequestHandler(requestHandler)
-                        .ignoringRequestMatchers("/v1/user/**", "/v1/file/**", "/v1/notices/register", "/v1/comment/**","/v1/notices/**","/v1/talent/**","/swagger-ui/**", "/v3/api-docs/**")
+                        .ignoringRequestMatchers("/v1/user/**", "/v1/file/**", "/v1/notices/register", "/v1/comment/**", "/v1/notices/**", "/v1/talent/**", "/swagger-ui/**", "/v3/api-docs/**")
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
                 //DaoAuthenticationProvider의 세부 내역을 AuthenticationProvider 빈을 만들어 정의했으므로 인증을 구성해줘야 한다.
                 .authenticationProvider(authenticationProvider)
                 .addFilterAfter(csrfCookieFilterService, BasicAuthenticationFilter.class)
                 .addFilterBefore(authFilterService, UsernamePasswordAuthenticationFilter.class)
+                //authFilterService가 인증 전에 실행되어 항상 검증되기 때문에 requestMatchers의 authenticated()과 permitAll()은 영향 X
+                //하지만 코드 가독성을 위해 requestMatchers를 사용해 명시해주자
                 .exceptionHandling(configurer -> configurer
                         .accessDeniedHandler(accessDeniedHandler)
                         .authenticationEntryPoint(authenticationEntryPoint)
-                        )
-                //authFilterService가 인증 전에 실행되어 항상 검증되기 때문에 requestMatchers의 authenticated()과 permitAll()은 영향 X
-                //하지만 코드 가독성을 위해 requestMatchers를 사용해 명시해주자
+                )
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers(HttpMethod.PATCH,"/v1/notices/{noticeId}").hasRole("ADMIN") // PATCH 메서드에 대한 접근 제한
-                        .requestMatchers(HttpMethod.DELETE,"/v1/notices/{noticeId}").hasRole("ADMIN") // DELETE 메서드에 대한 접근 제한
+                        .requestMatchers(HttpMethod.PATCH, "/v1/notices/{noticeId}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/v1/notices/{noticeId}").hasRole("ADMIN")
                         .requestMatchers("/myBalance").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/v1/notices/register").hasRole("ADMIN")
-                        .requestMatchers("/v1/user/**", "/v1/file/**", "/v1/notices/{noticeId}","/v1/comment/**","/v1/subjectCategory/**","/v1/place/**","/v1/talent/**","/swagger-ui/**", "/v3/api-docs/**").permitAll())
+                        .requestMatchers("/v1/user/**", "/v1/file/**", "/v1/notices/{noticeId}", "/v1/comment/**", "/v1/subjectCategory/**", "/v1/place/**", "/v1/talent/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll())
                 .formLogin(Customizer.withDefaults())
                 .httpBasic(Customizer.withDefaults());
         return http.build();

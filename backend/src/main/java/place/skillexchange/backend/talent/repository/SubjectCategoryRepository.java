@@ -22,4 +22,6 @@ public interface SubjectCategoryRepository extends JpaRepository<SubjectCategory
     List<SubjectCategory> findAllOrderByParentIdAscNullsFirstCategoryIdAsc();
 
     Optional<SubjectCategory> findBySubjectName(String subjectName);
+
+    Optional<SubjectCategory> findByIdAndParentIsNotNull(Long id);
 }
