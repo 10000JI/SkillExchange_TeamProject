@@ -9,6 +9,7 @@ import org.hibernate.annotations.ColumnDefault;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import place.skillexchange.backend.talent.entity.GenderForTalent;
 import place.skillexchange.backend.user.dto.UserDto;
 import place.skillexchange.backend.file.entity.File;
 import place.skillexchange.backend.talent.entity.TalentScrap;
@@ -37,8 +38,9 @@ public class User implements UserDetails {
     @ColumnDefault("0")
     private boolean active;
 
-    @Column(name = "gender", length = 10)
-    private String gender;
+    @Enumerated(EnumType.STRING)
+    @Column(length = 6)
+    private Gender gender;
 
     @Column(name = "job", length = 50)
     private String job;
@@ -118,7 +120,7 @@ public class User implements UserDetails {
      * 프로필 수정
      */
     public void changeProfileField(UserDto.ProfileRequest dto) {
-        this.gender = dto.getGender();
+        this.gender = Gender.valueOf(dto.getGender());
         this.job = dto.getJob();
         this.careerSkills = dto.getCareerSkills();
         this.preferredSubject = dto.getPreferredSubject();
