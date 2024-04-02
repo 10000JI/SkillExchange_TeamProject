@@ -6,6 +6,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -22,14 +23,16 @@ public class JwtService {
      * 클레임(Claim): JWT(토큰 기반의 웹 인증 시스템) 내에서 사용자에 대한 정보를 나타내는 JSON 객체
      */
 
-    private static final String SECRET_KEY = "jxgEQeXHuPq8VdbyYFNkANdudQ53YUn20233359";
+    @Value("${custom.jwt.secretKey}")
+    private String secretKeyPlain;
+
 
     /**
      * 비밀 키 : JWT에서 사용되는 비밀 키
      */
     private SecretKey getSignInKey() {
         // decode SECRET_KEY
-        return Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
+        return Keys.hmacShaKeyFor(secretKeyPlain.getBytes(StandardCharsets.UTF_8));
     }
 
     /**
