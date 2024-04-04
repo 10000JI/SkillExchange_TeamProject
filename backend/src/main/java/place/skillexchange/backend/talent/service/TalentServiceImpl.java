@@ -76,21 +76,15 @@ public class TalentServiceImpl implements TalentService {
         return new TalentDto.WriterInfoResponse(user);
     }
 
-    // 조회수 증가를 위한 업데이트
-    @Transactional
-    public void increaseHit(Long talentId) {
-        talentRepository.updateHit(talentId);
-    }
-
     /**
      * 재능교환 게시물 조회
      */
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public TalentDto.TalentReadResponse read(Long talentId) {
         Talent talent = talentRepository.findById(talentId)
                 .orElseThrow(() -> BoardNotFoundException.EXCEPTION);
-        increaseHit(talentId);
+        talent.updateHit();
         return new TalentDto.TalentReadResponse(talent);
     }
 

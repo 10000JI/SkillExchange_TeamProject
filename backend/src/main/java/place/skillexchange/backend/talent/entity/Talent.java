@@ -115,8 +115,8 @@ public class Talent extends BaseEntity {
         this.dayOfWeek = DayOfWeekUtil.convertSelectedDaysToEnum(dto.getSelectedDays());
     }
 
-    public Object thenReturn(Talent talent) {
-        return null;
+    public void updateHit() {
+        hit++;
     }
 }
 

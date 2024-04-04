@@ -221,8 +221,6 @@ class TalentServiceImplTest {
 
         //talentRepository의 동작을 모의화
         when(talentRepository.findById(boardId)).thenReturn(Optional.of(talent));
-        //talentRepository의 동작을 모의화
-        doNothing().when(talentRepository).updateHit(boardId);
 
         //When
         TalentDto.TalentReadResponse response = talentService.read(boardId);
@@ -243,7 +241,6 @@ class TalentServiceImplTest {
         assertThat(imgUrl2).isEqualTo(response.getImgUrl().get(0));
 
         verify(talentRepository).findById(boardId);
-        verify(talentRepository).updateHit(boardId);
     }
 
     @Test

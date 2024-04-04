@@ -63,11 +63,11 @@ public class Notice extends BaseEntity {
         this.content = dto.getContent();
     }
 
-//    /**
-//     * 조회수 +1
-//     */
-//    public void updateHit() {
-//        this.hit++; // 조회수 증가
-//    }
+    /**
+     * 조회수 +1
+     */
+    public void updateHit() {
+        this.hit++; // 조회수 증가
+    }
 
 }

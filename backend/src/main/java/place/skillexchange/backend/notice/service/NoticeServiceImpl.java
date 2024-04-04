@@ -58,20 +58,12 @@ public class NoticeServiceImpl implements NoticeService{
     /**
      * 공지사항 조회
      */
-    // 조회수 업데이트를 위한 별도의 메서드 예시
-    @Transactional
-    public void increaseHit(Long noticeId) {
-        noticeRepository.updateHit(noticeId);
-    }
-
-    // 조회 메서드 내에서 조회수 업데이트 호출 예시
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public NoticeDto.NoticeReadResponse read(Long noticeId) {
         Notice notice = noticeRepository.findById(noticeId)
                 .orElseThrow(() -> BoardNotFoundException.EXCEPTION);
-        // 별도의 트랜잭션으로 처리하기 위해 분리된 메서드 호출
-        increaseHit(noticeId);
+        notice.updateHit();
         return new NoticeDto.NoticeReadResponse(notice);
     }
 

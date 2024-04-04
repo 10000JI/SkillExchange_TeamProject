@@ -13,10 +13,5 @@ public interface NoticeRepository extends JpaRepository<Notice,Long>, CustomNoti
 
     void deleteById(Long noticeId);
 
-    // 조회수 증가를 위한 업데이트 쿼리
-    @Transactional
-    @Modifying
-    @Query("UPDATE Notice n SET n.hit = n.hit + 1 WHERE n.id = :noticeId")
-    void updateHit(Long noticeId);
 }
 
