@@ -16,6 +16,7 @@ import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.multipart.MultipartFile;
+import place.skillexchange.backend.common.util.DayOfWeekUtil;
 import place.skillexchange.backend.file.entity.File;
 import place.skillexchange.backend.file.service.FileServiceImpl;
 import place.skillexchange.backend.notice.dto.NoticeDto;
@@ -25,13 +26,12 @@ import place.skillexchange.backend.talent.repository.PlaceRepository;
 import place.skillexchange.backend.talent.repository.SubjectCategoryRepository;
 import place.skillexchange.backend.talent.repository.TalentRepository;
 import place.skillexchange.backend.talent.repository.TalentScrapRepository;
+import place.skillexchange.backend.user.entity.Gender;
 import place.skillexchange.backend.user.entity.User;
 import place.skillexchange.backend.user.repository.UserRepository;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -75,8 +75,10 @@ class TalentServiceImplTest {
         String placeName = "testPlace";
         String teachingSubject = "testTeachingSubject";
         String teachedSubject = "testTeachedSubject";
-        String ageGroup = "25~30";
-        String week = "월요일";
+        Long minAge = 25L;
+        Long maxAge = 30L;
+        Set<String> selectedDays = new HashSet<>(Arrays.asList("MON", "TUE", "WED"));
+        String gender = "FEMALE";
         String img = "img.jpg";
         String imgUrl = "https://.../img1.jpg";
 
@@ -84,7 +86,7 @@ class TalentServiceImplTest {
         Place place = new Place(1L, placeName);
         SubjectCategory teachingSubjectCategory = new SubjectCategory(7L, teachingSubject, new SubjectCategory(1L, "parentCategory1", null));
         SubjectCategory teachedSubjectCategory = new SubjectCategory(19L, teachedSubject, new SubjectCategory(2L, "parentCategory2", null));
-        Talent talent = Talent.builder().id(boardId).writer(user).place(place).teachingSubject(teachingSubjectCategory).teachedSubject(teachedSubjectCategory).title(title).content(content).ageGroup(ageGroup).week(week).hit(0L).build();
+        Talent talent = Talent.builder().id(boardId).writer(user).place(place).teachingSubject(teachingSubjectCategory).teachedSubject(teachedSubjectCategory).title(title).content(content).minAge(minAge).maxAge(maxAge).dayOfWeek(DayOfWeekUtil.convertSelectedDaysToEnum(selectedDays)).gender(GenderForTalent.valueOf(gender)).hit(0L).build();
         //예상으로 반환되는 객체
         List<File> files = new ArrayList<>();
         File file = File.builder().oriName(img).fileUrl(imgUrl).build();
@@ -101,8 +103,11 @@ class TalentServiceImplTest {
                 .placeName(placeName)
                 .teachingSubject(teachingSubject)
                 .teachedSubject(teachedSubject)
-                .ageGroup(ageGroup)
-                .week(week).build();
+                .minAge(minAge)
+                .minAge(maxAge)
+                .gender(gender)
+                .selectedDays(selectedDays)
+                .selectedDays(selectedDays).build();
 
         // 현재 인증된 사용자 설정
         Authentication authentication = new TestingAuthenticationToken(userId, null, "ROLE_USER");
@@ -133,8 +138,10 @@ class TalentServiceImplTest {
         assertThat(placeName).isEqualTo(response.getPlaceName());
         assertThat(teachingSubject).isEqualTo(response.getTeachingSubject());
         assertThat(teachedSubject).isEqualTo(response.getTeachedSubject());
-        assertThat(ageGroup).isEqualTo(response.getAgeGroup());
-        assertThat(week).isEqualTo(response.getWeek());
+        assertThat(minAge).isEqualTo(response.getMinAge());
+        assertThat(maxAge).isEqualTo(response.getMaxAge());
+        assertThat(selectedDays).isEqualTo(response.getSelectedDays());
+        assertThat(gender).isEqualTo(response.getGender());
         assertThat(files.get(0).getFileUrl()).isEqualTo(response.getImgUrl().get(0));
         assertThat(201).isEqualTo(response.getReturnCode());
         assertThat("재능교환 게시물이 등록되었습니다.").isEqualTo(response.getReturnMessage());
@@ -154,12 +161,12 @@ class TalentServiceImplTest {
         //Given
         Long boardId = 1L;
         String writer = "testUser";
-        String gender = "testGender";
+        String gender = "FEMALE";
         String careerSkills = "testCareerSkills";
         String preferredSubject = "testPreferredSubject";
         String mySubject = "testMySubject";
 
-        User user = User.builder().id(writer).gender(gender).careerSkills(careerSkills).preferredSubject(preferredSubject).mySubject(mySubject).build();
+        User user = User.builder().id(writer).gender(Gender.valueOf(gender)).careerSkills(careerSkills).preferredSubject(preferredSubject).mySubject(mySubject).build();
         Talent talent = Talent.builder().id(boardId).writer(user).build();
 
         //talentRepository의 동작을 모의화
@@ -193,8 +200,10 @@ class TalentServiceImplTest {
         String placeName = "testPlace";
         String teachingSubject = "testTeachingSubject";
         String teachedSubject = "testTeachedSubject";
-        String ageGroup = "25~30";
-        String week = "월요일";
+        Long minAge = 25L;
+        Long maxAge = 30L;
+        Set<String> selectedDays = new HashSet<>(Arrays.asList("MON", "TUE", "WED"));
+        String gender = "FEMALE";
         String img1 = "img1.jpg";
         String img2 = "img2.jpg";
         String imgUrl1 = "https://.../img1.jpg";
@@ -208,7 +217,7 @@ class TalentServiceImplTest {
         User user = User.builder().id(writer).file(avatarFile).build();
         SubjectCategory teachingSubjectCategory = new SubjectCategory(7L, teachingSubject, new SubjectCategory(1L, "parentCategory1", null));
         SubjectCategory teachedSubjectCategory = new SubjectCategory(19L, teachedSubject, new SubjectCategory(2L, "parentCategory2", null));
-        Talent talent = Talent.builder().id(boardId).writer(user).place(new Place(1L, placeName)).teachingSubject(teachingSubjectCategory).teachedSubject(teachedSubjectCategory).title(title).content(content).ageGroup(ageGroup).week(week).hit(0L).files(boardFile).build();
+        Talent talent = Talent.builder().id(boardId).writer(user).place(new Place(1L, placeName)).teachingSubject(teachingSubjectCategory).teachedSubject(teachedSubjectCategory).title(title).content(content).minAge(minAge).maxAge(maxAge).gender(GenderForTalent.valueOf(gender)).dayOfWeek(DayOfWeekUtil.convertSelectedDaysToEnum(selectedDays)).hit(0L).files(boardFile).build();
 
         //talentRepository의 동작을 모의화
         when(talentRepository.findById(boardId)).thenReturn(Optional.of(talent));
@@ -227,8 +236,10 @@ class TalentServiceImplTest {
         assertThat(placeName).isEqualTo(response.getPlaceName());
         assertThat(teachingSubject).isEqualTo(response.getTeachingSubject());
         assertThat(teachedSubject).isEqualTo(response.getTeachedSubject());
-        assertThat(ageGroup).isEqualTo(response.getAgeGroup());
-        assertThat(week).isEqualTo(response.getWeek());
+        assertThat(minAge).isEqualTo(response.getMinAge());
+        assertThat(maxAge).isEqualTo(response.getMaxAge());
+        assertThat(selectedDays).isEqualTo(response.getSelectedDays());
+        assertThat(gender).isEqualTo(response.getGender());
         assertThat(imgUrl2).isEqualTo(response.getImgUrl().get(0));
 
         verify(talentRepository).findById(boardId);
@@ -248,8 +259,10 @@ class TalentServiceImplTest {
         String teachingSubject = "testTeachingSubject";
         String teachedSubject = "testTeachedSubject";
         String updateTeachedSubject = "updateTeachedSubject";
-        String ageGroup = "25~30";
-        String week = "월요일";
+        Long minAge = 25L;
+        Long maxAge = 30L;
+        Set<String> selectedDays = new HashSet<>(Arrays.asList("MON", "TUE", "WED"));
+        String gender = "FEMALE";
         String img1 = "img1.jpg";
         String img2 = "img2.jpg";
         String imgUrl1 = "https://.../img1.jpg";
@@ -263,8 +276,7 @@ class TalentServiceImplTest {
         List<File> files = new ArrayList<>();
         File file1 = File.builder().oriName(img1).fileUrl(imgUrl1).build();
         files.add(file1);
-        Talent talent = Talent.builder().id(boardId).writer(user).place(place).teachingSubject(teachingSubjectCategory).teachedSubject(teachedSubjectCategory).title(title).content(content).ageGroup(ageGroup).week(week).hit(0L).files(files).build();
-
+        Talent talent = Talent.builder().id(boardId).writer(user).place(place).teachingSubject(teachingSubjectCategory).teachedSubject(teachedSubjectCategory).title(title).content(content).minAge(minAge).maxAge(maxAge).gender(GenderForTalent.valueOf(gender)).dayOfWeek(DayOfWeekUtil.convertSelectedDaysToEnum(selectedDays)).hit(0L).files(files).build();
         // MultipartFile을 저장할 리스트 생성, 새로운 이미지 요청
         List<MultipartFile> multipartFiles = new ArrayList<>();
         multipartFiles.add(new MockMultipartFile(img2.substring(0, img2.lastIndexOf('.')), img2, "image/jpeg", new byte[0]));
@@ -282,8 +294,10 @@ class TalentServiceImplTest {
                 .placeName(placeName)
                 .teachingSubject(teachingSubject)
                 .teachedSubject(updateTeachedSubject)
-                .ageGroup(ageGroup)
-                .week(week)
+                .minAge(minAge)
+                .maxAge(maxAge)
+                .gender(gender)
+                .selectedDays(selectedDays)
                 //기존에 저장된 이미지 그대로 사용
                 .imgUrl(imgUrl).build();
 
@@ -312,8 +326,10 @@ class TalentServiceImplTest {
         assertThat(teachingSubject).isEqualTo(response.getTeachingSubject());
         //수정된 가르침을 받을 과목(teachedSubject)
         assertThat(updateTeachedSubject).isEqualTo(response.getTeachedSubject());
-        assertThat(ageGroup).isEqualTo(response.getAgeGroup());
-        assertThat(week).isEqualTo(response.getWeek());
+        assertThat(minAge).isEqualTo(response.getMinAge());
+        assertThat(maxAge).isEqualTo(response.getMaxAge());
+        assertThat(selectedDays).isEqualTo(response.getSelectedDays());
+        assertThat(gender).isEqualTo(response.getGender());
         assertThat(img1).isEqualTo(response.getOriName().get(0));
         assertThat(img2).isEqualTo(response.getOriName().get(1));
         assertThat(imgUrl1).isEqualTo(response.getImgUrl().get(0));
@@ -339,8 +355,10 @@ class TalentServiceImplTest {
         String placeName = "testPlace";
         String teachingSubject = "testTeachingSubject";
         String teachedSubject = "testTeachedSubject";
-        String ageGroup = "25~30";
-        String week = "월요일";
+        Long minAge = 25L;
+        Long maxAge = 30L;
+        Set<String> selectedDays = new HashSet<>(Arrays.asList("MON", "TUE", "WED"));
+        String gender = "FEMALE";
         String img1 = "img1.jpg";
         String img2 = "img2.jpg";
         String imgUrl1 = "https://.../img1.jpg";
@@ -354,7 +372,7 @@ class TalentServiceImplTest {
         File file2 = File.builder().oriName(img2).fileUrl(imgUrl2).build();
         files.add(file1);
         files.add(file2);
-        Talent talent = Talent.builder().id(boardId).writer(User.builder().id(writer).build()).place(place).teachingSubject(teachingSubjectCategory).teachedSubject(teachedSubjectCategory).title(title).content(content).ageGroup(ageGroup).week(week).hit(0L).files(files).build();
+        Talent talent = Talent.builder().id(boardId).writer(User.builder().id(writer).build()).place(place).teachingSubject(teachingSubjectCategory).teachedSubject(teachedSubjectCategory).title(title).content(content).minAge(minAge).maxAge(maxAge).gender(GenderForTalent.valueOf(gender)).dayOfWeek(DayOfWeekUtil.convertSelectedDaysToEnum(selectedDays)).hit(0L).files(files).build();
 
         // 현재 인증된 사용자 설정
         Authentication authentication = new TestingAuthenticationToken(userId, null, "ROLE_USER");
@@ -397,7 +415,8 @@ class TalentServiceImplTest {
         String teachingSubject1 = "testTeachingSubject1";
         String teachingSubject2 = "testTeachingSubject2";
         String teachedSubject = "testTeachedSubject";
-        String ageGroup = "25~30";
+        Long minAge = 25L;
+        Long maxAge = 30L;
         String img1 = "img1.jpg";
         String imgUrl1 = "https://.../img1.jpg";
 
@@ -408,8 +427,8 @@ class TalentServiceImplTest {
         SubjectCategory teachingSubjectCategory2 = new SubjectCategory(37L, teachingSubject2, new SubjectCategory(3L, "parentCategory2", null));
         SubjectCategory teachedSubjectCategory = new SubjectCategory(19L, teachedSubject, new SubjectCategory(2L, "parentCategory3", null));
 
-        Talent talent1 = Talent.builder().id(boardId1).writer(user).title(title).content(content).place(place).teachingSubject(teachingSubjectCategory1).teachedSubject(teachedSubjectCategory).ageGroup(ageGroup).hit(0L).build();
-        Talent talent2 = Talent.builder().id(boardId2).writer(user).title(title).content(content).place(place).teachingSubject(teachingSubjectCategory2).teachedSubject(teachedSubjectCategory).ageGroup(ageGroup).hit(0L).build();
+        Talent talent1 = Talent.builder().id(boardId1).writer(user).title(title).content(content).place(place).teachingSubject(teachingSubjectCategory1).teachedSubject(teachedSubjectCategory).minAge(minAge).maxAge(maxAge).hit(0L).build();
+        Talent talent2 = Talent.builder().id(boardId2).writer(user).title(title).content(content).place(place).teachingSubject(teachingSubjectCategory2).teachedSubject(teachedSubjectCategory).minAge(minAge).maxAge(maxAge).hit(0L).build();
 
         // 공지사항 목록 데이터 생성
         List<TalentDto.TalentListResponse> talentList = new ArrayList<>();
@@ -420,6 +439,8 @@ class TalentServiceImplTest {
 
         // Mock customNoticeRepository의 동작 설정
         when(talentRepository.findAllWithPagingAndSearch(keyword, pageable,subjectCategoryId)).thenReturn(page);
+        when(categoryRepository.findById(subjectCategoryId)).thenReturn(Optional.of(teachedSubjectCategory));
+        when(categoryRepository.findByIdAndParentIsNotNull(subjectCategoryId)).thenReturn(Optional.of(teachedSubjectCategory));
 
         // When
         Page<TalentDto.TalentListResponse> result = talentService.list(limit, skip, keyword, subjectCategoryId);
@@ -437,7 +458,8 @@ class TalentServiceImplTest {
         assertThat(placeName).isEqualTo(result.getContent().get(0).getPlaceName());
         assertThat(teachingSubject1).isEqualTo(result.getContent().get(0).getTeachingSubject());
         assertThat(teachedSubject).isEqualTo(result.getContent().get(0).getTeachedSubject());
-        assertThat(ageGroup).isEqualTo(result.getContent().get(0).getAgeGroup());
+        assertThat(minAge).isEqualTo(result.getContent().get(0).getMinAge());
+        assertThat(maxAge).isEqualTo(result.getContent().get(0).getMaxAge());
         assertThat(imgUrl1).isEqualTo(result.getContent().get(0).getAvatar());
 
         assertThat(boardId2).isEqualTo(result.getContent().get(1).getId());
@@ -458,14 +480,18 @@ class TalentServiceImplTest {
         String placeName = "testPlace";
         String teachingSubject = "testTeachingSubject";
         String teachedSubject = "testTeachedSubject";
-        String ageGroup = "25~30";
-        String week = "월요일";
+        Long minAge = 25L;
+        Long maxAge = 30L;
+        Set<String> selectedDays = new HashSet<>(Arrays.asList("MON", "TUE", "WED"));
+        String gender = "FEMALE";
+        String img1 = "img1.jpg";
+        String img2 = "img2.jpg";
 
         User user = User.builder().id(writer).build();
         Place place = new Place(1L, placeName);
         SubjectCategory teachingSubjectCategory = new SubjectCategory(7L, teachingSubject, new SubjectCategory(1L, "parentCategory1", null));
         SubjectCategory teachedSubjectCategory = new SubjectCategory(19L, teachedSubject, new SubjectCategory(2L, "parentCategory2", null));
-        Talent talent = Talent.builder().id(boardId).writer(user).place(place).teachingSubject(teachingSubjectCategory).teachedSubject(teachedSubjectCategory).title(title).content(content).ageGroup(ageGroup).week(week).hit(0L).build();
+        Talent talent = Talent.builder().id(boardId).writer(user).place(place).teachingSubject(teachingSubjectCategory).teachedSubject(teachedSubjectCategory).title(title).content(content).maxAge(maxAge).minAge(minAge).gender(GenderForTalent.valueOf(gender)).dayOfWeek(DayOfWeekUtil.convertSelectedDaysToEnum(selectedDays)).hit(0L).build();
         TalentScrap scrap = TalentScrap.of(user, talent);
 
         // 현재 인증된 사용자 설정
