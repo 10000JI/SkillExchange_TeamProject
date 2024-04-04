@@ -24,7 +24,7 @@ public class Comment extends CreatedDateEntity {
     private Long id;
 
     //내용
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     @Lob
     private String content;
 

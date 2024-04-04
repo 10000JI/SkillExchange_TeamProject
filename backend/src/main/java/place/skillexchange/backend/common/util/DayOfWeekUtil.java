@@ -2,15 +2,12 @@ package place.skillexchange.backend.common.util;
 
 import place.skillexchange.backend.talent.entity.DayOfWeek;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class DayOfWeekUtil {
 
     public static Set<DayOfWeek> convertSelectedDaysToEnum(Set<String> selectedDays) {
-        Set<DayOfWeek> convertedDays = new HashSet<>();
+        Set<DayOfWeek> convertedDays = new TreeSet<>();
         for (String day : selectedDays) {
             convertedDays.add(DayOfWeek.fromString(day));
         }
@@ -18,10 +15,16 @@ public class DayOfWeekUtil {
     }
 
     public static Set<String> convertSelectedDaysToString(Set<DayOfWeek> selectedDays) {
-        Set<String> convertedDays = new HashSet<>();
-        for (DayOfWeek day : selectedDays) {
-            convertedDays.add(day.toString());
+        // 요일을 순서대로 정렬하기 위한 배열
+        String[] daysOfWeekInOrder = {"MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"};
+
+        // 정렬된 문자열 집합 생성
+        Set<String> sortedDays = new LinkedHashSet<>();
+        for (String  day : daysOfWeekInOrder) {
+            if (selectedDays.contains(DayOfWeek.valueOf(day))) {
+                sortedDays.add(day);
+            }
         }
-        return convertedDays;
+        return sortedDays;
     }
 }
