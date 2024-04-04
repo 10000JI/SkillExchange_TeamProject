@@ -98,6 +98,7 @@ public class TalentServiceImpl implements TalentService {
      * 게시물 수정
      */
     @Override
+    @Transactional
     public TalentDto.TalentUpdateResponse update(TalentDto.TalentUpdateRequest dto, List<MultipartFile> multipartFiles, Long talentId) throws IOException {
         String id = securityUtil.getCurrentMemberUsername();
         User user = userRepository.findById(id).orElseThrow(() -> UserNotFoundException.EXCEPTION);

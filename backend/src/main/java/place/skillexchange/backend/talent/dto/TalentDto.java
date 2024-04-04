@@ -163,7 +163,9 @@ public class TalentDto {
         private String content;
         private String placeName;
         private String teachingSubject;
+        private String parentTeachingSubject;
         private String teachedSubject;
+        private String parentTeachedSubject;
         private Set<String> selectedDays;
         private String gender;
         private Long minAge;
@@ -185,8 +187,10 @@ public class TalentDto {
             this.content = talent.getContent();
             this.title = talent.getTitle();
             this.placeName = talent.getPlace().getPlaceName();
+            this.parentTeachingSubject = talent.getTeachingSubject().getParent().getSubjectName();
             this.teachingSubject = talent.getTeachingSubject().getSubjectName();
             this.teachedSubject = talent.getTeachedSubject().getSubjectName();
+            this.parentTeachedSubject = talent.getTeachedSubject().getParent().getSubjectName();
             this.gender = talent.getGender().toString();
             this.minAge = talent.getMinAge();
             this.maxAge = talent.getMaxAge();
