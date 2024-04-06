@@ -270,17 +270,23 @@ class TalentServiceImplTest {
         Place place = new Place(1L, placeName);
         SubjectCategory teachingSubjectCategory = new SubjectCategory(7L, teachingSubject, new SubjectCategory(1L, "parentCategory1", null));
         SubjectCategory teachedSubjectCategory = new SubjectCategory(19L, teachedSubject, new SubjectCategory(2L, "parentCategory2", null));
+
         List<File> files = new ArrayList<>();
         File file1 = File.builder().oriName(img1).fileUrl(imgUrl1).build();
         files.add(file1);
+
         Talent talent = Talent.builder().id(boardId).writer(user).place(place).teachingSubject(teachingSubjectCategory).teachedSubject(teachedSubjectCategory).title(title).content(content).minAge(minAge).maxAge(maxAge).gender(GenderForTalent.valueOf(gender)).dayOfWeek(DayOfWeekUtil.convertSelectedDaysToEnum(selectedDays)).hit(0L).files(files).build();
+
         // MultipartFile을 저장할 리스트 생성, 새로운 이미지 요청
         List<MultipartFile> multipartFiles = new ArrayList<>();
         multipartFiles.add(new MockMultipartFile(img2.substring(0, img2.lastIndexOf('.')), img2, "image/jpeg", new byte[0]));
+
         List<String> imgUrl = new ArrayList<>();
-        imgUrl.add(imgUrl1);
+        imgUrl.add(imgUrl1); //기존에 저장한 이미지 url
+
         File file2 = File.builder().oriName(img2).fileUrl(imgUrl2).build();
-        files.add(file2);
+        files.add(file2); //MultipartFile로 새롭게 추가한 이미지 파일 리턴 값(=File)
+
         // 가르침을 받을 과목(teachedSubject) 수정 요청
         SubjectCategory updateTeachedSubjectCategory = new SubjectCategory(37L, updateTeachedSubject, new SubjectCategory(3L, "parentCategory3", null));
 
@@ -308,7 +314,7 @@ class TalentServiceImplTest {
         when(talentRepository.findById(boardId)).thenReturn(Optional.of(talent));
         //categoryRepository의 동작을 모의화 (teachedSubject 수정)
         when(categoryRepository.findBySubjectName(updateTeachedSubject)).thenReturn(Optional.of(updateTeachedSubjectCategory));
-        // fileService의 동작을 모의화 (새로운 이미치 추가)
+        // fileService의 동작을 모의화 (기존 이미지 url + 새로운 이미치 파일 추가)
         when(fileService.updateTalentImg(request.getImgUrl(),multipartFiles, talent)).thenReturn(files);
 
         //When

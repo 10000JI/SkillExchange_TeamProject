@@ -171,7 +171,7 @@ class NoticeServiceImplTest {
         // Given
         Long noticeId = 1L;
         List<File> files = new ArrayList<>();
-        Notice notice = Notice.builder().id(noticeId).title("testTitle").content("testContent").writer(User.builder().id("testUser").build()).files(files).build();
+        Notice notice = Notice.builder().id(noticeId).title("testTitle").content("testContent").writer(User.builder().id("testUser").build()).hit(0L).files(files).build();
 
         when(noticeRepository.findById(noticeId)).thenReturn(Optional.of(notice));
 
@@ -251,7 +251,9 @@ class NoticeServiceImplTest {
 
         // userRepository.findById가 올바른 userId로 호출되었는지 확인
         verify(userRepository).findById(userId);
-        // fileService.registerNoticeImg가 올바른 파라미터와 함께 호출되었는지 확인
+        // noticeRepository.findById가 올바른 userId로 호출되었는지 확인
+        verify(noticeRepository).findById(noticeId);
+        // fileService.updateNoticeImg가 올바른 파라미터와 함께 호출되었는지 확인
         verify(fileService).updateNoticeImg(imgUrl, multipartFiles, notice);
     }
 
@@ -364,8 +366,6 @@ class NoticeServiceImplTest {
 
         // noticeRepository 동작을 모의화
         when(noticeRepository.findById(noticeId)).thenReturn((Optional.empty()));
-        // noticeRepository.delete 메서드의 동작을 모의화하여 설정
-        doThrow(BoardNotFoundException.class).when(noticeRepository).deleteById(noticeId);
 
         // When
         Throwable thrown = catchThrowable(() -> noticeService.delete(noticeId));

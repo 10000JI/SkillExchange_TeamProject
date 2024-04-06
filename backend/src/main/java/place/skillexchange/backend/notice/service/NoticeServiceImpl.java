@@ -47,7 +47,7 @@ public class NoticeServiceImpl implements NoticeService{
         Notice notice = noticeRepository.save(dto.toEntity(user));
 
         List<File> files = null;
-        System.out.println("MultiPartFiles:  "+multipartFiles);
+        System.out.println("MultiPartFiles: "+multipartFiles);
         if (multipartFiles != null) {
             files = fileService.registerNoticeImg(multipartFiles,notice);
         }
@@ -63,7 +63,7 @@ public class NoticeServiceImpl implements NoticeService{
     public NoticeDto.NoticeReadResponse read(Long noticeId) {
         Notice notice = noticeRepository.findById(noticeId)
                 .orElseThrow(() -> BoardNotFoundException.EXCEPTION);
-        notice.updateHit();
+        notice.updateHit(); //update가 발생하므로 @Transactional
         return new NoticeDto.NoticeReadResponse(notice);
     }
 
