@@ -175,7 +175,11 @@ public class UserDto {
         public ProfileResponse(User user, File file, int returnCode, String returnMessage) {
             this.id = user.getId();
             this.email = user.getEmail();
-            this.gender = user.getGender().toString();
+            if (user.getGender  () != null) {
+                this.gender = user.getGender().toString();
+            } else {
+                this.gender = null;
+            }
             this.job = user.getJob();
             this.careerSkills = user.getCareerSkills();
             this.preferredSubject = user.getPreferredSubject();
@@ -223,7 +227,11 @@ public class UserDto {
         public MyProfileResponse(User user, int returnCode, String returnMessage) {
             this.id = user.getId();
             this.email = user.getEmail();
-            this.gender = user.getGender().toString();
+            if (user.getGender() != null) {
+                this.gender = user.getGender().toString();
+            } else {
+                this.gender = null;
+            }
             this.job = user.getJob();
             this.careerSkills = user.getCareerSkills();
             this.preferredSubject = user.getPreferredSubject();
