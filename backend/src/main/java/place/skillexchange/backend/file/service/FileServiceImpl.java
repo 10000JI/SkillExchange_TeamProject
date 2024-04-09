@@ -181,17 +181,18 @@ public class FileServiceImpl implements FileService{
                 String fileUrl = file.getFileUrl();
                 // 이미지Url이 요청이 들어온 이미지Url들과 동일한지 비교하기 위한 !! 논리 자료형 !!
                 boolean isUrlFoundInImgUrl = false;
-
-                // 요청이 들어온 이미지Url들 for문
-                for (String imgUrlItem : imgUrl) {
-                    // db에 저장했던 Url과 요청 들어온 이미지Url이 동일하다면
-                    if (fileUrl.equals(imgUrlItem)) {
-                        // 반환 List에 추가(ResponseDto로 쓰일 것)
-                        updatedImages.add(file);
-                        // 동일하므로 논리자료형 true
-                        isUrlFoundInImgUrl = true;
-                        // 저장했던 이미지Url과 요청이 들어온 Url이 동일한 것을 확인했으므로 break, 첫번째 for문으로 돌아감
-                        break;
+                if (imgUrl != null) {
+                    // 요청이 들어온 이미지Url들 for문
+                    for (String imgUrlItem : imgUrl) {
+                        // db에 저장했던 Url과 요청 들어온 이미지Url이 동일하다면
+                        if (fileUrl.equals(imgUrlItem)) {
+                            // 반환 List에 추가(ResponseDto로 쓰일 것)
+                            updatedImages.add(file);
+                            // 동일하므로 논리자료형 true
+                            isUrlFoundInImgUrl = true;
+                            // 저장했던 이미지Url과 요청이 들어온 Url이 동일한 것을 확인했으므로 break, 첫번째 for문으로 돌아감
+                            break;
+                        }
                     }
                 }
 
