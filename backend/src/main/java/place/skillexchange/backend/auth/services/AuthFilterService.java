@@ -66,7 +66,7 @@ public class AuthFilterService extends OncePerRequestFilter {
             //accessToken이 만료되었다면
             if (jwtService.isTokenExpired(jwt)) {
                 //쿠키의 refreshToken과 db에 저장된 refreshToken의 만료일을 확인하고 accessToken 재발급 / 만료되면 재로그인 exception
-                handleExpiredToken(request, response, filterChain);
+                handleExpiredToken(request, response);
             } else {
                 //accessToken이 만료되지 않았다면 유효한지 검증
                 authenticateUser(jwt, request, response);
@@ -76,7 +76,7 @@ public class AuthFilterService extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private void handleExpiredToken(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
+    private void handleExpiredToken(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String refreshTokenValue = extractRefreshTokenFromCookie(request);
         if (refreshTokenValue != null) {
             RefreshToken refreshToken = refreshTokenService.verifyRefreshToken(refreshTokenValue);

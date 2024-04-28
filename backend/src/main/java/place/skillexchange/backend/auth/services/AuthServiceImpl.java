@@ -70,13 +70,12 @@ public class AuthServiceImpl implements AuthService{
             @Override
             public void run() {
                 // 5분 후에 실행될 작업
-                System.out.println("1시간 후에 한 번 실행됩니다.");
                 if (userRepository.findByIdAndActiveIsTrue(user.getId()) == null) {
                     userRepository.delete(user);
                 }
                 timer.cancel(); // 작업 완료 후 타이머 종료
             }
-        }, 5 * 60 * 1000); // 5분 후 = 1시간 후에 작업 실행
+        }, 5 * 60 * 1000); // 5분 후
 
         String activeToken = jwtService.generateActiveToken(user);
         //active Token (계정 활성화 토큰) 발급
