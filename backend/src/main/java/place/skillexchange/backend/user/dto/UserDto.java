@@ -64,7 +64,7 @@ public class UserDto {
     }
 
     /**
-     * 로그인 성공시 요청된 Dto
+     * 로그인시 요청된 Dto
      */
     @Getter
     @AllArgsConstructor
